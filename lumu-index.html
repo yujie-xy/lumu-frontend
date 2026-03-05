@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>橹穆国 · 欢迎回家</title>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@300;400;600;900&family=Noto+Sans+SC:wght@300;400;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   CSS VARIABLES · 橹穆国 Design System
+══════════════════════════════════════════ */
+:root {
+  --pink:       #f5b8d0;
+  --pink-deep:  #e87aab;
+  --pink-soft:  #fce8f3;
+  --blue:       #a8d4f5;
+  --blue-deep:  #5a9fd4;
+  --blue-soft:  #e8f4fc;
+  --lilac:      #d4b8f0;
+  --night:      #0d0818;
+  --night-mid:  #160e2a;
+  --night-card: rgba(255,255,255,0.04);
+  --star-white: rgba(255,255,255,0.9);
+  --text-light: rgba(255,255,255,0.85);
+  --text-dim:   rgba(255,255,255,0.45);
+  --glow-pink:  rgba(245,184,208,0.5);
+  --glow-blue:  rgba(168,212,245,0.5);
+}
+
+/* ══════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--night);
+  font-family: 'Noto Sans SC', sans-serif;
+  color: var(--text-light);
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* Custom cursor */
+body { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='4' fill='%23f5b8d0' opacity='0.8'/%3E%3C/svg%3E") 12 12, auto; }
+
+/* ══════════════════════════════════════════
+   ANIMATED BACKGROUND LAYERS
+══════════════════════════════════════════ */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Deep space gradient */
+.bg-cosmos {
+  background: 
+    radial-gradient(ellipse 120% 80% at 50% -10%, #1a0d3a 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at 10% 100%, #0a1830 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 90% 80%, #1a0a22 0%, transparent 50%),
+    linear-gradient(180deg, #0d0818 0%, #100a20 50%, #0d0818 100%);
+}
+
+/* Nebula glow blobs */
+.bg-nebula {
+  overflow: hidden;
+}
+.nebula-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: nebula-drift var(--d) ease-in-out infinite alternate;
+}
+@keyframes nebula-drift {
+  from { transform: translate(0,0) scale(1); opacity: var(--op-from); }
+  to   { transform: translate(var(--tx), var(--ty)) scale(var(--s)); opacity: var(--op-to); }
+}
+
+/* Star field canvas */
+#starfield { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+
+/* Floating particles */
+.particle-field {
+  position: fixed; inset: 0; z-index: 2; pointer-events: none;
+}
+.fp {
+  position: absolute;
+  border-radius: 50%;
+  animation: fp-float var(--dur) ease-in-out infinite;
+  animation-delay: var(--del);
+}
+@keyframes fp-float {
+  0%   { transform: translateY(0) rotate(0deg) scale(1);   opacity: 0; }
+  20%  { opacity: var(--op); }
+  80%  { opacity: var(--op); }
+  100% { transform: translateY(-120px) rotate(360deg) scale(0.5); opacity: 0; }
+}
+
+/* ══════════════════════════════════════════
+   PETALS / SAKURA
+══════════════════════════════════════════ */
+.petal-field { position: fixed; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
+.petal {
+  position: absolute;
+  top: -30px;
+  width: var(--sz);
+  height: var(--sz);
+  background: var(--col);
+  border-radius: 50% 0 50% 0;
+  animation: petal-fall var(--dur) linear infinite;
+  animation-delay: var(--del);
+  opacity: 0.7;
+}
+@keyframes petal-fall {
+  0%   { top: -30px; left: var(--x); transform: rotate(0deg) translateX(0); opacity: 0.7; }
+  100% { top: 110vh;  left: calc(var(--x) + 80px); transform: rotate(720deg) translateX(40px); opacity: 0; }
+}
+
+/* ══════════════════════════════════════════
+   MAIN LAYOUT
+══════════════════════════════════════════ */
+.page-wrap {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ══════════════════════════════════════════
+   HEADER / LOGO AREA
+══════════════════════════════════════════ */
+.site-header {
+  width: 100%;
+  text-align: center;
+  padding: 60px 20px 20px;
+  animation: fade-down 1.2s ease both;
+}
+@keyframes fade-down {
+  from { opacity:0; transform: translateY(-30px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+.header-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  letter-spacing: 6px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.eyebrow-line {
+  display: inline-block;
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--blue-deep));
+}
+.eyebrow-line.r {
+  background: linear-gradient(90deg, var(--pink-deep), transparent);
+}
+
+.site-logo {
+  font-family: 'ZCOOL XiaoWei', serif;
+  font-size: clamp(72px, 14vw, 130px);
+  line-height: 1;
+  letter-spacing: 12px;
+  position: relative;
+  display: inline-block;
+}
+.logo-text {
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    var(--blue) 30%,
+    #ffffff 50%,
+    var(--pink) 70%,
+    #ffffff 85%,
+    var(--lilac) 100%
+  );
+  background-size: 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: logo-shimmer 6s linear infinite;
+  filter: drop-shadow(0 0 30px rgba(168,212,245,0.4)) drop-shadow(0 0 60px rgba(245,184,208,0.3));
+}
+@keyframes logo-shimmer {
+  from { background-position: 0% 50%; }
+  to   { background-position: 300% 50%; }
+}
+
+.logo-glow-ring {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(200,160,255,0.08) 0%, transparent 70%);
+  animation: pulse-ring 4s ease-in-out infinite;
+}
+@keyframes pulse-ring {
+  0%,100% { transform: scale(1); opacity: 0.5; }
+  50%      { transform: scale(1.05); opacity: 1; }
+}
+
+.site-tagline {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 13px;
+  letter-spacing: 5px;
+  color: var(--text-dim);
+  margin-top: 12px;
+  font-weight: 300;
+  animation: fade-in 2s ease both 0.6s;
+}
+@keyframes fade-in {
+  from { opacity:0; }
+  to   { opacity:1; }
+}
+
+/* CP names below logo */
+.cp-names {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+  animation: fade-in 2s ease both 0.9s;
+}
+.cp-name {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: var(--text-dim);
+}
+.cp-name.blue-n { color: var(--blue-deep); }
+.cp-name.pink-n { color: var(--pink-deep); }
+.cp-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--pink));
+  opacity: 0.8;
+}
+.cp-heart { font-size: 16px; animation: heartbeat 2s ease-in-out infinite; }
+@keyframes heartbeat {
+  0%,100% { transform: scale(1); }
+  30%     { transform: scale(1.35); }
+  60%     { transform: scale(1); }
+  80%     { transform: scale(1.15); }
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 36px 0 10px;
+  width: 100%;
+  max-width: 500px;
+  animation: fade-in 2s ease both 1.2s;
+}
+.div-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+}
+.div-symbol { font-size: 12px; color: var(--text-dim); letter-spacing: 4px; }
+
+/* ══════════════════════════════════════════
+   CHOICE SECTION — Main cards
+══════════════════════════════════════════ */
+.choice-section {
+  width: 100%;
+  max-width: 960px;
+  padding: 20px 24px 60px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  animation: fade-up 1.2s ease both 1s;
+}
+@keyframes fade-up {
+  from { opacity:0; transform: translateY(40px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* ─────── CHOICE CARD BASE ─────── */
+.choice-card {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s ease;
+  text-decoration: none;
+  display: block;
+}
+.choice-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* Shimmer border via pseudo */
+.choice-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  padding: 1.5px;
+  background: var(--border-grad);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.7;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.choice-card:hover::before { opacity: 1; }
+
+/* Inner glass panel */
+.card-glass {
+  position: relative;
+  height: 100%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  border-radius: 22px;
+  padding: 36px 30px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: hidden;
+}
+
+/* Glow on hover */
+.card-glow {
+  position: absolute;
+  inset: -80px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.5s, transform 0.5s;
+  pointer-events: none;
+}
+.choice-card:hover .card-glow { opacity: 1; transform: scale(0.8); }
+
+/* ─────── PASSERBY CARD (路人) ─────── */
+.card-passerby {
+  --border-grad: linear-gradient(135deg, rgba(168,212,245,0.6), rgba(255,255,255,0.1), rgba(168,212,245,0.3));
+  --glass-bg: linear-gradient(145deg, rgba(168,212,245,0.07) 0%, rgba(90,159,212,0.04) 100%);
+}
+.card-passerby .card-glow {
+  background: radial-gradient(circle, rgba(168,212,245,0.15) 0%, transparent 60%);
+}
+.card-passerby:hover {
+  box-shadow: 0 20px 60px rgba(90,159,212,0.25), 0 0 0 1px rgba(168,212,245,0.2);
+}
+
+/* ─────── FAN CARD (青梅果) ─────── */
+.card-fan {
+  --border-grad: linear-gradient(135deg, rgba(245,184,208,0.6), rgba(255,255,255,0.1), rgba(245,184,208,0.3));
+  --glass-bg: linear-gradient(145deg, rgba(245,184,208,0.08) 0%, rgba(232,122,171,0.04) 100%);
+}
+.card-fan .card-glow {
+  background: radial-gradient(circle, rgba(245,184,208,0.18) 0%, transparent 60%);
+}
+.card-fan:hover {
+  box-shadow: 0 20px 60px rgba(232,122,171,0.25), 0 0 0 1px rgba(245,184,208,0.2);
+}
+
+/* Card decorative bg shape */
+.card-bg-shape {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Card top icon area */
+.card-icon-wrap {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 4px;
+}
+.card-icon-ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  animation: spin-ring 12s linear infinite;
+}
+@keyframes spin-ring {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.card-icon-ring-inner {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  animation: spin-ring 8s linear infinite reverse;
+}
+.card-icon-circle {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.4s ease;
+}
+.choice-card:hover .card-icon-circle { transform: scale(1.08) rotate(-5deg); }
+
+.card-passerby .card-icon-ring {
+  border: 1.5px dashed rgba(168,212,245,0.4);
+}
+.card-passerby .card-icon-ring-inner {
+  border: 1px solid rgba(168,212,245,0.2);
+}
+.card-passerby .card-icon-circle {
+  background: radial-gradient(circle at 30% 30%, rgba(200,230,255,0.3), rgba(90,159,212,0.15));
+  box-shadow: 0 8px 30px rgba(90,159,212,0.2), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.card-fan .card-icon-ring {
+  border: 1.5px dashed rgba(245,184,208,0.5);
+}
+.card-fan .card-icon-ring-inner {
+  border: 1px solid rgba(245,184,208,0.25);
+}
+.card-fan .card-icon-circle {
+  background: radial-gradient(circle at 30% 30%, rgba(255,220,235,0.3), rgba(232,122,171,0.15));
+  box-shadow: 0 8px 30px rgba(232,122,171,0.2), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+/* Card text */
+.card-label {
+  font-size: 11px;
+  letter-spacing: 6px;
+  text-align: center;
+  text-transform: uppercase;
+  opacity: 0.5;
+  margin-bottom: 2px;
+}
+.card-title {
+  font-family: 'ZCOOL XiaoWei', serif;
+  font-size: 32px;
+  text-align: center;
+  letter-spacing: 6px;
+  line-height: 1;
+}
+.card-passerby .card-title { color: #c8e4f8; }
+.card-fan .card-title { color: #f8d0e4; }
+
+.card-subtitle {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 12px;
+  text-align: center;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  line-height: 1.7;
+}
+
+/* Perks list */
+.card-perks {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+.perk-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 1px;
+}
+.perk-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.card-passerby .perk-dot { background: var(--blue); box-shadow: 0 0 6px var(--glow-blue); }
+.card-fan .perk-dot { background: var(--pink); box-shadow: 0 0 6px var(--glow-pink); }
+
+.perk-item.locked { opacity: 0.3; text-decoration: line-through; }
+
+/* Card CTA button */
+.card-btn {
+  margin-top: auto;
+  padding: 14px 20px;
+  border-radius: 50px;
+  border: none;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 13px;
+  letter-spacing: 4px;
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  width: 100%;
+  pointer-events: none; /* card handles click */
+}
+.card-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+  border-radius: 50px;
+}
+
+.card-passerby .card-btn {
+  background: linear-gradient(135deg, #6aaed4, #a8d4f5);
+  color: white;
+  box-shadow: 0 8px 24px rgba(90,159,212,0.35);
+}
+.card-fan .card-btn {
+  background: linear-gradient(135deg, #e07aab, #f5b8d0);
+  color: white;
+  box-shadow: 0 8px 24px rgba(232,122,171,0.35);
+}
+.choice-card:hover .card-btn {
+  transform: scale(1.03);
+  box-shadow: 0 12px 32px rgba(90,159,212,0.5);
+}
+.card-fan:hover .card-btn {
+  box-shadow: 0 12px 32px rgba(232,122,171,0.5);
+}
+
+/* Floating sparkle on card */
+.card-sparkle {
+  position: absolute;
+  font-size: 14px;
+  animation: sparkle-pulse var(--d) ease-in-out infinite;
+  animation-delay: var(--dl);
+  pointer-events: none;
+  opacity: 0;
+}
+.choice-card:hover .card-sparkle { opacity: 1; }
+@keyframes sparkle-pulse {
+  0%,100% { transform: scale(0) rotate(0deg); opacity: 0; }
+  50%      { transform: scale(1) rotate(180deg); opacity: 0.8; }
+}
+
+/* ══════════════════════════════════════════
+   ADMIN LOGIN — small discrete link
+══════════════════════════════════════════ */
+.admin-entry {
+  margin-top: 4px;
+  margin-bottom: 50px;
+  animation: fade-in 2s ease both 2s;
+}
+.admin-link {
+  font-size: 11px;
+  color: rgba(255,255,255,0.18);
+  letter-spacing: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.4s;
+  padding: 6px 16px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+}
+.admin-link:hover { color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.15); }
+
+/* ══════════════════════════════════════════
+   FOOTER DECORATION
+══════════════════════════════════════════ */
+.site-footer {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 12px 20px;
+  background: linear-gradient(to top, rgba(13,8,24,0.9), transparent);
+  animation: fade-in 2s ease both 2.5s;
+}
+.footer-tag {
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: rgba(255,255,255,0.18);
+}
+.footer-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.15); }
+
+/* ══════════════════════════════════════════
+   MODAL — Login / Register overlay
+══════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.modal-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(10,6,20,0.85);
+  backdrop-filter: blur(16px);
+}
+.modal-box {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(145deg, rgba(30,16,55,0.95) 0%, rgba(20,10,38,0.98) 100%);
+  border-radius: 24px;
+  overflow: hidden;
+  transform: scale(0.9) translateY(30px);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06);
+}
+.modal-overlay.open .modal-box { transform: scale(1) translateY(0); }
+
+/* Modal shimmer top border */
+.modal-top-line {
+  height: 2px;
+  background: var(--modal-grad, linear-gradient(90deg, var(--blue), var(--pink)));
+}
+
+.modal-inner { padding: 36px 36px 32px; }
+
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+.modal-close:hover { background: rgba(255,255,255,0.12); color: white; }
+
+.modal-title {
+  font-family: 'ZCOOL XiaoWei', serif;
+  font-size: 26px;
+  letter-spacing: 4px;
+  margin-bottom: 4px;
+}
+.modal-sub {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-bottom: 28px;
+}
+
+/* Tabs */
+.modal-tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 24px;
+}
+.m-tab {
+  flex: 1;
+  padding: 9px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.m-tab.active {
+  background: linear-gradient(135deg, rgba(232,122,171,0.3), rgba(168,212,245,0.2));
+  color: white;
+}
+
+/* Form */
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  color: white;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  outline: none;
+  transition: border-color 0.3s, background 0.3s;
+}
+.form-input:focus {
+  border-color: rgba(245,184,208,0.5);
+  background: rgba(255,255,255,0.08);
+}
+.form-input::placeholder { color: rgba(255,255,255,0.2); }
+
+/* Submit btn */
+.form-submit {
+  width: 100%;
+  padding: 14px;
+  border-radius: 50px;
+  border: none;
+  background: linear-gradient(135deg, #e07aab, #f5b8d0 50%, #a8d4f5);
+  color: white;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.form-submit::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent);
+}
+.form-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(232,122,171,0.4); }
+
+.form-note {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-top: 14px;
+  letter-spacing: 1px;
+  line-height: 1.7;
+}
+.form-note a {
+  color: var(--pink);
+  cursor: pointer;
+  text-decoration: none;
+}
+.form-note a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Error message */
+.form-error {
+  font-size: 11px;
+  color: #ff8aaa;
+  letter-spacing: 1px;
+  margin-top: 8px;
+  min-height: 16px;
+  text-align: center;
+}
+
+/* Success message */
+.form-success {
+  text-align: center;
+  padding: 20px 0;
+}
+.success-icon { font-size: 50px; margin-bottom: 16px; display: block; animation: bounce 0.6s ease; }
+@keyframes bounce { 0%,100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+.success-title {
+  font-family: 'ZCOOL XiaoWei', serif;
+  font-size: 22px;
+  letter-spacing: 4px;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--blue), var(--pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.success-sub { font-size: 12px; color: var(--text-dim); letter-spacing: 2px; }
+
+/* ══════════════════════════════════════════
+   ADMIN MODAL
+══════════════════════════════════════════ */
+#modal-admin .modal-top-line {
+  background: linear-gradient(90deg, #3a4a6a, #6a3a5a);
+}
+#modal-admin .modal-title { color: rgba(255,255,255,0.7); }
+
+/* ══════════════════════════════════════════
+   TOAST NOTIFICATION
+══════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(30,20,50,0.95);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: white;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  backdrop-filter: blur(20px);
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ══════════════════════════════════════════
+   LOADING SCREEN
+══════════════════════════════════════════ */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: var(--night);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  transition: opacity 0.8s ease 0.2s, visibility 0.8s ease 0.2s;
+}
+#loading-screen.hide { opacity: 0; visibility: hidden; }
+
+.loading-logo {
+  font-family: 'ZCOOL XiaoWei', serif;
+  font-size: 60px;
+  letter-spacing: 10px;
+  background: linear-gradient(135deg, var(--blue), var(--pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: loading-pulse 1.5s ease-in-out infinite;
+}
+@keyframes loading-pulse {
+  0%,100% { opacity: 0.4; transform: scale(0.97); }
+  50%      { opacity: 1;   transform: scale(1); }
+}
+
+.loading-bar-wrap {
+  width: 200px;
+  height: 2px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.loading-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue-deep), var(--pink-deep));
+  border-radius: 2px;
+  animation: load-fill 1.8s ease forwards;
+}
+@keyframes load-fill { from { width: 0; } to { width: 100%; } }
+
+.loading-text {
+  font-size: 11px;
+  letter-spacing: 6px;
+  color: var(--text-dim);
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .choice-section { grid-template-columns: 1fr; max-width: 400px; }
+  .site-logo { font-size: clamp(56px, 20vw, 90px); }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════ LOADING SCREEN ══════ -->
+<div id="loading-screen">
+  <div class="loading-logo">橹穆国</div>
+  <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
+  <div class="loading-text">正在进入星域...</div>
+</div>
+
+<!-- ══════ BACKGROUND LAYERS ══════ -->
+<div class="bg-layer bg-cosmos"></div>
+<div class="bg-layer bg-nebula" id="nebula-layer"></div>
+<canvas id="starfield"></canvas>
+<div class="petal-field" id="petal-field"></div>
+<div class="particle-field" id="particle-field"></div>
+
+<!-- ══════ MAIN PAGE ══════ -->
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-eyebrow">
+      <span class="eyebrow-line"></span>
+      LUMU KINGDOM · OFFICIAL FAN COMMUNITY
+      <span class="eyebrow-line r"></span>
+    </div>
+
+    <div class="site-logo">
+      <div class="logo-glow-ring"></div>
+      <span class="logo-text">橹穆国</span>
+    </div>
+
+    <div class="site-tagline">穆祉丞 × 王橹杰 的专属宇宙</div>
+
+    <div class="cp-names">
+      <span class="cp-name blue-n">王橹杰</span>
+      <span class="cp-dot"></span>
+      <span class="cp-heart">💜</span>
+      <span class="cp-dot"></span>
+      <span class="cp-name pink-n">穆祉丞</span>
+    </div>
+
+    <div class="divider">
+      <div class="div-line"></div>
+      <div class="div-symbol">✦ 请选择你的身份 ✦</div>
+      <div class="div-line"></div>
+    </div>
+  </header>
+
+  <!-- CHOICE CARDS -->
+  <div class="choice-section">
+
+    <!-- CARD: 路人 -->
+    <a class="choice-card card-passerby" onclick="openPasserbyConfirm(event)" href="#">
+      <div class="card-bg-shape" style="width:200px;height:200px;background:radial-gradient(circle,rgba(168,212,245,0.08),transparent);top:-60px;right:-60px;border-radius:50%;"></div>
+      <div class="card-sparkle" style="top:14%;left:18%;--d:2.2s;--dl:0s">✦</div>
+      <div class="card-sparkle" style="top:20%;right:20%;--d:1.8s;--dl:0.4s">✧</div>
+      <div class="card-sparkle" style="bottom:25%;left:25%;--d:2.5s;--dl:0.8s">⭑</div>
+      <div class="card-glow"></div>
+      <div class="card-glass">
+        <div class="card-icon-wrap">
+          <div class="card-icon-ring"></div>
+          <div class="card-icon-ring-inner"></div>
+          <div class="card-icon-circle">🌙</div>
+        </div>
+        <div class="card-label">PASSERBY · 路人</div>
+        <div class="card-title">路过的人</div>
+        <div class="card-subtitle">
+          无需登录，悄悄看看<br>
+          这片为他们留下的角落
+        </div>
+        <ul class="card-perks">
+          <li class="perk-item"><span class="perk-dot"></span>浏览时间线与大事件</li>
+          <li class="perk-item"><span class="perk-dot"></span>翻阅故事线章节</li>
+          <li class="perk-item"><span class="perk-dot"></span>欣赏照片合集</li>
+          <li class="perk-item"><span class="perk-dot"></span>点赞（不可评论）</li>
+          <li class="perk-item locked"><span class="perk-dot"></span>发言 · 评论 · 私信</li>
+          <li class="perk-item locked"><span class="perk-dot"></span>橹穆世界完整内容</li>
+        </ul>
+        <button class="card-btn">以路人身份进入 →</button>
+      </div>
+    </a>
+
+    <!-- CARD: 粉丝/青梅果 -->
+    <a class="choice-card card-fan" onclick="openFanLogin()" href="#">
+      <div class="card-bg-shape" style="width:200px;height:200px;background:radial-gradient(circle,rgba(245,184,208,0.1),transparent);bottom:-60px;left:-60px;border-radius:50%;"></div>
+      <div class="card-sparkle" style="top:12%;right:18%;--d:2s;--dl:0.2s">✦</div>
+      <div class="card-sparkle" style="top:22%;left:22%;--d:1.6s;--dl:0.6s">♡</div>
+      <div class="card-sparkle" style="bottom:22%;right:22%;--d:2.3s;--dl:1s">✧</div>
+      <div class="card-glow"></div>
+      <div class="card-glass">
+        <div class="card-icon-wrap">
+          <div class="card-icon-ring"></div>
+          <div class="card-icon-ring-inner"></div>
+          <div class="card-icon-circle">🌸</div>
+        </div>
+        <div class="card-label">FAN · 青梅果</div>
+        <div class="card-title">青梅果</div>
+        <div class="card-subtitle">
+          通过验证，加入国度<br>
+          与同好一起守护橹穆
+        </div>
+        <ul class="card-perks">
+          <li class="perk-item"><span class="perk-dot"></span>解锁完整网站内容</li>
+          <li class="perk-item"><span class="perk-dot"></span>发帖 · 评论 · 点赞</li>
+          <li class="perk-item"><span class="perk-dot"></span>私信其他粉丝</li>
+          <li class="perk-item"><span class="perk-dot"></span>橹穆世界全开放</li>
+          <li class="perk-item"><span class="perk-dot"></span>接收大事件通知</li>
+          <li class="perk-item"><span class="perk-dot"></span>专属粉丝徽章</li>
+        </ul>
+        <button class="card-btn">登录 · 注册 →</button>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ADMIN ENTRY -->
+  <div class="admin-entry">
+    <a class="admin-link" onclick="openAdmin()" href="#">
+      ⚙ 管理员入口
+    </a>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <span class="footer-tag">橹穆国 LUMU KINGDOM</span>
+  <span class="footer-dot"></span>
+  <span class="footer-tag">SINCE 2025</span>
+  <span class="footer-dot"></span>
+  <span class="footer-tag">穆祉丞 × 王橹杰</span>
+</footer>
+
+<!-- ══════════════════════════════════════════
+     MODAL: 路人确认弹窗
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-passerby">
+  <div class="modal-bg" onclick="closeModal('modal-passerby')"></div>
+  <div class="modal-box" style="max-width:380px;">
+    <div class="modal-top-line" style="background:linear-gradient(90deg,var(--blue-deep),rgba(168,212,245,0.6));"></div>
+    <div class="modal-inner" style="text-align:center;">
+      <button class="modal-close" onclick="closeModal('modal-passerby')">✕</button>
+      <div style="font-size:48px;margin-bottom:14px;">🌙</div>
+      <div class="modal-title" style="font-size:22px;letter-spacing:5px;margin-bottom:8px;">路人进入</div>
+      <div class="modal-sub" style="line-height:1.9;margin-bottom:20px;">
+        你将以 <span style="color:var(--blue);">路人</span> 身份浏览橹穆国<br>
+        部分功能将不可使用<br>
+        <span style="font-size:11px;opacity:0.5;">（无法评论 · 无法发帖 · 无法私信）</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="form-submit" style="background:linear-gradient(135deg,#5a9fd4,#a8d4f5);" onclick="confirmPasserby()">
+          🌙 确认以路人身份进入
+        </button>
+        <button onclick="closeModal('modal-passerby');openFanLogin();"
+          style="padding:12px;border-radius:50px;border:1px solid rgba(245,184,208,0.4);
+          background:transparent;color:var(--pink);font-family:'Noto Sans SC',sans-serif;
+          font-size:12px;letter-spacing:3px;cursor:pointer;transition:all .3s;">
+          🌸 还是登录/注册吧
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: 粉丝登录/注册
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-fan">
+  <div class="modal-bg" onclick="closeModal('modal-fan')"></div>
+  <div class="modal-box">
+    <div class="modal-top-line"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-fan')">✕</button>
+      <div class="modal-title">🌸 青梅果入口</div>
+      <div class="modal-sub">欢迎回家 · 新人需要注册验证</div>
+
+      <div class="modal-tabs">
+        <button class="m-tab active" onclick="switchTab('login')">已有账号</button>
+        <button class="m-tab" onclick="switchTab('register')">新人注册</button>
+      </div>
+
+      <!-- Login Form -->
+      <div id="tab-login">
+        <div class="form-group">
+          <label class="form-label">账号</label>
+          <input class="form-input" type="text" id="login-user" placeholder="输入用户名或邮箱">
+        </div>
+        <div class="form-group">
+          <label class="form-label">密码</label>
+          <input class="form-input" type="password" id="login-pass" placeholder="输入密码">
+        </div>
+        <div class="form-error" id="login-error"></div>
+        <button class="form-submit" onclick="doLogin()">进入橹穆国 ✦</button>
+        <div class="form-note">
+          还没有账号？<a onclick="switchTab('register')">去注册</a>
+        </div>
+      </div>
+
+      <!-- Register Form -->
+      <div id="tab-register" style="display:none">
+        <div class="form-group">
+          <label class="form-label">用户名</label>
+          <input class="form-input" type="text" id="reg-user" placeholder="起一个可爱的名字">
+        </div>
+        <div class="form-group">
+          <label class="form-label">密码</label>
+          <input class="form-input" type="password" id="reg-pass" placeholder="设置密码（至少6位）">
+        </div>
+        <div class="form-group">
+          <label class="form-label">邮箱</label>
+          <input class="form-input" type="email" id="reg-email" placeholder="可选，用于找回账号">
+        </div>
+        <div class="form-error" id="reg-error"></div>
+        <button class="form-submit" onclick="goToQuiz()">下一步：验证身份 ✦</button>
+        <div class="form-note">注册需通过随机5题粉丝验证<br>只有真正了解橹穆的人才能加入 💙</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: 管理员登录
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-admin">
+  <div class="modal-bg" onclick="closeModal('modal-admin')"></div>
+  <div class="modal-box">
+    <div class="modal-top-line"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-admin')">✕</button>
+      <div class="modal-title" style="color:rgba(255,255,255,0.7)">⚙ 管理员登录</div>
+      <div class="modal-sub">输入管理员账号与密码</div>
+
+      <div class="form-group">
+        <label class="form-label">管理员账号</label>
+        <input class="form-input" type="text" id="admin-user" placeholder="admin">
+      </div>
+      <div class="form-group">
+        <label class="form-label">密码</label>
+        <input class="form-input" type="password" id="admin-pass" placeholder="输入管理员密码">
+      </div>
+      <div class="form-error" id="admin-error"></div>
+      <button class="form-submit" style="background:linear-gradient(135deg,#3a4a6a,#6a3a5a)" onclick="doAdminLogin()">进入管理后台</button>
+
+      <div class="form-note" style="margin-top:20px;font-size:10px;opacity:0.4">
+        测试账号: admin / lumu2024admin<br>
+        粉丝账号: yumeifan / lumu2024
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     QUIZ MODAL — 注册验证题
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-quiz">
+  <div class="modal-bg"></div>
+  <div class="modal-box" style="max-width:500px">
+    <div class="modal-top-line"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-quiz')">✕</button>
+      <div class="modal-title">🌸 粉丝验证</div>
+      <div class="modal-sub" id="quiz-progress-text">第 1 题 / 共 5 题</div>
+
+      <!-- Progress dots -->
+      <div style="display:flex;justify-content:center;gap:8px;margin-bottom:24px">
+        <div class="quiz-dot" id="qdot-0" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all 0.3s"></div>
+        <div class="quiz-dot" id="qdot-1" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all 0.3s"></div>
+        <div class="quiz-dot" id="qdot-2" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all 0.3s"></div>
+        <div class="quiz-dot" id="qdot-3" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all 0.3s"></div>
+        <div class="quiz-dot" id="qdot-4" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all 0.3s"></div>
+      </div>
+
+      <div id="quiz-body">
+        <div id="quiz-question" style="font-family:'Noto Serif SC',serif;font-size:16px;letter-spacing:1px;line-height:1.8;margin-bottom:20px;min-height:60px"></div>
+        <div id="quiz-options" style="display:flex;flex-direction:column;gap:10px"></div>
+        <div class="form-error" id="quiz-error" style="margin-top:12px"></div>
+      </div>
+
+      <div id="quiz-success" style="display:none" class="form-success">
+        <span class="success-icon">🎉</span>
+        <div class="success-title">验证通过！</div>
+        <div class="success-sub">欢迎加入橹穆国，青梅果！</div>
+        <button class="form-submit" style="margin-top:20px" onclick="completeRegister()">进入橹穆国 ✦</button>
+      </div>
+
+      <div id="quiz-fail" style="display:none" class="form-success">
+        <span class="success-icon">💔</span>
+        <div class="success-title" style="-webkit-text-fill-color:#ff8aaa;color:#ff8aaa">再了解一下吧</div>
+        <div class="success-sub">答错了，多了解橹穆再来试试</div>
+        <button class="form-submit" style="margin-top:20px;background:linear-gradient(135deg,#6a3a5a,#a85a8a)" onclick="retryQuiz()">重新答题</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════
+   LOADING
+══════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loading-screen').classList.add('hide');
+  }, 2000);
+});
+
+/* ══════════════════════════════════════════
+   STARFIELD CANVAS
+══════════════════════════════════════════ */
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
+let stars = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  initStars();
+}
+
+function initStars() {
+  stars = [];
+  const count = Math.floor((canvas.width * canvas.height) / 5000);
+  for (let i = 0; i < count; i++) {
+    const hue = Math.random() > 0.5 ? 200 : 330; // blue or pink tint
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.8 + 0.3,
+      alpha: Math.random() * 0.8 + 0.2,
+      speed: Math.random() * 0.015 + 0.005,
+      phase: Math.random() * Math.PI * 2,
+      hue,
+    });
+  }
+}
+
+function drawStars(time) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(s => {
+    const a = s.alpha * (0.5 + 0.5 * Math.sin(time * s.speed + s.phase));
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${s.hue}, 80%, 90%, ${a})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+requestAnimationFrame(drawStars);
+
+/* ══════════════════════════════════════════
+   NEBULA BLOBS
+══════════════════════════════════════════ */
+const blobs = [
+  { col:'rgba(100,160,255,0.18)', w:500, h:400, t:'5%',  l:'0%',   d:12, tx:'40px',ty:'30px', s:1.1, oa:0.18, ob:0.28 },
+  { col:'rgba(230,130,180,0.15)', w:450, h:350, t:'50%', l:'55%',  d:10, tx:'-30px',ty:'-20px', s:0.9, oa:0.12, ob:0.22 },
+  { col:'rgba(160,100,240,0.12)', w:400, h:300, t:'30%', l:'25%',  d:14, tx:'20px',ty:'40px', s:1.05, oa:0.1, ob:0.18 },
+  { col:'rgba(100,200,240,0.1)',  w:350, h:280, t:'70%', l:'5%',   d:9,  tx:'50px',ty:'-30px', s:1.15, oa:0.08, ob:0.16 },
+];
+const nl = document.getElementById('nebula-layer');
+blobs.forEach(b => {
+  const el = document.createElement('div');
+  el.className = 'nebula-blob';
+  el.style.cssText = `
+    background:${b.col};width:${b.w}px;height:${b.h}px;
+    top:${b.t};left:${b.l};
+    --d:${b.d}s;--tx:${b.tx};--ty:${b.ty};--s:${b.s};
+    --op-from:${b.oa};--op-to:${b.ob};
+  `;
+  nl.appendChild(el);
+});
+
+/* ══════════════════════════════════════════
+   PETALS
+══════════════════════════════════════════ */
+const petalColors = [
+  'rgba(245,184,208,0.8)', 'rgba(168,212,245,0.7)',
+  'rgba(212,184,245,0.7)', 'rgba(255,210,225,0.8)',
+];
+const pf = document.getElementById('petal-field');
+for (let i = 0; i < 18; i++) {
+  const p = document.createElement('div');
+  p.className = 'petal';
+  const sz = (Math.random() * 8 + 6) + 'px';
+  p.style.cssText = `
+    --sz:${sz};
+    --col:${petalColors[Math.floor(Math.random()*petalColors.length)]};
+    --x:${Math.random()*100}vw;
+    --dur:${Math.random()*8+8}s;
+    --del:${Math.random()*12}s;
+  `;
+  pf.appendChild(p);
+}
+
+/* ══════════════════════════════════════════
+   FLOATING PARTICLES
+══════════════════════════════════════════ */
+const particleColors = ['rgba(168,212,245,0.6)','rgba(245,184,208,0.6)','rgba(212,184,245,0.5)'];
+const pfield = document.getElementById('particle-field');
+for (let i = 0; i < 25; i++) {
+  const p = document.createElement('div');
+  p.className = 'fp';
+  const col = particleColors[i % particleColors.length];
+  const sz = (Math.random() * 4 + 2) + 'px';
+  p.style.cssText = `
+    width:${sz};height:${sz};
+    background:${col};
+    left:${Math.random()*100}%;
+    top:${Math.random()*100}%;
+    --dur:${Math.random()*8+6}s;
+    --del:${Math.random()*8}s;
+    --op:${Math.random()*0.6+0.3};
+  `;
+  pfield.appendChild(p);
+}
+
+/* ══════════════════════════════════════════
+   MODAL SYSTEM
+══════════════════════════════════════════ */
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function openFanLogin(e) {
+  if(e) e.preventDefault();
+  openModal('modal-fan');
+}
+function openAdmin(e) {
+  if(e) e.preventDefault();
+  openModal('modal-admin');
+}
+
+/* Tab switching */
+function switchTab(tab) {
+  const tabs = document.querySelectorAll('.m-tab');
+  document.getElementById('tab-login').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('tab-register').style.display = tab === 'register' ? 'block' : 'none';
+  tabs[0].classList.toggle('active', tab === 'login');
+  tabs[1].classList.toggle('active', tab === 'register');
+}
+
+/* ══════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════ */
+function showToast(msg, dur = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+/* ══════════════════════════════════════════
+   API 配置
+   ★ 部署后把下面的地址改成你的 Railway 后端地址
+══════════════════════════════════════════ */
+const API_BASE = 'https://lumu-backend-production.up.railway.app'; // ← 部署后改这里
+
+/* ══════════════════════════════════════════
+   SESSION — 改用 localStorage + JWT 持久化登录
+   关闭浏览器再打开也保持登录状态
+══════════════════════════════════════════ */
+function setSession(data) {
+  // data 包含 { token, username, role, badge }
+  localStorage.setItem('lumu_session', JSON.stringify(data));
+}
+function getSession() {
+  try { return JSON.parse(localStorage.getItem('lumu_session') || 'null'); } catch { return null; }
+}
+
+/* ══════════════════════════════════════════
+   LOGIN LOGIC — 粉丝登录（调用后端 API）
+══════════════════════════════════════════ */
+async function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-error');
+
+  if (!u || !p) { shakeError(err, '请填写账号和密码'); return; }
+
+  // 禁用按钮防止重复点击
+  const btn = document.querySelector('#modal-fan .btn-full');
+  if (btn) { btn.disabled = true; btn.textContent = '登录中...'; }
+
+  try {
+    const res = await fetch(API_BASE + '/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u, password: p })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      shakeError(err, data.error || '账号或密码错误，再试一次');
+      return;
+    }
+
+    // 保存 token 和用户信息到 localStorage
+    setSession({ token: data.token, username: data.username, role: data.role, badge: data.badge });
+    closeModal('modal-fan');
+    showToast(`✨ 欢迎回来，${data.username}！`);
+    setTimeout(() => { window.location.href = 'lumu-main.html'; }, 1500);
+
+  } catch(e) {
+    shakeError(err, '网络错误，请确认后端服务已启动');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '进入橹穆国 ✦'; }
+  }
+}
+
+/* ══════════════════════════════════════════
+   ADMIN LOGIN — 管理员登录（同样走后端 API）
+══════════════════════════════════════════ */
+async function doAdminLogin() {
+  const u = document.getElementById('admin-user').value.trim();
+  const p = document.getElementById('admin-pass').value;
+  const err = document.getElementById('admin-error');
+
+  if (!u || !p) { shakeError(err, '请填写账号和密码'); return; }
+
+  const btn = document.querySelector('#modal-admin .btn-full');
+  if (btn) { btn.disabled = true; btn.textContent = '登录中...'; }
+
+  try {
+    const res = await fetch(API_BASE + '/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u, password: p })
+    });
+    const data = await res.json();
+
+    if (!res.ok || data.role !== 'admin') {
+      shakeError(err, data.role !== 'admin' ? '该账号没有管理员权限' : (data.error || '账号或密码错误'));
+      return;
+    }
+
+    setSession({ token: data.token, username: data.username, role: data.role, badge: data.badge });
+    closeModal('modal-admin');
+    showToast('⚙ 管理员已登录');
+    setTimeout(() => { window.location.href = 'lumu-main.html'; }, 1500);
+
+  } catch(e) {
+    shakeError(err, '网络错误，请确认后端服务已启动');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '进入管理后台 ✦'; }
+  }
+}
+
+/* ══════════════════════════════════════════
+   PASSERBY FLOW — show confirm modal first
+══════════════════════════════════════════ */
+function openPasserbyConfirm(e) {
+  if (e) e.preventDefault();
+  openModal('modal-passerby');
+}
+
+function confirmPasserby() {
+  // 路人不需要 token，直接本地存一个 guest session
+  localStorage.setItem('lumu_session', JSON.stringify({ username: '路人', role: 'guest', badge: '路人' }));
+  closeModal('modal-passerby');
+  showToast('🌙 以路人身份进入...');
+  setTimeout(() => { window.location.href = 'lumu-main.html'; }, 1200);
+}
+
+/* ══════════════════════════════════════════
+   REGISTRATION — QUIZ SYSTEM
+══════════════════════════════════════════ */
+// Question bank
+const QUESTION_BANK = [
+  { q: '穆祉丞的身份是？', opts: ['爱豆', '唱跳艺人', '主播', '演员'], ans: 1 },
+  { q: '王橹杰的身份是？', opts: ['唱跳艺人', '演员', '爱豆', '主播'], ans: 2 },
+  { q: '橹穆国的 CP 名字是由哪两个字组合而成？', opts: ['穆王', '橹穆', '杰丞', '橹丞'], ans: 1 },
+  { q: '王橹杰与穆祉丞所在的 CP 粉圈，粉丝自称？', opts: ['路人', '青梅果', '小橹', '丞粉'], ans: 1 },
+  { q: '橹穆国网站的主色调是什么颜色？', opts: ['红黄', '绿白', '粉蓝', '黑金'], ans: 2 },
+  { q: '以下哪个是穆祉丞的名字中的字？', opts: ['橹', '杰', '丞', '王'], ans: 2 },
+  { q: '以下哪个是王橹杰的名字中的字？', opts: ['穆', '丞', '祉', '橹'], ans: 3 },
+  { q: '「橹穆国」这个名称中，「橹」字来自哪位成员？', opts: ['穆祉丞', '王橹杰', '两人都有', '都没有'], ans: 1 },
+  { q: '「橹穆国」中，「穆」字来自哪位成员？', opts: ['王橹杰', '穆祉丞', '管理员', '都没有'], ans: 1 },
+  { q: '本站专属粉丝的身份称号是？', opts: ['路人', '访客', '青梅果', '管理员'], ans: 2 },
+  { q: '在橹穆国，路人与粉丝最大的区别是？', opts: ['能看故事线', '能查看时间线', '能发言和评论', '能看照片'], ans: 2 },
+  { q: '橹穆国大事件由谁发布？', opts: ['所有粉丝', '路人', '管理员', '任何人'], ans: 2 },
+];
+
+let quizState = { questions: [], current: 0, wrong: 0, regData: null };
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+async function goToQuiz() {
+  const u = document.getElementById('reg-user').value.trim();
+  const p = document.getElementById('reg-pass').value;
+  const err = document.getElementById('reg-error');
+
+  if (!u) { shakeError(err, '请输入用户名'); return; }
+  if (u.length < 2) { shakeError(err, '用户名至少2个字符'); return; }
+  if (p.length < 6) { shakeError(err, '密码至少6位'); return; }
+
+  // 检查用户名是否已存在（通过后端 API）
+  const checkBtn = document.querySelector('#modal-fan .btn-full');
+  if (checkBtn) { checkBtn.disabled = true; checkBtn.textContent = '检查中...'; }
+  try {
+    const res = await fetch(API_BASE + '/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      // 发一个"预检"请求看用户名是否可用
+      body: JSON.stringify({ username: u, password: p, email: document.getElementById('reg-email').value.trim(), precheck: true })
+    });
+    // 409 = 用户名已存在
+    if (res.status === 409) {
+      const d = await res.json();
+      shakeError(err, d.error || '用户名已存在，请换一个');
+      return;
+    }
+  } catch(e) {
+    // 网络错误时不阻止进入答题，注册时再报错
+  } finally {
+    if (checkBtn) { checkBtn.disabled = false; checkBtn.textContent = '开始答题 →'; }
+  }
+
+  quizState.regData = {
+    username: u,
+    pass: p,
+    email: document.getElementById('reg-email').value.trim(),
+  };
+  quizState.questions = shuffle(QUESTION_BANK).slice(0, 5);
+  quizState.current = 0;
+  quizState.wrong = 0;
+
+  closeModal('modal-fan');
+  openModal('modal-quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = quizState.questions[quizState.current];
+  const idx = quizState.current;
+
+  // Update progress
+  document.getElementById('quiz-progress-text').textContent = `第 ${idx+1} 题 / 共 5 题`;
+
+  // Update dots
+  for (let i = 0; i < 5; i++) {
+    const dot = document.getElementById('qdot-' + i);
+    if (i < idx) {
+      dot.style.background = 'var(--pink)';
+      dot.style.boxShadow = '0 0 6px var(--glow-pink)';
+    } else if (i === idx) {
+      dot.style.background = 'var(--blue)';
+      dot.style.boxShadow = '0 0 6px var(--glow-blue)';
+      dot.style.transform = 'scale(1.4)';
+    } else {
+      dot.style.background = 'rgba(255,255,255,0.15)';
+      dot.style.boxShadow = 'none';
+      dot.style.transform = 'scale(1)';
+    }
+  }
+
+  // Question text
+  const qEl = document.getElementById('quiz-question');
+  qEl.style.animation = 'none';
+  void qEl.offsetHeight;
+  qEl.style.animation = 'fade-in 0.4s ease both';
+  qEl.textContent = `${idx + 1}. ${q.q}`;
+
+  // Options
+  const optsEl = document.getElementById('quiz-options');
+  optsEl.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.style.cssText = `
+      padding:12px 16px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:10px;
+      color:rgba(255,255,255,0.8);
+      font-family:'Noto Sans SC',sans-serif;
+      font-size:13px;
+      letter-spacing:1px;
+      cursor:pointer;
+      text-align:left;
+      transition:all 0.25s;
+      animation: fade-in ${0.1 + i*0.08}s ease both;
+    `;
+    btn.textContent = `${['A','B','C','D'][i]}. ${opt}`;
+    btn.onmouseover = () => {
+      btn.style.background = 'rgba(168,212,245,0.12)';
+      btn.style.borderColor = 'rgba(168,212,245,0.4)';
+    };
+    btn.onmouseout = () => {
+      if (!btn.dataset.answered) {
+        btn.style.background = 'rgba(255,255,255,0.05)';
+        btn.style.borderColor = 'rgba(255,255,255,0.1)';
+      }
+    };
+    btn.onclick = () => answerQuestion(i, btn);
+    optsEl.appendChild(btn);
+  });
+
+  document.getElementById('quiz-error').textContent = '';
+}
+
+function answerQuestion(choice, btn) {
+  const q = quizState.questions[quizState.current];
+  const opts = document.querySelectorAll('#quiz-options button');
+
+  // Disable all
+  opts.forEach(b => { b.onclick = null; b.dataset.answered = '1'; b.style.cursor = 'default'; });
+
+  if (choice === q.ans) {
+    // Correct
+    btn.style.background = 'rgba(168,212,245,0.25)';
+    btn.style.borderColor = 'rgba(168,212,245,0.8)';
+    btn.style.color = '#a8d4f5';
+    // Update dot to correct
+    const dot = document.getElementById('qdot-' + quizState.current);
+    dot.style.background = '#7de8b0';
+    dot.style.boxShadow = '0 0 8px rgba(125,232,176,0.6)';
+
+    setTimeout(() => {
+      quizState.current++;
+      if (quizState.current >= 5) {
+        showQuizSuccess();
+      } else {
+        renderQuestion();
+      }
+    }, 600);
+  } else {
+    // Wrong
+    btn.style.background = 'rgba(255,100,130,0.2)';
+    btn.style.borderColor = 'rgba(255,100,130,0.6)';
+    btn.style.color = '#ff8aaa';
+    // Show correct answer
+    opts[q.ans].style.background = 'rgba(168,212,245,0.2)';
+    opts[q.ans].style.borderColor = 'rgba(168,212,245,0.6)';
+    opts[q.ans].style.color = '#a8d4f5';
+    // Shake
+    const box = document.getElementById('modal-quiz').querySelector('.modal-box');
+    box.style.animation = 'none';
+    void box.offsetHeight;
+    box.style.animation = 'shake 0.4s ease';
+
+    quizState.wrong++;
+    const dot = document.getElementById('qdot-' + quizState.current);
+    dot.style.background = '#ff8aaa';
+
+    setTimeout(() => {
+      if (quizState.wrong >= 2) {
+        showQuizFail();
+      } else {
+        quizState.current++;
+        if (quizState.current >= 5) {
+          showQuizSuccess();
+        } else {
+          renderQuestion();
+        }
+      }
+    }, 1200);
+  }
+}
+
+function showQuizSuccess() {
+  document.getElementById('quiz-body').style.display = 'none';
+  document.getElementById('quiz-success').style.display = 'block';
+  document.getElementById('quiz-fail').style.display = 'none';
+}
+function showQuizFail() {
+  document.getElementById('quiz-body').style.display = 'none';
+  document.getElementById('quiz-fail').style.display = 'block';
+  document.getElementById('quiz-success').style.display = 'none';
+}
+
+function retryQuiz() {
+  quizState.questions = shuffle(QUESTION_BANK).slice(0, 5);
+  quizState.current = 0;
+  quizState.wrong = 0;
+  document.getElementById('quiz-body').style.display = 'block';
+  document.getElementById('quiz-success').style.display = 'none';
+  document.getElementById('quiz-fail').style.display = 'none';
+  // Reset dots
+  for (let i = 0; i < 5; i++) {
+    const dot = document.getElementById('qdot-' + i);
+    dot.style.background = 'rgba(255,255,255,0.15)';
+    dot.style.boxShadow = 'none';
+    dot.style.transform = 'scale(1)';
+  }
+  renderQuestion();
+}
+
+async function completeRegister() {
+  const { username, pass, email } = quizState.regData;
+
+  const btn = document.querySelector('#quiz-success .btn-full');
+  if (btn) { btn.disabled = true; btn.textContent = '注册中...'; }
+
+  try {
+    const res = await fetch(API_BASE + '/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password: pass, email })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      // 注册失败（比如用户名被别人抢注）
+      showToast('❌ ' + (data.error || '注册失败，请重试'));
+      if (btn) { btn.disabled = false; btn.textContent = '完成注册 ✦'; }
+      return;
+    }
+
+    // 注册成功：保存 token 到 localStorage
+    setSession({ token: data.token, username: data.username, role: data.role, badge: data.badge });
+    closeModal('modal-quiz');
+    showToast(`🌸 注册成功！欢迎加入橹穆国，${data.username}！`);
+    setTimeout(() => { window.location.href = 'lumu-main.html'; }, 1800);
+
+  } catch(e) {
+    showToast('❌ 网络错误，请检查后端连接');
+    if (btn) { btn.disabled = false; btn.textContent = '完成注册 ✦'; }
+  }
+}
+
+/* ══════════════════════════════════════════
+   SHAKE ANIMATION
+══════════════════════════════════════════ */
+function shakeError(el, msg) {
+  el.textContent = msg;
+  const parent = el.closest('.modal-box') || el.parentElement;
+  parent.style.animation = 'none';
+  void parent.offsetHeight;
+  parent.style.animation = 'shake 0.4s ease';
+}
+
+// Inject shake keyframe
+const shakeStyle = document.createElement('style');
+shakeStyle.textContent = `
+  @keyframes shake {
+    0%,100% { transform: translateX(0) scale(1); }
+    15%     { transform: translateX(-8px) scale(1); }
+    30%     { transform: translateX(7px) scale(1); }
+    45%     { transform: translateX(-5px) scale(1); }
+    60%     { transform: translateX(4px) scale(1); }
+    75%     { transform: translateX(-2px) scale(1); }
+  }
+`;
+document.head.appendChild(shakeStyle);
+
+/* ══════════════════════════════════════════
+   PAGE INIT — clear any old session so user
+   always picks an identity on this page
+══════════════════════════════════════════ */
+// 到达首页时清除 session，强制重新选择身份
+// （保留 localStorage 中的数据，让用户可以选择快速登录）
+// 如果你希望"关闭再打开保持登录"，可以注释掉下面这行
+localStorage.removeItem('lumu_session');
+</script>
+</body>
+</html>

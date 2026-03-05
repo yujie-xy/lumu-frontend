@@ -1,0 +1,2071 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>橹穆国</title>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@300;400;600;900&family=Noto+Sans+SC:wght@300;400;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   DESIGN SYSTEM
+═══════════════════════════════════════════════════════ */
+:root{
+  --pink:#f5b8d0;--pink-deep:#e87aab;--pink-soft:rgba(245,184,208,.15);
+  --blue:#a8d4f5;--blue-deep:#5a9fd4;--blue-soft:rgba(168,212,245,.15);
+  --lilac:#d4b8f0;
+  --night:#0d0818;--night-mid:#130c24;
+  --card:rgba(255,255,255,.05);--card2:rgba(255,255,255,.09);
+  --border:rgba(255,255,255,.09);--border2:rgba(255,255,255,.16);
+  --t1:rgba(255,255,255,.92);--t2:rgba(255,255,255,.6);--t3:rgba(255,255,255,.35);
+  --gp:rgba(232,122,171,.4);--gb:rgba(90,159,212,.4);
+  --nav-h:58px; --r:14px; --r-sm:8px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--night);font-family:'Noto Sans SC',sans-serif;color:var(--t1);min-height:100vh;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+button{font-family:inherit;cursor:pointer;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+
+/* ── BG ─── */
+.bg-cosmos{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 110% 55% at 50% 0%,#1a0d3a 0%,transparent 55%),
+    radial-gradient(ellipse 55% 38% at 5% 100%,#0a1830 0%,transparent 45%),
+    radial-gradient(ellipse 50% 32% at 95% 80%,#190a22 0%,transparent 45%),
+    linear-gradient(180deg,#0d0818 0%,#100a20 100%);}
+.bg-glow{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 45% 28% at 15% 35%,rgba(100,160,255,.06) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 22% at 85% 70%,rgba(232,122,171,.05) 0%,transparent 60%);}
+#starfield{position:fixed;inset:0;z-index:1;pointer-events:none;}
+
+/* ── NAV ─── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);
+  display:flex;align-items:center;padding:0 16px;gap:4px;
+  background:rgba(13,8,24,.88);backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'ZCOOL XiaoWei',serif;font-size:20px;letter-spacing:3px;
+  background:linear-gradient(135deg,var(--blue),var(--pink));-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;flex-shrink:0;margin-right:4px;cursor:pointer;}
+.nav-links{display:flex;align-items:center;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none;}
+.nav-links::-webkit-scrollbar{display:none;}
+.nl{padding:6px 13px;border-radius:7px;font-size:12px;letter-spacing:2px;color:var(--t2);
+  cursor:pointer;border:none;background:transparent;transition:all .2s;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:6px;}
+.nl::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;
+  flex-shrink:0;background:rgba(255,255,255,.2);transition:all .2s;}
+.nl:hover{color:var(--t1);background:var(--card2);}
+.nl:hover::before{background:var(--blue);}
+.nl.active{color:var(--pink);background:var(--pink-soft);}
+.nl.active::before{background:var(--pink);box-shadow:0 0 6px var(--gp);}
+.nl.locked{opacity:.35;cursor:not-allowed;}
+.nl.locked:hover{background:transparent;color:var(--t2);}
+.nl.locked::before{background:rgba(255,255,255,.2);}
+.nav-sp{flex:1;}
+.nav-acts{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.nav-bell{position:relative;width:34px;height:34px;border-radius:50%;
+  border:1px solid var(--border);background:var(--card);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .3s;font-size:15px;}
+.nav-bell:hover{background:var(--card2);}
+.bell-badge{position:absolute;top:-3px;right:-3px;min-width:15px;height:15px;padding:0 4px;
+  background:linear-gradient(135deg,var(--pink-deep),var(--blue-deep));
+  border-radius:8px;font-size:9px;font-weight:700;display:flex;align-items:center;
+  justify-content:center;color:white;font-family:'Noto Sans SC',sans-serif;}
+.bell-badge.hide{display:none;}
+.nav-dm{padding:6px 13px;border-radius:18px;border:1px solid var(--border2);
+  background:var(--card);color:var(--t2);font-size:11px;letter-spacing:2px;
+  transition:all .3s;}
+.nav-dm:hover{background:var(--blue-soft);color:var(--blue);border-color:var(--blue-deep);}
+.nav-dm.locked{opacity:.3;cursor:not-allowed;}
+.nav-user{display:flex;align-items:center;gap:7px;padding:4px 11px;border-radius:18px;
+  background:var(--card2);border:1px solid var(--border);cursor:pointer;transition:all .3s;}
+.nav-user:hover{border-color:var(--pink);}
+.u-av{width:24px;height:24px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));
+  display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.u-name{font-size:11px;letter-spacing:1px;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.u-badge{font-size:9px;padding:2px 6px;border-radius:8px;background:var(--pink-soft);color:var(--pink);letter-spacing:1px;}
+.u-badge.admin{background:rgba(200,160,100,.15);color:#d4aa70;}
+.nav-logout{padding:6px 11px;border-radius:7px;font-size:11px;letter-spacing:1px;
+  color:var(--t3);border:none;background:transparent;transition:all .2s;}
+.nav-logout:hover{color:#ff8aaa;background:rgba(255,100,130,.08);}
+
+/* Notif dropdown */
+.notif-drop{position:fixed;top:calc(var(--nav-h)+6px);right:12px;width:310px;
+  max-height:400px;background:rgba(20,10,38,.98);border:1px solid var(--border2);
+  border-radius:var(--r);overflow:hidden;backdrop-filter:blur(24px);
+  box-shadow:0 20px 60px rgba(0,0,0,.5);z-index:600;
+  opacity:0;pointer-events:none;transform:translateY(-8px);transition:all .3s;}
+.notif-drop.open{opacity:1;pointer-events:all;transform:translateY(0);}
+.nd-head{padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);}
+.nd-title{font-size:12px;letter-spacing:3px;}
+.nd-all{font-size:10px;color:var(--blue-deep);cursor:pointer;letter-spacing:1px;}
+.nd-all:hover{color:var(--blue);}
+.nd-list{overflow-y:auto;max-height:330px;}
+.nd-item{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;
+  cursor:pointer;transition:background .2s;}
+.nd-item:hover,.nd-item.unread{background:rgba(168,212,245,.04);}
+.nd-dot{width:6px;height:6px;border-radius:50%;background:var(--pink);margin-top:5px;flex-shrink:0;}
+.nd-dot.read{opacity:0;}
+.nd-msg{font-size:11px;letter-spacing:.5px;line-height:1.7;color:var(--t1);flex:1;}
+.nd-time{font-size:10px;color:var(--t3);margin-top:3px;letter-spacing:1px;}
+.nd-empty{padding:28px;text-align:center;color:var(--t3);font-size:12px;letter-spacing:2px;}
+
+/* ── PAGE ─── */
+.page-body{padding-top:calc(var(--nav-h) + 20px);min-height:100vh;position:relative;z-index:10;overflow-x:hidden;}
+.page{display:none;animation:fadeUp .5s ease both;}
+.page.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes heartbeat{0%,100%{transform:scale(1)}30%{transform:scale(1.3)}80%{transform:scale(1.12)}}
+@keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-7px)}30%{transform:translateX(6px)}45%{transform:translateX(-4px)}60%{transform:translateX(3px)}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.04)}}
+
+/* ── CARDS ─── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  backdrop-filter:blur(12px);transition:border-color .3s;}
+.card:hover{border-color:var(--border2);}
+
+/* ── BUTTONS ─── */
+.btn-p{padding:9px 20px;border-radius:50px;border:none;
+  background:linear-gradient(135deg,var(--pink-deep),var(--blue-deep));
+  color:white;font-size:11px;font-weight:700;letter-spacing:3px;cursor:pointer;
+  transition:all .3s;position:relative;overflow:hidden;}
+.btn-p::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.12),transparent);}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 24px var(--gp);}
+.btn-p:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-g{padding:8px 18px;border-radius:50px;border:1px solid var(--border2);
+  background:transparent;color:var(--t2);font-size:11px;letter-spacing:2px;cursor:pointer;transition:all .3s;}
+.btn-g:hover{border-color:var(--pink);color:var(--pink);background:var(--pink-soft);}
+.btn-sm{padding:5px 12px;border-radius:12px;border:1px solid var(--border);
+  background:var(--card);color:var(--t2);font-size:11px;letter-spacing:1px;cursor:pointer;transition:all .3s;}
+.btn-sm:hover{border-color:var(--border2);color:var(--t1);}
+
+/* ── MODAL ─── */
+.modal-ov{position:fixed;inset:0;z-index:800;display:flex;align-items:center;justify-content:center;
+  padding:20px;opacity:0;pointer-events:none;transition:opacity .3s;}
+.modal-ov.open{opacity:1;pointer-events:all;}
+.modal-bg{position:absolute;inset:0;background:rgba(8,4,18,.88);backdrop-filter:blur(16px);}
+.modal-box{position:relative;z-index:1;width:100%;max-width:460px;
+  background:linear-gradient(145deg,rgba(26,12,50,.97),rgba(14,7,28,.99));
+  border-radius:18px;overflow:hidden;
+  box-shadow:0 40px 80px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.07);
+  transform:scale(.92) translateY(24px);transition:transform .4s cubic-bezier(.34,1.56,.64,1);}
+.modal-ov.open .modal-box{transform:scale(1) translateY(0);}
+.modal-bar{height:2px;background:linear-gradient(90deg,var(--blue-deep),var(--pink-deep));}
+.modal-inner{padding:28px 26px 24px;}
+.modal-title{font-family:'ZCOOL XiaoWei',serif;font-size:20px;letter-spacing:4px;margin-bottom:3px;}
+.modal-sub{font-size:11px;color:var(--t3);letter-spacing:2px;margin-bottom:20px;}
+.modal-close{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;
+  border:1px solid var(--border);background:var(--card);color:var(--t3);cursor:pointer;
+  font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .3s;}
+.modal-close:hover{background:var(--card2);color:var(--t1);}
+.fi{width:100%;padding:10px 13px;background:rgba(255,255,255,.05);border:1px solid var(--border);
+  border-radius:var(--r-sm);color:var(--t1);font-family:'Noto Sans SC',sans-serif;
+  font-size:13px;outline:none;transition:border-color .3s,background .3s;}
+.fi:focus{border-color:rgba(245,184,208,.5);background:rgba(255,255,255,.08);}
+.fi::placeholder{color:rgba(255,255,255,.18);}
+textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
+.fg{margin-bottom:13px;}
+.fl{display:block;font-size:10px;letter-spacing:3px;color:var(--t3);margin-bottom:7px;}
+.ferr{font-size:11px;color:#ff8aaa;letter-spacing:1px;margin-top:5px;min-height:16px;}
+.btn-full{width:100%;padding:13px;border-radius:50px;border:none;
+  background:linear-gradient(135deg,var(--pink-deep),var(--blue-deep) 70%,var(--pink-deep));
+  color:white;font-size:12px;font-weight:700;letter-spacing:4px;cursor:pointer;
+  margin-top:6px;transition:all .3s;position:relative;overflow:hidden;}
+.btn-full::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.12),transparent);}
+.btn-full:hover{transform:translateY(-2px);box-shadow:0 10px 28px var(--gp);}
+
+/* ── SECTION HEADER ─── */
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.sh h2{font-family:'ZCOOL XiaoWei',serif;font-size:20px;letter-spacing:4px;}
+.sh-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent);}
+.sh-tag{font-size:10px;letter-spacing:3px;color:var(--t3);border:1px solid var(--border);padding:2px 9px;border-radius:8px;}
+
+/* ── TOAST ─── */
+#toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:rgba(20,10,40,.97);border:1px solid var(--border2);border-radius:50px;
+  padding:11px 22px;font-size:12px;letter-spacing:2px;color:var(--t1);z-index:9999;
+  opacity:0;transition:opacity .3s,transform .3s;backdrop-filter:blur(20px);
+  white-space:nowrap;pointer-events:none;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE: STORY LINE (故事线)
+═══════════════════════════════════════════════════════ */
+.story-wrap{display:grid;grid-template-columns:240px 1fr;gap:24px;max-width:1100px;margin:0 auto;padding:0 20px 60px;}
+.story-toc{position:sticky;top:calc(var(--nav-h)+20px);height:fit-content;}
+.toc-title{font-family:'ZCOOL XiaoWei',serif;font-size:16px;letter-spacing:4px;margin-bottom:16px;
+  padding-bottom:12px;border-bottom:1px solid var(--border);}
+.toc-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--r-sm);
+  cursor:pointer;transition:all .25s;margin-bottom:4px;}
+.toc-item:hover{background:var(--card2);}
+.toc-item.active{background:var(--pink-soft);border:1px solid rgba(245,184,208,.2);}
+.toc-num{width:22px;height:22px;border-radius:50%;border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;
+  color:var(--t3);}
+.toc-item.active .toc-num{border-color:var(--pink);color:var(--pink);}
+.toc-text{font-size:12px;letter-spacing:1px;color:var(--t2);}
+.toc-item.active .toc-text{color:var(--t1);}
+
+.story-content-wrap{min-height:600px;}
+.story-chapter{display:none;}
+.story-chapter.active{display:block;animation:fadeUp .4s ease both;}
+.chapter-head{margin-bottom:24px;}
+.chapter-num{font-size:10px;letter-spacing:5px;color:var(--blue-deep);margin-bottom:8px;}
+.chapter-title{font-family:'ZCOOL XiaoWei',serif;font-size:28px;letter-spacing:5px;
+  background:linear-gradient(135deg,var(--t1),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.chapter-meta{font-size:11px;color:var(--t3);letter-spacing:2px;margin-top:8px;}
+.chapter-banner{height:200px;border-radius:var(--r);margin-bottom:24px;
+  display:flex;align-items:center;justify-content:center;font-size:60px;
+  position:relative;overflow:hidden;}
+.chapter-banner::before{content:'';position:absolute;inset:0;background:inherit;filter:blur(0);}
+.chapter-body{font-family:'Noto Serif SC',serif;font-size:14px;line-height:2.2;
+  color:var(--t2);letter-spacing:.5px;}
+.chapter-body p{margin-bottom:18px;text-indent:2em;}
+.chapter-body .highlight{color:var(--pink);font-style:italic;}
+.chapter-body .blue-text{color:var(--blue);}
+
+/* Story comments */
+.story-comments{margin-top:36px;padding-top:24px;border-top:1px solid var(--border);}
+.sc-toggle{display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:16px;}
+.sc-toggle-txt{font-size:12px;letter-spacing:3px;color:var(--t2);}
+.sc-toggle-icon{font-size:12px;transition:transform .3s;}
+.sc-toggle.open .sc-toggle-icon{transform:rotate(180deg);}
+.sc-list{display:none;}
+.sc-list.open{display:block;}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE: TIMELINE (时间线)
+═══════════════════════════════════════════════════════ */
+.tl-wrap{display:grid;grid-template-columns:320px 1fr;gap:28px;max-width:1100px;margin:0 auto;padding:0 20px 60px;}
+/* Calendar */
+.cal-box{position:sticky;top:calc(var(--nav-h)+20px);height:fit-content;}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.cal-ym{font-family:'ZCOOL XiaoWei',serif;font-size:16px;letter-spacing:3px;}
+.cal-nav{display:flex;gap:6px;}
+.cal-nav-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);
+  background:var(--card);color:var(--t2);display:flex;align-items:center;justify-content:center;
+  font-size:13px;cursor:pointer;transition:all .2s;}
+.cal-nav-btn:hover{border-color:var(--border2);color:var(--t1);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-dow{font-size:10px;letter-spacing:1px;color:var(--t3);text-align:center;padding:6px 0;}
+.cal-day{height:36px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;
+  font-size:12px;cursor:pointer;transition:all .2s;position:relative;color:var(--t2);}
+.cal-day:hover{background:var(--card2);color:var(--t1);}
+.cal-day.empty{cursor:default;}
+.cal-day.today{color:var(--blue);font-weight:700;}
+.cal-day.special{
+  background:linear-gradient(135deg,rgba(245,184,208,.2),rgba(168,212,245,.2));
+  border:1px solid rgba(245,184,208,.3);color:var(--t1);font-weight:700;}
+.cal-day.special::after{content:'✦';position:absolute;top:2px;right:3px;font-size:7px;color:var(--pink);}
+.cal-day.selected{background:linear-gradient(135deg,var(--pink-deep),var(--blue-deep));color:white;}
+.cal-legend{margin-top:14px;display:flex;gap:14px;}
+.cal-leg-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--t3);}
+.cal-leg-dot{width:8px;height:8px;border-radius:2px;}
+
+/* Timeline */
+.tl-scroll{overflow-y:auto;max-height:calc(100vh - 140px);padding-right:4px;}
+.tl-line{position:relative;padding-left:30px;}
+.tl-line::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:1px;
+  background:linear-gradient(180deg,transparent,rgba(168,212,245,.4) 10%,rgba(245,184,208,.4) 90%,transparent);}
+.tl-event{position:relative;margin-bottom:28px;}
+.tl-event::before{content:'';position:absolute;left:-24px;top:14px;width:10px;height:10px;
+  border-radius:50%;background:var(--pink-deep);box-shadow:0 0 10px var(--gp);}
+.tl-event.blue::before{background:var(--blue-deep);box-shadow:0 0 10px var(--gb);}
+.tl-event.big::before{width:14px;height:14px;left:-26px;top:12px;
+  box-shadow:0 0 20px var(--gp),0 0 6px white;}
+.tl-event-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  overflow:hidden;cursor:pointer;transition:all .3s;}
+.tl-event-card:hover{border-color:var(--border2);transform:translateX(4px);}
+.tl-event-card.active-tl{border-color:rgba(245,184,208,.4);background:var(--pink-soft);}
+.tl-event-img{height:120px;display:flex;align-items:center;justify-content:center;font-size:44px;
+  background:linear-gradient(135deg,rgba(168,212,245,.1),rgba(245,184,208,.1));}
+.tl-event-body{padding:14px 16px;}
+.tl-event-date{font-size:10px;color:var(--blue-deep);letter-spacing:3px;margin-bottom:5px;}
+.tl-event-title{font-family:'Noto Serif SC',serif;font-size:15px;letter-spacing:2px;margin-bottom:6px;}
+.tl-event-desc{font-size:12px;color:var(--t2);line-height:1.8;letter-spacing:.5px;}
+.tl-comment-area{display:none;padding:14px 16px;border-top:1px solid var(--border);}
+.tl-comment-area.open{display:block;}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE: PHOTOS (照片合集)
+═══════════════════════════════════════════════════════ */
+.photos-wrap{max-width:1100px;margin:0 auto;padding:0 20px 60px;}
+.photos-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+.pf-btn{padding:7px 16px;border-radius:20px;border:1px solid var(--border);
+  background:transparent;color:var(--t2);font-size:11px;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.pf-btn:hover,.pf-btn.active{border-color:var(--pink);color:var(--pink);background:var(--pink-soft);}
+.photo-grid{columns:3;gap:14px;}
+.photo-item{break-inside:avoid;margin-bottom:14px;border-radius:var(--r);
+  overflow:hidden;cursor:pointer;position:relative;
+  background:var(--card);border:1px solid var(--border);
+  transition:all .35s;}
+.photo-item:hover{transform:scale(1.02);border-color:var(--border2);}
+.photo-thumb{width:100%;display:block;
+  height:var(--ph,200px);
+  display:flex;align-items:center;justify-content:center;
+  font-size:50px;
+  background:var(--grad);}
+.photo-info{padding:10px 12px;}
+.photo-author{font-size:10px;color:var(--t3);letter-spacing:2px;}
+.photo-caption{font-size:12px;color:var(--t2);margin-top:3px;letter-spacing:.5px;}
+.photo-actions{display:flex;align-items:center;gap:10px;padding:0 12px 10px;}
+.pa-like{display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;
+  color:var(--t3);transition:color .2s;}
+.pa-like:hover,.pa-like.liked{color:var(--pink);}
+
+/* Lightbox */
+.lightbox-ov{position:fixed;inset:0;z-index:900;display:flex;align-items:center;justify-content:center;
+  background:rgba(8,4,18,.95);backdrop-filter:blur(20px);
+  opacity:0;pointer-events:none;transition:opacity .3s;}
+.lightbox-ov.open{opacity:1;pointer-events:all;}
+.lb-content{position:relative;max-width:700px;width:90%;}
+.lb-img{width:100%;border-radius:var(--r);font-size:80px;
+  min-height:300px;display:flex;align-items:center;justify-content:center;
+  background:var(--card2);border:1px solid var(--border2);}
+.lb-close{position:absolute;top:-44px;right:0;width:36px;height:36px;border-radius:50%;
+  border:1px solid var(--border2);background:var(--card2);color:var(--t1);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE: OUTPUT ZONE (产量专区)
+═══════════════════════════════════════════════════════ */
+.output-wrap{max-width:1100px;margin:0 auto;padding:0 20px 60px;}
+.output-tabs{display:flex;gap:6px;margin-bottom:24px;
+  background:var(--card);border-radius:10px;padding:5px;border:1px solid var(--border);}
+.ot-btn{flex:1;padding:9px;border-radius:var(--r-sm);border:none;
+  background:transparent;color:var(--t2);font-size:12px;letter-spacing:2px;cursor:pointer;transition:all .3s;}
+.ot-btn.active{background:linear-gradient(135deg,var(--pink-soft),var(--blue-soft));color:var(--t1);}
+.output-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.output-card{border-radius:var(--r);overflow:hidden;cursor:pointer;
+  background:var(--card);border:1px solid var(--border);transition:all .35s;}
+.output-card:hover{transform:translateY(-4px);border-color:var(--border2);box-shadow:0 12px 40px rgba(0,0,0,.3);}
+.oc-thumb{height:160px;display:flex;align-items:center;justify-content:center;
+  font-size:50px;position:relative;overflow:hidden;}
+.oc-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;
+  align-items:center;justify-content:center;font-size:30px;
+  opacity:0;transition:opacity .3s;}
+.output-card:hover .oc-overlay{opacity:1;}
+.oc-type-badge{position:absolute;top:10px;left:10px;padding:3px 10px;border-radius:8px;
+  font-size:10px;letter-spacing:2px;backdrop-filter:blur(8px);}
+.oc-body{padding:14px 16px;}
+.oc-title{font-size:14px;letter-spacing:1px;margin-bottom:5px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.oc-meta{font-size:10px;color:var(--t3);letter-spacing:1px;}
+.oc-link{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--blue-deep);
+  margin-top:8px;letter-spacing:1px;}
+.oc-link:hover{color:var(--blue);}
+.admin-upload-btn{display:flex;align-items:center;gap:8px;padding:10px 20px;
+  border-radius:var(--r);border:1px dashed var(--border2);
+  background:transparent;color:var(--t3);font-size:12px;letter-spacing:2px;
+  cursor:pointer;transition:all .3s;margin-bottom:20px;}
+.admin-upload-btn:hover{border-color:var(--pink);color:var(--pink);background:var(--pink-soft);}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE: LUMU WORLD (橹穆世界)
+═══════════════════════════════════════════════════════ */
+.world-wrap{max-width:1100px;margin:0 auto;padding:0 20px 60px;}
+.world-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+.wt-btn{padding:9px 20px;border-radius:20px;border:1px solid var(--border);
+  background:transparent;color:var(--t2);font-size:12px;letter-spacing:2px;cursor:pointer;transition:all .3s;}
+.wt-btn:hover,.wt-btn.active{border-color:var(--pink);color:var(--pink);background:var(--pink-soft);}
+.world-section{display:none;animation:fadeUp .4s ease both;}
+.world-section.active{display:block;}
+.world-hero{border-radius:var(--r);padding:36px;margin-bottom:24px;text-align:center;
+  background:linear-gradient(135deg,rgba(168,212,245,.08),rgba(245,184,208,.08));
+  border:1px solid var(--border);}
+.world-hero-title{font-family:'ZCOOL XiaoWei',serif;font-size:32px;letter-spacing:6px;
+  background:linear-gradient(135deg,var(--blue),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+.world-hero-sub{font-size:12px;color:var(--t3);letter-spacing:4px;}
+.world-post-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+.wp-card{border-radius:var(--r);padding:18px;background:var(--card);border:1px solid var(--border);
+  transition:all .3s;}
+.wp-card:hover{border-color:var(--border2);transform:translateY(-3px);}
+.wp-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.wp-av{width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));
+  display:flex;align-items:center;justify-content:center;font-size:13px;}
+.wp-user{font-size:12px;letter-spacing:1px;}
+.wp-badge{font-size:9px;padding:2px 6px;border-radius:6px;background:var(--pink-soft);color:var(--pink);margin-left:4px;}
+.wp-time{font-size:10px;color:var(--t3);margin-left:auto;letter-spacing:1px;}
+.wp-body{font-size:13px;color:var(--t2);line-height:1.9;letter-spacing:.5px;margin-bottom:12px;}
+.wp-actions{display:flex;gap:14px;}
+.wp-act{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t3);cursor:pointer;transition:color .2s;}
+.wp-act:hover{color:var(--pink);}
+.wp-act.liked{color:var(--pink);}
+.new-post-box{border-radius:var(--r);padding:18px;background:var(--card);border:1px solid var(--border);margin-bottom:20px;}
+.np-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.np-title{font-size:12px;letter-spacing:3px;color:var(--t2);}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE: EVENTS (橹穆大事件)
+═══════════════════════════════════════════════════════ */
+.events-wrap{max-width:800px;margin:0 auto;padding:0 20px 60px;}
+.ev-card{border-radius:var(--r);overflow:hidden;margin-bottom:20px;
+  background:var(--card);border:1px solid var(--border);transition:all .3s;}
+.ev-card:hover{border-color:var(--border2);}
+.ev-top-bar{height:3px;background:linear-gradient(90deg,var(--blue-deep),var(--pink-deep));}
+.ev-body{padding:20px 22px;}
+.ev-type-tag{display:inline-flex;align-items:center;gap:6px;
+  font-size:10px;letter-spacing:3px;color:var(--pink);margin-bottom:10px;}
+.ev-title{font-family:'ZCOOL XiaoWei',serif;font-size:20px;letter-spacing:3px;margin-bottom:10px;}
+.ev-content{font-family:'Noto Serif SC',serif;font-size:13px;color:var(--t2);line-height:2;letter-spacing:.5px;}
+.ev-footer{display:flex;align-items:center;justify-content:space-between;
+  margin-top:14px;padding-top:12px;border-top:1px solid var(--border);}
+.ev-date{font-size:10px;color:var(--t3);letter-spacing:2px;}
+.ev-sig{font-size:11px;color:var(--t3);letter-spacing:1px;}
+.ev-comments{padding:16px 22px;border-top:1px solid var(--border);}
+.admin-new-ev{border-radius:var(--r);padding:20px;background:rgba(200,160,100,.04);
+  border:1px dashed rgba(200,160,100,.25);margin-bottom:24px;}
+.admin-new-ev-title{font-size:12px;letter-spacing:3px;color:#d4aa70;margin-bottom:14px;}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE: MESSAGES (私信)
+═══════════════════════════════════════════════════════ */
+.dm-wrap{display:grid;grid-template-columns:260px 1fr;gap:0;max-width:1000px;
+  margin:0 auto;padding:0 20px 60px;height:calc(100vh - 110px);}
+.dm-list-col{border-right:1px solid var(--border);padding-right:16px;overflow-y:auto;}
+.dm-chat-col{padding-left:16px;display:flex;flex-direction:column;}
+.dm-list-head{font-family:'ZCOOL XiaoWei',serif;font-size:16px;letter-spacing:3px;
+  margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.dm-thread{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-sm);
+  cursor:pointer;transition:all .2s;margin-bottom:4px;}
+.dm-thread:hover{background:var(--card2);}
+.dm-thread.active{background:var(--pink-soft);border:1px solid rgba(245,184,208,.2);}
+.dt-av{width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.dt-info{flex:1;overflow:hidden;}
+.dt-name{font-size:12px;letter-spacing:1px;font-weight:700;}
+.dt-preview{font-size:11px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+.dt-badge{width:8px;height:8px;border-radius:50%;background:var(--pink);flex-shrink:0;}
+.dt-badge.read{opacity:0;}
+/* Chat */
+.chat-header{padding-bottom:14px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-shrink:0;}
+.ch-av{width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));
+  display:flex;align-items:center;justify-content:center;font-size:16px;}
+.ch-name{font-size:14px;letter-spacing:2px;font-weight:700;}
+.ch-status{font-size:10px;color:var(--blue-deep);letter-spacing:2px;}
+.chat-messages{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-right:4px;}
+.chat-msg{display:flex;gap:10px;align-items:flex-end;}
+.chat-msg.mine{flex-direction:row-reverse;}
+.cm-av{width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));
+  display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.cm-bubble{max-width:65%;padding:10px 14px;border-radius:14px;
+  font-size:13px;line-height:1.7;letter-spacing:.5px;}
+.chat-msg:not(.mine) .cm-bubble{background:var(--card2);border:1px solid var(--border);color:var(--t1);border-bottom-left-radius:4px;}
+.chat-msg.mine .cm-bubble{background:linear-gradient(135deg,var(--pink-deep),var(--blue-deep));color:white;border-bottom-right-radius:4px;}
+.cm-time{font-size:10px;color:var(--t3);padding-bottom:4px;flex-shrink:0;}
+.chat-input-area{padding-top:14px;border-top:1px solid var(--border);flex-shrink:0;}
+.chat-input-row{display:flex;gap:8px;align-items:flex-end;}
+.chat-input{flex:1;padding:10px 14px;background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-sm);color:var(--t1);font-family:'Noto Sans SC',sans-serif;
+  font-size:13px;outline:none;resize:none;line-height:1.6;max-height:100px;
+  transition:border-color .3s;}
+.chat-input:focus{border-color:rgba(245,184,208,.4);}
+.chat-input::placeholder{color:var(--t3);}
+.chat-send{width:38px;height:38px;border-radius:50%;border:none;
+  background:linear-gradient(135deg,var(--pink-deep),var(--blue-deep));
+  color:white;font-size:16px;cursor:pointer;flex-shrink:0;transition:all .3s;}
+.chat-send:hover{transform:scale(1.08);box-shadow:0 6px 18px var(--gp);}
+
+/* ── COMMENT SHARED ─── */
+.comment-input-row{display:flex;gap:10px;align-items:flex-start;margin-top:14px;}
+.cav{width:30px;height:30px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));
+  display:flex;align-items:center;justify-content:center;font-size:12px;}
+.ci-wrap{flex:1;}
+.ci{width:100%;padding:9px 13px;background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-sm);color:var(--t1);font-family:'Noto Sans SC',sans-serif;
+  font-size:12px;outline:none;resize:none;min-height:52px;line-height:1.7;
+  transition:border-color .3s;}
+.ci:focus{border-color:rgba(245,184,208,.4);}
+.ci::placeholder{color:var(--t3);}
+.ci-actions{display:flex;align-items:center;gap:8px;margin-top:7px;}
+.ci-emojis{display:flex;gap:5px;}
+.ci-emoji{font-size:16px;cursor:pointer;transition:transform .2s;}
+.ci-emoji:hover{transform:scale(1.3);}
+.c-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
+.c-item:last-child{border-bottom:none;}
+.c-meta{display:flex;align-items:center;gap:7px;margin-bottom:5px;}
+.c-user{font-size:11px;font-weight:700;letter-spacing:1px;}
+.c-bdg{font-size:9px;color:var(--pink);background:var(--pink-soft);padding:1px 6px;border-radius:6px;}
+.c-time{font-size:10px;color:var(--t3);}
+.c-body{font-size:12px;color:var(--t2);line-height:1.8;letter-spacing:.5px;}
+.c-acts{display:flex;gap:10px;margin-top:7px;}
+.c-like{font-size:11px;color:var(--t3);cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .2s;}
+.c-like:hover,.c-like.liked{color:var(--pink);}
+.c-del{font-size:10px;color:var(--t3);cursor:pointer;letter-spacing:1px;}
+.c-del:hover{color:#ff8aaa;}
+
+/* ── LOCKED MSG ─── */
+.locked-msg{text-align:center;padding:30px 20px;color:var(--t3);font-size:12px;letter-spacing:2px;line-height:2;}
+.locked-msg a{color:var(--pink);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+
+/* ── LIKE ANIM ─── */
+@keyframes likeAnim{0%{transform:scale(1)}50%{transform:scale(1.5)}100%{transform:scale(1)}}
+.like-pop{animation:likeAnim .3s ease;}
+
+/* ── HOME SHIMMER ─── */
+@keyframes shimmer2{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes heartbeat{0%,100%{transform:scale(1)}30%{transform:scale(1.3)}80%{transform:scale(1.12)}}
+
+.home-logo-wrap{
+  display:block;
+  padding: 24px 0 8px;
+  margin-bottom:4px;
+  position:relative;
+}
+.home-logo{
+  font-family:'ZCOOL XiaoWei','Ma Shan Zheng','Noto Serif SC',serif;
+  font-size:clamp(64px,11vw,108px);
+  font-weight:400;
+  letter-spacing:16px;
+  line-height:1.15;
+  display:inline-block;
+  padding:0 20px;
+  /* Gradient text */
+  background:linear-gradient(135deg,#c8e8ff 0%,#f5b8d0 35%,#ffffff 55%,#a8d4f5 75%,#d4b8f0 100%);
+  background-size:250% 250%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  color:#e8d0f0; /* fallback if clip fails */
+  animation:shimmer2 6s ease-in-out infinite alternate;
+}
+/* Fallback for browsers that don't support background-clip:text */
+@supports not (-webkit-background-clip:text){
+  .home-logo{
+    background:none;
+    color:#e8d0f0;
+    text-shadow:0 0 40px rgba(168,212,245,.5);
+  }
+}
+.home-logo-glow{
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(168,212,245,.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+</style>
+</head>
+<body>
+<div class="bg-cosmos"></div>
+<div class="bg-glow"></div>
+<canvas id="starfield"></canvas>
+
+<!-- ═══════════════════════════════════════════
+     TOP NAV
+═══════════════════════════════════════════ -->
+<nav class="nav">
+  <span class="nav-logo" onclick="showPage('home')">橹穆国</span>
+  <div class="nav-links" id="nav-links">
+    <button class="nl" data-page="story"    onclick="showPage('story')">故事线</button>
+    <button class="nl" data-page="timeline" onclick="showPage('timeline')">时间线</button>
+    <button class="nl" data-page="photos"   onclick="showPage('photos')">照片合集</button>
+    <button class="nl" data-page="output"   onclick="showPage('output')">产量专区</button>
+    <button class="nl" data-page="world"    onclick="showPage('world')">橹穆世界</button>
+    <button class="nl" data-page="events"   onclick="showPage('events')">大事件</button>
+    <button class="nl fan-only" data-page="messages" onclick="showPage('messages')">私信</button>
+  </div>
+  <div class="nav-sp"></div>
+  <div class="nav-acts">
+    <div class="nav-bell fan-only" id="nav-bell" onclick="toggleNotif()">
+      &#9679;
+      <span class="bell-badge hide" id="bell-badge">0</span>
+    </div>
+    <button class="nav-dm fan-only" onclick="showPage('messages')">私信</button>
+    <div class="nav-user" id="nav-user-btn" onclick="toggleUserMenu()">
+      <div class="u-av" id="u-av" style="font-size:13px;font-family:'Noto Sans SC',sans-serif;">&#9679;</div>
+      <span class="u-name" id="u-name">路人</span>
+      <span class="u-badge" id="u-badge">路人</span>
+    </div>
+    <button class="nav-logout" id="nav-logout" onclick="doLogout()">退出</button>
+    <span id="guest-chip" style="display:none;font-size:10px;letter-spacing:2px;
+      color:var(--t3);padding:3px 10px;border:1px solid var(--border);
+      border-radius:10px;cursor:default;" title="路人模式：可浏览全站，登录后可互动">路人模式</span>
+  </div>
+</nav>
+
+<!-- Notif Dropdown -->
+<div class="notif-drop" id="notif-drop">
+  <div class="nd-head">
+    <span class="nd-title">通 知</span>
+    <span class="nd-all" onclick="markAllRead()">全部已读</span>
+  </div>
+  <div class="nd-list" id="nd-list"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE BODY
+═══════════════════════════════════════════ -->
+<div class="page-body">
+
+<!-- ══ HOME ══ -->
+<div class="page active" id="page-home">
+  <div style="max-width:980px;margin:0 auto;padding:16px 28px 80px;text-align:center;">
+
+    <!-- ── Logo ── -->
+    <div class="home-logo-wrap">
+      <div class="home-logo-glow"></div>
+      <div class="home-logo">橹穆国</div>
+    </div>
+
+    <!-- ── Subtitle ── -->
+    <div style="font-family:'Noto Serif SC','Noto Sans SC',sans-serif;font-size:13px;
+      letter-spacing:5px;color:var(--t3);margin-bottom:44px;margin-top:4px;">
+      穆祉丞 &nbsp;&#215;&nbsp; 王橹杰 &nbsp;&#183;&nbsp; 专属粉丝宇宙
+    </div>
+
+    <!-- ── 6 Nav Cards: strict 3×2 grid ── -->
+    <div id="home-grid" style="
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      grid-template-rows:repeat(2,auto);
+      gap:18px;
+      max-width:820px;
+      margin:0 auto 36px;
+    ">
+
+      <!-- 故事线 -->
+      <div class="hnc" onclick="showPage('story')" style="
+        padding:28px 16px 22px;border-radius:var(--r);
+        background:linear-gradient(145deg,rgba(168,212,245,.09),rgba(90,159,212,.04));
+        border:1px solid rgba(168,212,245,.2);cursor:pointer;transition:all .3s;text-align:center;">
+        <div style="margin-bottom:14px;">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="5" width="20" height="28" rx="3" fill="rgba(168,212,245,.25)" stroke="rgba(168,212,245,.6)" stroke-width="1.5"/>
+            <rect x="14" y="5" width="20" height="28" rx="3" fill="rgba(168,212,245,.15)" stroke="rgba(168,212,245,.4)" stroke-width="1.5"/>
+            <line x1="18" y1="14" x2="30" y2="14" stroke="rgba(168,212,245,.7)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="18" y1="19" x2="30" y2="19" stroke="rgba(168,212,245,.5)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="18" y1="24" x2="26" y2="24" stroke="rgba(168,212,245,.4)" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div style="font-family:'ZCOOL XiaoWei','Noto Serif SC',serif;font-size:17px;letter-spacing:4px;color:var(--t1);margin-bottom:7px;">故 事 线</div>
+        <div style="font-size:11px;color:var(--t3);letter-spacing:2px;">章节 &#183; 故事 &#183; 记忆</div>
+      </div>
+
+      <!-- 时间线 -->
+      <div class="hnc" onclick="showPage('timeline')" style="
+        padding:28px 16px 22px;border-radius:var(--r);
+        background:linear-gradient(145deg,rgba(212,184,245,.09),rgba(160,100,240,.04));
+        border:1px solid rgba(212,184,245,.2);cursor:pointer;transition:all .3s;text-align:center;">
+        <div style="margin-bottom:14px;">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="8" width="28" height="26" rx="4" fill="rgba(212,184,245,.15)" stroke="rgba(212,184,245,.5)" stroke-width="1.5"/>
+            <line x1="13" y1="4" x2="13" y2="12" stroke="rgba(212,184,245,.7)" stroke-width="2" stroke-linecap="round"/>
+            <line x1="27" y1="4" x2="27" y2="12" stroke="rgba(212,184,245,.7)" stroke-width="2" stroke-linecap="round"/>
+            <line x1="6" y1="17" x2="34" y2="17" stroke="rgba(212,184,245,.4)" stroke-width="1.5"/>
+            <rect x="11" y="21" width="5" height="5" rx="1" fill="rgba(212,184,245,.6)"/>
+            <rect x="20" y="21" width="5" height="5" rx="1" fill="rgba(212,184,245,.4)"/>
+            <rect x="11" y="28" width="5" height="3" rx="1" fill="rgba(212,184,245,.4)"/>
+            <rect x="20" y="28" width="5" height="3" rx="1" fill="rgba(245,184,208,.5)"/>
+            <rect x="29" y="21" width="2" height="2" rx="0.5" fill="rgba(212,184,245,.3)"/>
+          </svg>
+        </div>
+        <div style="font-family:'ZCOOL XiaoWei','Noto Serif SC',serif;font-size:17px;letter-spacing:4px;color:var(--t1);margin-bottom:7px;">时 间 线</div>
+        <div style="font-size:11px;color:var(--t3);letter-spacing:2px;">重要时刻 &#183; 日历</div>
+      </div>
+
+      <!-- 照片合集 -->
+      <div class="hnc" onclick="showPage('photos')" style="
+        padding:28px 16px 22px;border-radius:var(--r);
+        background:linear-gradient(145deg,rgba(245,184,208,.09),rgba(232,122,171,.04));
+        border:1px solid rgba(245,184,208,.2);cursor:pointer;transition:all .3s;text-align:center;">
+        <div style="margin-bottom:14px;">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="8" width="32" height="24" rx="4" fill="rgba(245,184,208,.12)" stroke="rgba(245,184,208,.5)" stroke-width="1.5"/>
+            <circle cx="13" cy="17" r="4" fill="rgba(245,184,208,.4)" stroke="rgba(245,184,208,.6)" stroke-width="1"/>
+            <path d="M4 26 L12 19 L20 25 L27 17 L36 28" stroke="rgba(245,184,208,.6)" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+            <path d="M4 27 L12 20 L20 26 L27 18 L36 29 L36 32 L4 32 Z" fill="rgba(245,184,208,.15)"/>
+          </svg>
+        </div>
+        <div style="font-family:'ZCOOL XiaoWei','Noto Serif SC',serif;font-size:17px;letter-spacing:4px;color:var(--t1);margin-bottom:7px;">照片合集</div>
+        <div style="font-size:11px;color:var(--t3);letter-spacing:2px;">同框 &#183; 回忆</div>
+      </div>
+
+      <!-- 产量专区 (fan only) -->
+      <div class="hnc" onclick="showPage('output')" style="
+        padding:28px 16px 22px;border-radius:var(--r);
+        background:linear-gradient(145deg,rgba(168,212,245,.07),rgba(90,159,212,.03));
+        border:1px solid rgba(168,212,245,.15);cursor:pointer;transition:all .3s;text-align:center;">
+        <div style="margin-bottom:14px;">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="10" width="32" height="22" rx="4" fill="rgba(168,212,245,.1)" stroke="rgba(168,212,245,.4)" stroke-width="1.5"/>
+            <circle cx="20" cy="21" r="7" fill="rgba(168,212,245,.08)" stroke="rgba(168,212,245,.35)" stroke-width="1.5"/>
+            <path d="M17 18 L26 21 L17 24 Z" fill="rgba(168,212,245,.7)"/>
+            <circle cx="32" cy="11" r="5" fill="#e87aab" stroke="rgba(245,184,208,.6)" stroke-width="1"/>
+            <line x1="32" y1="8" x2="32" y2="14" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="29" y1="11" x2="35" y2="11" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div style="font-family:'ZCOOL XiaoWei','Noto Serif SC',serif;font-size:17px;letter-spacing:4px;color:var(--t1);margin-bottom:7px;">产量专区</div>
+        <div style="font-size:11px;color:var(--t3);letter-spacing:2px;">视频 &#183; 文章 &#183; 物料</div>
+      </div>
+
+      <!-- 橹穆世界 (fan only) -->
+      <div class="hnc" onclick="showPage('world')" style="
+        padding:28px 16px 22px;border-radius:var(--r);
+        background:linear-gradient(145deg,rgba(245,184,208,.07),rgba(212,184,245,.04));
+        border:1px solid rgba(245,184,208,.15);cursor:pointer;transition:all .3s;text-align:center;">
+        <div style="margin-bottom:14px;">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="14" fill="rgba(245,184,208,.1)" stroke="rgba(245,184,208,.45)" stroke-width="1.5"/>
+            <ellipse cx="20" cy="20" rx="7" ry="14" fill="none" stroke="rgba(245,184,208,.3)" stroke-width="1.2"/>
+            <line x1="6" y1="20" x2="34" y2="20" stroke="rgba(245,184,208,.3)" stroke-width="1.2"/>
+            <line x1="8" y1="14" x2="32" y2="14" stroke="rgba(245,184,208,.2)" stroke-width="1"/>
+            <line x1="8" y1="26" x2="32" y2="26" stroke="rgba(245,184,208,.2)" stroke-width="1"/>
+            <circle cx="20" cy="20" r="3" fill="rgba(245,184,208,.6)"/>
+          </svg>
+        </div>
+        <div style="font-family:'ZCOOL XiaoWei','Noto Serif SC',serif;font-size:17px;letter-spacing:4px;color:var(--t1);margin-bottom:7px;">橹穆世界</div>
+        <div style="font-size:11px;color:var(--t3);letter-spacing:2px;">发帖 &#183; 讨论 &#183; 圈子</div>
+      </div>
+
+      <!-- 大事件 -->
+      <div class="hnc" onclick="showPage('events')" style="
+        padding:28px 16px 22px;border-radius:var(--r);
+        background:linear-gradient(145deg,rgba(212,184,245,.09),rgba(245,184,208,.05));
+        border:1px solid rgba(212,184,245,.2);cursor:pointer;transition:all .3s;text-align:center;">
+        <div style="margin-bottom:14px;">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 6 L8 18 L8 28 C8 30.2 9.8 32 12 32 L28 32 C30.2 32 32 30.2 32 28 L32 18 Z" fill="rgba(212,184,245,.12)" stroke="rgba(212,184,245,.5)" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M15 32 L15 36" stroke="rgba(212,184,245,.5)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M25 32 L25 36" stroke="rgba(212,184,245,.5)" stroke-width="2" stroke-linecap="round"/>
+            <line x1="12" y1="36" x2="28" y2="36" stroke="rgba(212,184,245,.4)" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="20" cy="22" r="3" fill="rgba(245,184,208,.7)"/>
+            <line x1="20" y1="14" x2="20" y2="18" stroke="rgba(212,184,245,.6)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div style="font-family:'ZCOOL XiaoWei','Noto Serif SC',serif;font-size:17px;letter-spacing:4px;color:var(--t1);margin-bottom:7px;">大 事 件</div>
+        <div style="font-size:11px;color:var(--t3);letter-spacing:2px;">公告 &#183; 重大时刻</div>
+      </div>
+
+    </div><!-- end grid -->
+
+    <!-- ── CP display ── -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:32px;margin-bottom:28px;">
+      <div style="text-align:center;">
+        <div style="width:56px;height:56px;border-radius:50%;
+          background:linear-gradient(135deg,rgba(168,212,245,.25),rgba(90,159,212,.15));
+          border:1px solid rgba(168,212,245,.35);
+          display:flex;align-items:center;justify-content:center;
+          margin:0 auto 8px;">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <circle cx="13" cy="8" r="5" fill="rgba(168,212,245,.7)" stroke="rgba(168,212,245,.9)" stroke-width="1"/>
+            <path d="M4 22 C4 17 22 17 22 22" fill="rgba(168,212,245,.4)" stroke="rgba(168,212,245,.6)" stroke-width="1" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div style="font-family:'ZCOOL XiaoWei','Noto Serif SC',serif;font-size:15px;letter-spacing:3px;color:var(--blue);">王橹杰</div>
+        <div style="font-size:10px;color:var(--t3);letter-spacing:2px;margin-top:3px;">爱豆</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="width:28px;height:28px;animation:heartbeat 2s ease-in-out infinite;">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <path d="M14 23 C14 23 4 16 4 9.5 C4 6.4 6.4 4 9.5 4 C11.5 4 13.2 5 14 6.5 C14.8 5 16.5 4 18.5 4 C21.6 4 24 6.4 24 9.5 C24 16 14 23 14 23 Z"
+              fill="url(#hg)" stroke="rgba(245,184,208,.5)" stroke-width="0.5"/>
+            <defs>
+              <linearGradient id="hg" x1="4" y1="4" x2="24" y2="24">
+                <stop offset="0%" stop-color="#a8d4f5"/>
+                <stop offset="100%" stop-color="#f5b8d0"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:56px;height:56px;border-radius:50%;
+          background:linear-gradient(135deg,rgba(245,184,208,.25),rgba(232,122,171,.15));
+          border:1px solid rgba(245,184,208,.35);
+          display:flex;align-items:center;justify-content:center;
+          margin:0 auto 8px;">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <circle cx="13" cy="8" r="5" fill="rgba(245,184,208,.7)" stroke="rgba(245,184,208,.9)" stroke-width="1"/>
+            <path d="M4 22 C4 17 22 17 22 22" fill="rgba(245,184,208,.4)" stroke="rgba(245,184,208,.6)" stroke-width="1" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div style="font-family:'ZCOOL XiaoWei','Noto Serif SC',serif;font-size:15px;letter-spacing:3px;color:var(--pink);">穆祉丞</div>
+        <div style="font-size:10px;color:var(--t3);letter-spacing:2px;margin-top:3px;">唱跳艺人</div>
+      </div>
+    </div>
+
+    <!-- ── Guest banner ── -->
+    <div id="home-guest-msg" style="display:none;margin-top:4px;padding:16px 24px;
+      border-radius:var(--r);
+      background:rgba(245,184,208,.07);
+      border:1px solid rgba(245,184,208,.18);
+      font-size:12px;color:var(--t2);letter-spacing:2px;line-height:2.2;">
+      你正在以路人身份浏览 &#183; 可查看全部板块，但无法评论 / 发帖 / 私信<br>
+      <a href="lumu-index.html" style="color:var(--pink);text-decoration:underline;
+        text-underline-offset:3px;font-size:11px;letter-spacing:1px;">
+        &#8592; 注册粉丝账号，解锁互动功能
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ STORY LINE ══ -->
+<div class="page" id="page-story">
+  <div class="story-wrap">
+    <div class="story-toc card" style="padding:20px;">
+      <div class="toc-title">📖 故事线目录</div>
+      <div id="toc-list"></div>
+      <div id="admin-story-btn" style="display:none;margin-top:16px;">
+        <button class="admin-upload-btn" style="width:100%;justify-content:center;" onclick="openModal('modal-add-chapter')">＋ 添加新章节</button>
+      </div>
+    </div>
+    <div class="story-content-wrap" id="story-chapters"></div>
+  </div>
+</div>
+
+<!-- ══ TIMELINE ══ -->
+<div class="page" id="page-timeline">
+  <div class="tl-wrap">
+    <div>
+      <div class="cal-box card" style="padding:20px;">
+        <div class="cal-head">
+          <span class="cal-ym" id="cal-ym"></span>
+          <div class="cal-nav">
+            <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
+            <button class="cal-nav-btn" onclick="calNav(1)">›</button>
+          </div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-legend">
+          <div class="cal-leg-item"><div class="cal-leg-dot" style="background:linear-gradient(135deg,var(--pink),var(--blue));"></div>重要时刻</div>
+          <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--blue);"></div>今天</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding:14px;border-radius:var(--r);background:var(--card);border:1px solid var(--border);">
+        <div style="font-size:11px;letter-spacing:3px;color:var(--t3);margin-bottom:10px;">橹穆 重要日期</div>
+        <div id="tl-special-list"></div>
+      </div>
+    </div>
+    <div>
+      <div class="sh"><h2>时 间 线</h2><div class="sh-line"></div><span class="sh-tag">TIMELINE</span></div>
+      <div id="admin-tl-btn" style="display:none;margin-bottom:16px;">
+        <button class="admin-upload-btn" onclick="openModal('modal-add-tldate')">＋ 添加重要日期</button>
+      </div>
+      <div class="tl-scroll" id="tl-scroll">
+        <div class="tl-line" id="tl-line"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PHOTOS ══ -->
+<div class="page" id="page-photos">
+  <div class="photos-wrap">
+    <div class="sh"><h2>照 片 合 集</h2><div class="sh-line"></div><span class="sh-tag">GALLERY</span></div>
+    <div id="admin-photo-area" style="display:none;margin-bottom:16px;">
+      <button class="admin-upload-btn" onclick="openModal('modal-add-photo')">＋ 添加照片/链接（管理员专属）</button>
+    </div>
+    <div class="photos-filters">
+      <button class="pf-btn active" onclick="filterPhotos('all',this)">全部</button>
+      <button class="pf-btn" onclick="filterPhotos('lumu',this)">橹穆同框</button>
+      <button class="pf-btn" onclick="filterPhotos('wlj',this)">王橹杰</button>
+      <button class="pf-btn" onclick="filterPhotos('mzc',this)">穆祉丞</button>
+      <button class="pf-btn" onclick="filterPhotos('fan',this)">粉丝投稿</button>
+    </div>
+    <div class="photo-grid" id="photo-grid"></div>
+  </div>
+</div>
+
+<!-- ══ OUTPUT ══ -->
+<div class="page" id="page-output">
+  <div class="output-wrap">
+    <div class="sh"><h2>产 量 专 区</h2><div class="sh-line"></div><span class="sh-tag">OUTPUT ZONE</span></div>
+    <div id="admin-upload-area" style="display:none;">
+      <button class="admin-upload-btn" onclick="openUploadModal()">
+        ＋ 上传新内容（管理员专属）
+      </button>
+    </div>
+    <div class="output-tabs" id="output-tabs">
+      <button class="ot-btn active" onclick="switchOutput('video',this)">🎬 视频</button>
+      <button class="ot-btn" onclick="switchOutput('article',this)">📝 文章</button>
+      <button class="ot-btn" onclick="switchOutput('material',this)">🗂 物料</button>
+    </div>
+    <div class="output-grid" id="output-grid"></div>
+  </div>
+</div>
+
+<!-- ══ WORLD ══ -->
+<div class="page" id="page-world">
+  <div class="world-wrap">
+    <div class="sh"><h2>橹 穆 世 界</h2><div class="sh-line"></div><span class="sh-tag">LUMU WORLD</span></div>
+    <div class="world-tabs">
+      <button class="wt-btn active" onclick="switchWorld('lumu',this)">🌍 橹穆世界</button>
+      <button class="wt-btn" onclick="switchWorld('quanen',this)">💗 全恩世界</button>
+      <button class="wt-btn" onclick="switchWorld('jiec',this)">💙 杰丞世界</button>
+      <button class="wt-btn" onclick="switchWorld('tunman',this)">🐷 豚馒世界</button>
+    </div>
+    <div id="world-content"></div>
+  </div>
+</div>
+
+<!-- ══ EVENTS ══ -->
+<div class="page" id="page-events">
+  <div class="events-wrap">
+    <div class="sh"><h2>橹 穆 大 事 件</h2><div class="sh-line"></div><span class="sh-tag">EVENTS</span></div>
+    <div id="admin-event-area" style="display:none;">
+      <div class="admin-new-ev">
+        <div class="admin-new-ev-title">👑 发布新公告</div>
+        <div class="fg"><label class="fl">公告标题</label><input class="fi" id="ev-title-input" placeholder="输入公告标题"></div>
+        <div class="fg"><label class="fl">公告内容</label><textarea class="fi" id="ev-content-input" placeholder="输入公告内容..." style="min-height:100px;"></textarea></div>
+        <button class="btn-p" onclick="publishEvent()">发布公告 ✦</button>
+      </div>
+    </div>
+    <div id="events-list"></div>
+  </div>
+</div>
+
+<!-- ══ MESSAGES ══ -->
+<div class="page" id="page-messages">
+  <div class="dm-wrap">
+    <div class="dm-list-col">
+      <div class="dm-list-head">💌 私 信</div>
+      <div id="dm-thread-list"></div>
+    </div>
+    <div class="dm-chat-col" id="dm-chat-col">
+      <div style="display:flex;flex:1;align-items:center;justify-content:center;color:var(--t3);font-size:12px;letter-spacing:3px;">
+        选择一个对话开始聊天
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end page-body -->
+
+<!-- ══ MODALS ══ -->
+<!-- Upload modal (admin) -->
+<div class="modal-ov" id="modal-upload">
+  <div class="modal-bg" onclick="closeModal('modal-upload')"></div>
+  <div class="modal-box">
+    <div class="modal-bar"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-upload')">✕</button>
+      <div class="modal-title">上传内容</div>
+      <div class="modal-sub">仅管理员可上传</div>
+      <div class="fg"><label class="fl">标题</label><input class="fi" id="up-title" placeholder="内容标题"></div>
+      <div class="fg"><label class="fl">类型</label>
+        <select class="fi" id="up-type">
+          <option value="video">🎬 视频</option>
+          <option value="article">📝 文章</option>
+          <option value="material">🗂 物料</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">链接（YouTube / BiliBili 等）</label><input class="fi" id="up-url" placeholder="https://..."></div>
+      <div class="fg"><label class="fl">作者名字</label><input class="fi" id="up-author" placeholder="例如：橹穆CP站、yumeifan"></div>
+      <div class="fg"><label class="fl">来源平台</label>
+        <select class="fi" id="up-platform">
+          <option value="bilibili">📺 哔哩哔哩</option>
+          <option value="youtube">▶ YouTube</option>
+          <option value="weibo">微博</option>
+          <option value="xiaohongshu">小红书</option>
+          <option value="douyin">抖音</option>
+          <option value="pan">网盘</option>
+          <option value="other">其他</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">封面 Emoji（代替封面图）</label><input class="fi" id="up-cover" placeholder="🎵" style="font-size:20px;"></div>
+      <div class="fg"><label class="fl">封面背景色</label>
+        <select class="fi" id="up-color">
+          <option value="linear-gradient(135deg,rgba(168,212,245,.2),rgba(90,159,212,.1))">蓝色</option>
+          <option value="linear-gradient(135deg,rgba(245,184,208,.2),rgba(232,122,171,.1))">粉色</option>
+          <option value="linear-gradient(135deg,rgba(212,184,245,.2),rgba(160,100,240,.1))">紫色</option>
+        </select>
+      </div>
+      <div class="ferr" id="up-err"></div>
+      <button class="btn-full" onclick="submitUpload()">上传 ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- Post modal -->
+<div class="modal-ov" id="modal-post">
+  <div class="modal-bg" onclick="closeModal('modal-post')"></div>
+  <div class="modal-box">
+    <div class="modal-bar"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-post')">✕</button>
+      <div class="modal-title">✍ 发布帖子</div>
+      <div class="modal-sub" id="post-modal-sub">橹穆世界</div>
+      <div class="fg"><textarea class="fi" id="post-content" placeholder="分享你的橹穆感想..." style="min-height:120px;"></textarea></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;" id="post-emojis">
+        <span style="font-size:11px;color:var(--t3);align-self:center;letter-spacing:2px;">插入：</span>
+        <span style="cursor:pointer;font-size:20px;transition:transform .2s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform=''" onclick="insertEmoji('💙')">💙</span>
+        <span style="cursor:pointer;font-size:20px;transition:transform .2s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform=''" onclick="insertEmoji('🌸')">🌸</span>
+        <span style="cursor:pointer;font-size:20px;transition:transform .2s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform=''" onclick="insertEmoji('✨')">✨</span>
+        <span style="cursor:pointer;font-size:20px;transition:transform .2s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform=''" onclick="insertEmoji('💗')">💗</span>
+        <span style="cursor:pointer;font-size:20px;transition:transform .2s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform=''" onclick="insertEmoji('🎵')">🎵</span>
+        <span style="cursor:pointer;font-size:20px;transition:transform .2s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform=''" onclick="insertEmoji('🌙')">🌙</span>
+      </div>
+      <div class="ferr" id="post-err"></div>
+      <button class="btn-full" onclick="submitPost()">发布 ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: 添加故事线章节 (admin) ══ -->
+<div class="modal-ov" id="modal-add-chapter">
+  <div class="modal-bg" onclick="closeModal('modal-add-chapter')"></div>
+  <div class="modal-box" style="max-width:520px;">
+    <div class="modal-bar"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-add-chapter')">✕</button>
+      <div class="modal-title">📖 添加新章节</div>
+      <div class="modal-sub">添加后所有粉丝可见</div>
+      <div class="fg"><label class="fl">章节标题</label><input class="fi" id="ch-title" placeholder="例如：离别"></div>
+      <div class="fg"><label class="fl">时间标注</label><input class="fi" id="ch-date" placeholder="例如：2024.09"></div>
+      <div class="fg"><label class="fl">章节 Emoji</label><input class="fi" id="ch-emoji" placeholder="🌸" style="font-size:20px;"></div>
+      <div class="fg"><label class="fl">渐变色</label>
+        <select class="fi" id="ch-grad">
+          <option value="linear-gradient(135deg,rgba(168,212,245,.25),rgba(90,159,212,.15))">蓝色</option>
+          <option value="linear-gradient(135deg,rgba(245,184,208,.2),rgba(232,122,171,.12))">粉色</option>
+          <option value="linear-gradient(135deg,rgba(212,184,245,.2),rgba(160,100,240,.1))">紫色</option>
+          <option value="linear-gradient(135deg,rgba(100,160,200,.2),rgba(80,120,180,.12))">深蓝</option>
+          <option value="linear-gradient(135deg,rgba(245,184,208,.25),rgba(168,212,245,.2))">粉蓝混合</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">章节内容（支持换行，用 &lt;p&gt; 分段）</label>
+        <textarea class="fi" id="ch-content" placeholder="输入章节正文内容...&#10;&#10;每段用空行分隔，将自动转为段落。" style="min-height:180px;"></textarea>
+      </div>
+      <div class="ferr" id="ch-err"></div>
+      <button class="btn-full" onclick="submitAddChapter()">发布章节 ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: 添加时间线日期 (admin) ══ -->
+<div class="modal-ov" id="modal-add-tldate">
+  <div class="modal-bg" onclick="closeModal('modal-add-tldate')"></div>
+  <div class="modal-box" style="max-width:480px;">
+    <div class="modal-bar"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-add-tldate')">✕</button>
+      <div class="modal-title">📅 添加重要日期</div>
+      <div class="modal-sub">添加后在日历和时间线中显示</div>
+      <div class="fg"><label class="fl">日期（格式 YYYY-MM-DD）</label><input class="fi" id="tl-date-input" placeholder="2024-10-15" type="date"></div>
+      <div class="fg"><label class="fl">事件标题</label><input class="fi" id="tl-title-input" placeholder="例如：橹穆首次综艺同框"></div>
+      <div class="fg"><label class="fl">事件描述</label><textarea class="fi" id="tl-desc-input" placeholder="简短描述这一天发生了什么..." style="min-height:80px;"></textarea></div>
+      <div class="fg"><label class="fl">事件 Emoji</label><input class="fi" id="tl-emoji-input" placeholder="✨" style="font-size:20px;"></div>
+      <div class="fg"><label class="fl">颜色</label>
+        <select class="fi" id="tl-color-input">
+          <option value="pink">粉色</option>
+          <option value="blue">蓝色</option>
+        </select>
+      </div>
+      <div class="fg" style="display:flex;align-items:center;gap:10px;">
+        <input type="checkbox" id="tl-big-input" style="width:16px;height:16px;cursor:pointer;accent-color:var(--pink);">
+        <label for="tl-big-input" class="fl" style="margin:0;cursor:pointer;">标记为重大时刻（在日历侧边栏显示）</label>
+      </div>
+      <div class="ferr" id="tl-err"></div>
+      <button class="btn-full" onclick="submitAddTLDate()">添加日期 ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: 添加照片/链接 (admin) ══ -->
+<div class="modal-ov" id="modal-add-photo">
+  <div class="modal-bg" onclick="closeModal('modal-add-photo')"></div>
+  <div class="modal-box" style="max-width:480px;">
+    <div class="modal-bar"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-add-photo')">✕</button>
+      <div class="modal-title">🖼 添加照片/内容</div>
+      <div class="modal-sub">添加图片链接或内容描述</div>
+      <div class="fg"><label class="fl">标题/说明</label><input class="fi" id="ph-caption" placeholder="例如：橹穆后台合照"></div>
+      <div class="fg"><label class="fl">图片链接（可选，留空用 Emoji 代替）</label><input class="fi" id="ph-url" placeholder="https://... (图片直链)"></div>
+      <div class="fg"><label class="fl">代表 Emoji（无图片链接时显示）</label><input class="fi" id="ph-emoji" placeholder="🌸" style="font-size:20px;"></div>
+      <div class="fg"><label class="fl">作者名字</label><input class="fi" id="ph-author" placeholder="例如：橹穆后援会、yumeifan"></div>
+      <div class="fg"><label class="fl">来源平台</label>
+        <select class="fi" id="ph-platform">
+          <option value="微博">微博</option>
+          <option value="小红书">小红书</option>
+          <option value="Twitter/X">Twitter/X</option>
+          <option value="Instagram">Instagram</option>
+          <option value="哔哩哔哩">哔哩哔哩</option>
+          <option value="粉丝自制">粉丝自制</option>
+          <option value="官方">官方</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">分类</label>
+        <select class="fi" id="ph-cat">
+          <option value="lumu">橹穆同框</option>
+          <option value="wlj">王橹杰</option>
+          <option value="mzc">穆祉丞</option>
+          <option value="fan">粉丝投稿</option>
+        </select>
+      </div>
+      <div class="ferr" id="ph-err"></div>
+      <button class="btn-full" onclick="submitAddPhoto()">添加 ✦</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ═══════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════ -->
+<script>
+/* ── STARFIELD ── */
+const cv=document.getElementById('starfield'),cx=cv.getContext('2d');let stars=[];
+function rsz(){cv.width=innerWidth;cv.height=innerHeight;stars=[];const n=Math.floor(cv.width*cv.height/5500);for(let i=0;i<n;i++)stars.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.6+.3,a:Math.random()*.8+.2,sp:Math.random()*.015+.005,ph:Math.random()*Math.PI*2,h:Math.random()>.5?210:330});}
+function dstars(t){cx.clearRect(0,0,cv.width,cv.height);stars.forEach(s=>{const a=s.a*(.5+.5*Math.sin(t*s.sp+s.ph));cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);cx.fillStyle=`hsla(${s.h},80%,90%,${a})`;cx.fill();});requestAnimationFrame(dstars);}
+window.addEventListener('resize',rsz);rsz();requestAnimationFrame(dstars);
+
+/* ── SESSION（改用 JWT Token + localStorage 持久化登录）── */
+const S={
+  get(){try{return JSON.parse(localStorage.getItem('lumu_session')||'null');}catch{return null;}},
+  set(d){localStorage.setItem('lumu_session',JSON.stringify(d));},
+  clear(){localStorage.removeItem('lumu_session');},
+  token(){const s=this.get();return s?s.token:null;},
+  role(){const s=this.get();return s?s.role:'guest';},
+  isAdmin(){return this.role()==='admin';},
+  isFan(){return['fan','admin'].includes(this.role());},
+  isGuest(){return this.role()==='guest'||!this.get();},
+  username(){const s=this.get();return s?s.username:'路人';},
+  badge(){const s=this.get();return s?(s.badge||'路人'):'路人';}
+};
+
+/* Users 现在由后端数据库管理 */
+
+/* ── NOTIFS（改用后端 API）── */
+const N = {
+  _cache: null,
+  async fetch() {
+    if (!S.isFan()) return;
+    try {
+      const data = await api('GET', '/api/notifications');
+      this._cache = data;
+      updateBellBadge();
+    } catch(e) {}
+  },
+  get() { return this._cache || []; },
+  unread() { return this.get().filter(n => !n.is_read).length; },
+  async markAll() {
+    try { await api('PUT', '/api/notifications/read'); this._cache = this.get().map(n=>({...n,is_read:true})); updateBellBadge(); } catch(e) {}
+  }
+};
+
+/* ── TOAST ── */
+function toast(m,d=3000){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),d);}
+
+/* ══════════════════════════════════════════════════════════════
+   API — 连接后端服务器
+   修改 API_BASE 为你部署后的后端地址
+   本地测试时：http://localhost:3000
+   部署到 Railway 后：https://你的项目名.railway.app
+══════════════════════════════════════════════════════════════ */
+const API_BASE = 'https://lumu-backend-production.up.railway.app'; // ← ★ 部署后改这里
+
+/* 封装 API 请求工具函数 */
+async function api(method, path, body) {
+  const token = S.token();
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+  };
+  if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+  if (body)  opts.body = JSON.stringify(body);
+  try {
+    const res = await fetch(API_BASE + path, opts);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '请求失败');
+    return data;
+  } catch (e) {
+    console.error('API Error:', method, path, e.message);
+    throw e;
+  }
+}
+
+/* ── DATA STORE (本地缓存 + 后端同步) ── */
+const DS = {
+  _cache: {},
+  get(k) {
+    const cached = this._cache[k];
+    return cached !== undefined ? cached : null;
+  },
+  set(k, v) {
+    this._cache[k] = v;
+  },
+  async loadAll() {
+    // 不再预加载全部，改为按页面按需加载
+    return;
+  }
+};
+
+/* ── INIT NAV ── */
+function initNav(){
+  // Fan-only NAV BUTTONS: locked (dimmed) for guests
+  document.querySelectorAll('.nl.fan-only').forEach(el=>{
+    if(!S.isFan()){el.classList.add('locked');}
+    else{el.classList.remove('locked');}
+  });
+  // Fan-only ACTION ITEMS (bell, dm button): hide for guests
+  document.querySelectorAll('.nav-acts .fan-only').forEach(el=>{
+    el.style.display = S.isFan() ? '' : 'none';
+  });
+  // Home fan cards: handled by card hover setup below
+  // Guest banner
+  if(S.isGuest()){
+    const gm=document.getElementById('home-guest-msg');
+    if(gm)gm.style.display='block';
+  }
+  document.getElementById('u-name').textContent = S.username();
+  const badge = S.badge();
+  const bdgEl = document.getElementById('u-badge');
+  bdgEl.textContent = badge;
+  bdgEl.classList.toggle('admin', S.isAdmin());
+  document.getElementById('u-av').textContent = S.isAdmin()?'★': S.isFan()?'●':'○';
+  // Bell icon text
+  const bell = document.getElementById('nav-bell');
+  if(bell) bell.childNodes[0].textContent = '◉ ';
+  // Guest chip
+  const chip = document.getElementById('guest-chip');
+  if(chip) chip.style.display = S.isGuest() ? 'inline-flex' : 'none';
+  updateBellBadge();
+}
+
+function updateBellBadge(){
+  if(!S.isFan())return;
+  const n=N.unread();
+  const b=document.getElementById('bell-badge');
+  b.textContent=n;
+  b.classList.toggle('hide',n===0);
+}
+
+/* ── PAGE ROUTER ── */
+let currentPage='home';
+function showPage(id){
+  if(['messages'].includes(id)&&!S.isFan()){
+    toast('🌸 请先登录才能访问此功能');
+    if(!S.get())setTimeout(()=>{window.location.href='lumu-index.html';},1500);
+    return;
+  }
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nl').forEach(b=>b.classList.remove('active'));
+  const pg=document.getElementById('page-'+id);
+  if(pg){pg.classList.add('active');}
+  document.querySelectorAll('.nl').forEach(b=>{
+    if(b.dataset.page===id) b.classList.add('active');
+  });
+  currentPage=id;
+  closeNotif();
+  // lazy render
+  if(id==='story'&&!storyInited)renderStory();
+  if(id==='timeline'&&!tlInited)renderTimeline();
+  if(id==='photos'&&!photosInited)renderPhotos();
+  if(id==='output'&&!outputInited)renderOutput();
+  if(id==='world'&&!worldInited)renderWorld();
+  if(id==='events'&&!eventsInited)renderEvents();
+  if(id==='messages'&&!dmInited)renderDM();
+}
+
+/* ── LOGOUT ── */
+function doLogout(){S.clear();toast('已退出橹穆国 🌙');setTimeout(()=>window.location.href='lumu-index.html',1200);}
+
+/* ── NOTIF ── */
+let notifOpen=false;
+function toggleNotif(){notifOpen=!notifOpen;document.getElementById('notif-drop').classList.toggle('open',notifOpen);if(notifOpen)renderNotifs();}
+function closeNotif(){notifOpen=false;document.getElementById('notif-drop').classList.remove('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('#notif-drop')&&!e.target.closest('#nav-bell'))closeNotif();});
+function renderNotifs(){
+  const list=N.get();
+  const el=document.getElementById('nd-list');
+  if(!list.length){el.innerHTML='<div class="nd-empty">暂无通知 ✦</div>';return;}
+  el.innerHTML=list.map(n=>`
+    <div class="nd-item ${n.is_read?'':'unread'}">
+      <div class="nd-dot ${n.is_read?'read':''}"></div>
+      <div style="flex:1"><div class="nd-msg">${n.message}</div><div class="nd-time">${fmtTime(n.created_at)}</div></div>
+    </div>
+  `).join('');
+}
+async function markAllRead(){await N.markAll();renderNotifs();}
+
+/* ── TIME FMT ── */
+function fmtTime(iso){
+  const d=new Date(iso),now=new Date();
+  const diff=now-d;
+  if(diff<60000)return'刚刚';
+  if(diff<3600000)return Math.floor(diff/60000)+'分钟前';
+  if(diff<86400000)return Math.floor(diff/3600000)+'小时前';
+  return d.toLocaleDateString('zh-CN');
+}
+
+/* ── MODAL ── */
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+/* ── COMMENT RENDER ── */
+/* ── 评论（全部改为 API）── */
+function renderComments(comments, containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  if (!comments || !comments.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--t3);letter-spacing:2px;padding:16px 0;">还没有评论，来留下第一条～</div>';
+    return;
+  }
+  el.innerHTML = comments.map(c => `
+    <div class="c-item">
+      <div class="cav">${c.username==='admin'?'👑':'💙'}</div>
+      <div style="flex:1">
+        <div class="c-meta">
+          <span class="c-user">${c.username}</span>
+          <span class="c-bdg">${c.badge||'访客'}</span>
+          <span class="c-time">${fmtTime(c.created_at)}</span>
+        </div>
+        <div class="c-body">${c.body}</div>
+        <div class="c-acts">
+          <span class="c-like" id="clike-${c.id}" onclick="likeComment(${c.id},this)">
+            🤍 ${c.likes||0}
+          </span>
+          ${S.isAdmin()?`<span class="c-del" onclick="delComment(${c.id},'${containerId}')">删除</span>`:''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+async function likeComment(commentId, el) {
+  if (!S.isFan()) { toast('登录后才能点赞'); return; }
+  try {
+    const r = await api('POST', '/api/likes/comment/' + commentId);
+    el.classList.toggle('liked', r.liked);
+    const cur = parseInt(el.textContent.replace(/\D/g,'')) || 0;
+    el.innerHTML = (r.liked ? '💗' : '🤍') + ' ' + (r.liked ? cur+1 : Math.max(0,cur-1));
+    el.classList.add('like-pop');
+    setTimeout(() => el.classList.remove('like-pop'), 300);
+  } catch(e) { toast('点赞失败'); }
+}
+async function delComment(commentId, containerId) {
+  if (!S.isAdmin()) return;
+  try {
+    await api('DELETE', '/api/comments/' + commentId);
+    toast('已删除评论');
+    const el = document.getElementById(containerId);
+    if (el) {
+      const item = document.getElementById('clike-' + commentId)?.closest('.c-item');
+      if (item) item.remove();
+    }
+  } catch(e) { toast('删除失败'); }
+}
+async function loadComments(type, targetId, containerId) {
+  try {
+    const comments = await api('GET', `/api/comments/${type}/${targetId}`);
+    renderComments(comments, containerId);
+  } catch(e) {
+    const el = document.getElementById(containerId);
+    if (el) el.innerHTML = '<div style="font-size:12px;color:var(--t3);padding:10px 0;">评论加载失败，请刷新重试</div>';
+  }
+}
+// type='story'|'timeline'|'photo'|'event'|'world', targetId = string id
+function commentInputHTML(type, targetId, containerId) {
+  if (!S.isFan()) {
+    return `<div style="padding:12px 0;font-size:11px;color:var(--t3);letter-spacing:2px;border-top:1px solid var(--border);margin-top:10px;">
+      <a href="lumu-index.html" style="color:var(--pink);text-decoration:underline;text-underline-offset:3px;">登录</a> 后才能留言评论
+    </div>`;
+  }
+  const key = type + '_' + targetId;
+  return `<div class="comment-input-row">
+    <div class="cav">${S.isAdmin()?'★':'●'}</div>
+    <div class="ci-wrap">
+      <textarea class="ci" id="ci-${key}" placeholder="留下你的想法..."></textarea>
+      <div class="ci-actions">
+        <div class="ci-emojis">
+          <span class="ci-emoji" onclick="addCiEmoji('${key}','💙')">💙</span>
+          <span class="ci-emoji" onclick="addCiEmoji('${key}','🌸')">🌸</span>
+          <span class="ci-emoji" onclick="addCiEmoji('${key}','✨')">✨</span>
+          <span class="ci-emoji" onclick="addCiEmoji('${key}','💗')">💗</span>
+        </div>
+        <button class="btn-p" style="padding:6px 16px;font-size:11px;"
+          onclick="submitComment('${type}','${targetId}','${containerId}')">发送</button>
+      </div>
+    </div>
+  </div>`;
+}
+function addCiEmoji(key, em) { const el = document.getElementById('ci-' + key); if (el) el.value += em; }
+async function submitComment(type, targetId, containerId) {
+  const key = type + '_' + targetId;
+  const el = document.getElementById('ci-' + key);
+  if (!el || !el.value.trim()) { toast('评论内容不能为空'); return; }
+  try {
+    await api('POST', `/api/comments/${type}/${targetId}`, { body: el.value.trim() });
+    el.value = '';
+    await loadComments(type, targetId, containerId);
+    toast('✨ 评论已发布');
+  } catch(e) { toast(e.message || '评论失败'); }
+}
+
+/* ═══════════════════════════════════════════════════
+   STORY DATA
+═══════════════════════════════════════════════════ */
+const CHAPTERS=[
+  {
+    num:1,title:'初 见',date:'2023.01',emoji:'🌱',
+    grad:'linear-gradient(135deg,rgba(168,212,245,.25),rgba(100,180,200,.15))',
+    content:`<p>一切从那场演出开始。</p>
+    <p>那年冬天，穆祉丞第一次踏上那个舞台，灯光还没完全亮起的时候，他就已经开始进入状态了。台下坐着的观众里，有一个人格外专注地看着他——那是王橹杰。</p>
+    <p>两个人在后台碰上了。王橹杰说：<span class="highlight">「你跳得很好，但有一个地方我觉得可以更自由一点。」</span></p>
+    <p>穆祉丞转过头，带着一点不服气，说：<span class="blue-text">「那你来示范一下？」</span></p>
+    <p>就是这样一个开始。没有什么戏剧性的相遇，没有刻意的安排，只是两个爱音乐的人，在一个小小的后台，开始了一段说不清楚从哪里算起的故事。</p>
+    <p>后来他们都记不太清那天具体说了什么，只记得聊到很晚，离开的时候外面已经飘起了雪。</p>`
+  },
+  {
+    num:2,title:'磨 合',date:'2023.04',emoji:'🌊',
+    grad:'linear-gradient(135deg,rgba(245,184,208,.2),rgba(212,150,180,.1))',
+    content:`<p>一起排练的日子并不总是那么甜蜜。</p>
+    <p>穆祉丞是个完美主义者，他可以为了一个动作的角度反复练上两个小时；王橹杰则更注重整体感觉，他觉得有时候太执着于细节反而会失去感染力。</p>
+    <p>有一次，两人因为一首歌的处理方式僵持了很久。穆祉丞坚持要按照原编曲来，王橹杰却想做一点即兴发挥。</p>
+    <p><span class="blue-text">「你总是这样，」</span>王橹杰说，<span class="blue-text">「太按规矩了，音乐不是做数学题。」</span></p>
+    <p><span class="highlight">「规矩是基础，」</span>穆祉丞回了一句，<span class="highlight">「没有基础的发挥只是乱来。」</span></p>
+    <p>那天他们谁都没有让步，各自回了家。但第二天，穆祉丞发来了一段改编后的录音——他把王橹杰想要的那种即兴融进了自己的版本里，听起来，出奇的好。</p>
+    <p>王橹杰听完，只发了一个字：<span class="blue-text">「服。」</span></p>`
+  },
+  {
+    num:3,title:'默 契',date:'2023.08',emoji:'✨',
+    grad:'linear-gradient(135deg,rgba(212,184,245,.2),rgba(180,150,230,.1))',
+    content:`<p>有些默契是悄悄长出来的，等你意识到的时候，已经根深蒂固。</p>
+    <p>他们开始能预判对方的下一个动作。在舞台上，穆祉丞走向左边，王橹杰就自然地补到右边；王橹杰的音准稍微游移了一点，穆祉丞的和声会不着痕迹地把他拉回来。</p>
+    <p>那年夏天，他们参加了一个联合演出。彩排的时候，导演说：<span class="blue-text">「你们两个……是配合最默契的。」</span></p>
+    <p>穆祉丞看了王橹杰一眼，没说话，但嘴角压着笑。</p>
+    <p>王橹杰低下头，假装在看歌词本，耳朵悄悄红了。</p>
+    <p>那个夏天有很多这样的瞬间。路过奶茶店，王橹杰还没开口，穆祉丞已经说：<span class="highlight">「你要五分糖对吧，不加冰。」</span></p>
+    <p>王橹杰愣了一下，然后说：<span class="blue-text">「你是不是偷看过我点单记录。」</span></p>
+    <p>穆祉丞只是笑，什么都没解释。</p>`
+  },
+  {
+    num:4,title:'风 波',date:'2024.01',emoji:'🌧',
+    grad:'linear-gradient(135deg,rgba(100,140,180,.2),rgba(80,100,160,.1))',
+    content:`<p>最难熬的日子，是在年初那段时间。</p>
+    <p>因为一些外部的舆论压力，他们被迫减少了公开合作。粉丝们开始焦虑，网上出现了很多猜测和不好的声音。穆祉丞看到那些评论，沉默了很久。</p>
+    <p>王橹杰发来消息：<span class="blue-text">「别看那些，你又不是不知道网上的人说话没有代价。」</span></p>
+    <p><span class="highlight">「我没事。」</span>穆祉丞回了三个字，然后关上了手机。</p>
+    <p>但当天深夜，王橹杰还是出现在了穆祉丞的楼下。带了两杯热咖啡，什么都没说，就站在那里。</p>
+    <p>穆祉丞下来，看见他，沉默了一会儿，说：<span class="highlight">「你是不是神经病。」</span></p>
+    <p><span class="blue-text">「可能是。」</span>王橹杰说，把其中一杯递过去，<span class="blue-text">「喝完了回去睡觉。」</span></p>
+    <p>那杯咖啡的温度，穆祉丞记了很久很久。</p>`
+  },
+  {
+    num:5,title:'重 回',date:'2024.06',emoji:'🌈',
+    grad:'linear-gradient(135deg,rgba(245,184,208,.25),rgba(168,212,245,.2))',
+    content:`<p>夏天回来了，他们也回来了。</p>
+    <p>六月的那场演出，是他们时隔半年的公开合作。台下的粉丝举着荧光棒，有人哭了，有人拼命鼓掌，有人把这一切都录下来，反复看了不知道多少遍。</p>
+    <p>他们走上台的时候，穆祉丞悄悄说了一句：<span class="highlight">「好久不见。」</span></p>
+    <p>王橹杰以为他在跟台下的粉丝说话，但他感觉得到，那句话，是说给他听的。</p>
+    <p>演出结束，后台灯光昏黄，两个人靠在墙上，耳朵里还是台下的掌声。</p>
+    <p><span class="blue-text">「还会有风波，」</span>王橹杰说，<span class="blue-text">「但我不怕了。」</span></p>
+    <p>穆祉丞看着天花板，过了一会儿，说：<span class="highlight">「我也是。」</span></p>
+    <p>那个夏天，橹穆国的粉丝们说：我们等到了。</p>
+    <p>而更多的人，在那一天，成了橹穆的粉丝。</p>`
+  }
+];
+let storyInited=false;
+let currentChapter=0;
+/* getAllChapters removed — 章节现在直接从 API 获取 */
+async function renderStory(){
+  storyInited=true;
+  if(S.isAdmin())document.getElementById('admin-story-btn').style.display='block';
+  // 从后端获取章节（内置章节 + 管理员添加的章节）
+  let apiChapters=[];
+  try{ apiChapters = await api('GET','/api/chapters'); }catch(e){}
+  const allCh=[...CHAPTERS,...apiChapters.map((c,i)=>({
+    num:CHAPTERS.length+i+1, title:c.title, date:c.date_label, emoji:c.emoji,
+    grad:c.gradient, content:c.content, _api:true, _id:c.id
+  }))];
+  const nums=['一','二','三','四','五','六','七','八','九','十','十一','十二','十三','十四','十五'];
+  const toc=document.getElementById('toc-list');
+  const chapters=document.getElementById('story-chapters');
+  toc.innerHTML=allCh.map((c,i)=>`
+    <div class="toc-item ${i===0?'active':''}" onclick="switchChapter(${i})">
+      <div class="toc-num">${c.num}</div>
+      <div class="toc-text">第${nums[i]||i+1}章 · ${c.title}</div>
+    </div>`).join('');
+  chapters.innerHTML=allCh.map((c,i)=>{
+    return`<div class="story-chapter ${i===0?'active':''}" id="chapter-${i}">
+      <div class="chapter-head">
+        <div class="chapter-num">第${nums[i]||i+1}章</div>
+        <div class="chapter-title">${c.title}</div>
+        <div class="chapter-meta">${c.date||''} · 橹穆故事</div>
+        ${c._api&&S.isAdmin()?`<button class="btn-sm" style="margin-top:8px;color:#ff8aaa;border-color:rgba(255,100,130,.3);" onclick="delChapter(${c._id})">🗑 删除此章节</button>`:''}
+      </div>
+      <div class="chapter-banner" style="background:${c.grad||'linear-gradient(135deg,rgba(168,212,245,.2),rgba(245,184,208,.15))'};">${c.emoji||'✨'}</div>
+      <div class="chapter-body">${c.content}</div>
+      <div class="story-comments">
+        <div class="sc-toggle" onclick="toggleStoryComments(${i},'story','${i}')">
+          <span class="sc-toggle-txt">💬 评论区</span>
+          <span class="sc-toggle-icon">▼</span>
+        </div>
+        <div class="sc-list" id="sc-list-${i}">
+          <div id="sc-comments-${i}"></div>
+          ${commentInputHTML('story',''+i,'sc-comments-'+i)}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function submitAddChapter(){
+  const title=document.getElementById('ch-title').value.trim();
+  const date_label=document.getElementById('ch-date').value.trim();
+  const emoji=document.getElementById('ch-emoji').value.trim()||'✨';
+  const gradient=document.getElementById('ch-grad').value;
+  const rawContent=document.getElementById('ch-content').value.trim();
+  const err=document.getElementById('ch-err');
+  if(!title||!rawContent){err.textContent='请填写标题和内容';return;}
+  const content=rawContent.split(/\n\n+/).map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+  try{
+    await api('POST','/api/chapters',{title,date_label,emoji,gradient,content,chapter_num:999});
+    closeModal('modal-add-chapter');
+    ['ch-title','ch-date','ch-emoji','ch-content'].forEach(id=>document.getElementById(id).value='');
+    err.textContent='';
+    storyInited=false;
+    renderStory();
+    toast('✨ 章节已添加');
+  }catch(e){err.textContent=e.message||'添加失败';}
+}
+async function delChapter(id){
+  if(!S.isAdmin())return;
+  try{
+    await api('DELETE','/api/chapters/'+id);
+    storyInited=false;
+    renderStory();
+    toast('章节已删除');
+  }catch(e){toast('删除失败');}
+}
+function switchChapter(i){
+  document.querySelectorAll('.toc-item').forEach((t,j)=>t.classList.toggle('active',j===i));
+  document.querySelectorAll('.story-chapter').forEach((c,j)=>c.classList.toggle('active',j===i));
+  currentChapter=i;
+}
+function toggleStoryComments(i, type, targetId) {
+  const toggle = document.querySelector(`#chapter-${i} .sc-toggle`);
+  const list = document.getElementById('sc-list-' + i);
+  const wasOpen = list.classList.contains('open');
+  toggle.classList.toggle('open');
+  list.classList.toggle('open');
+  // Load comments on first open
+  if (!wasOpen && !list.dataset.loaded) {
+    list.dataset.loaded = '1';
+    loadComments('story', '' + i, 'sc-comments-' + i);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   TIMELINE DATA
+═══════════════════════════════════════════════════ */
+const TL_EVENTS=[
+  {id:'e1',date:'2023-01-15',title:'初次相遇',desc:'在那场冬日演出的后台，两人第一次正式交谈。',emoji:'🌱',color:'pink',big:true},
+  {id:'e2',date:'2023-04-02',title:'第一次合作演出',desc:'穆祉丞与王橹杰第一次作为搭档共同出现在舞台上，粉丝反响热烈。',emoji:'🎤',color:'blue',big:true},
+  {id:'e3',date:'2023-06-18',title:'联合排练拍摄花絮流出',desc:'排练花絮意外流出，两人的默契瞬间引发大量关注。',emoji:'🎬',color:'pink'},
+  {id:'e4',date:'2023-08-05',title:'夏日联合演出',desc:'夏日演出，穆祉丞提前为王橹杰准备了他最爱喝的饮料，被后援会拍到。',emoji:'✨',color:'blue',big:true},
+  {id:'e5',date:'2023-10-24',title:'橹杰生日快乐',desc:'穆祉丞在直播中突然唱了一段生日快乐，大家都知道是为谁。',emoji:'🎂',color:'pink'},
+  {id:'e6',date:'2023-12-31',title:'跨年夜同框',desc:'跨年夜，两人同时出现在同一活动，留下了本年度最甜蜜同框。',emoji:'🎆',color:'blue',big:true},
+  {id:'e7',date:'2024-01-10',title:'风波时期开始',desc:'外部舆论压力使两人公开合作减少，粉丝们守候着。',emoji:'🌧',color:'pink'},
+  {id:'e8',date:'2024-03-20',title:'穆祉丞生日',desc:'王橹杰在社媒发文，虽然只是普通祝福，但粉丝们都读懂了字里行间。',emoji:'🌸',color:'blue'},
+  {id:'e9',date:'2024-06-08',title:'重归同框',desc:'时隔半年，两人终于在夏日演出重新同台，台下粉丝泪目。',emoji:'🌈',color:'pink',big:true},
+  {id:'e10',date:'2024-09-15',title:'橹穆国成立',desc:'粉丝们自发创立橹穆国，成为两人最大的联合应援站。',emoji:'🏳️',color:'blue',big:true},
+];
+const SPECIAL_DATES=TL_EVENTS.map(e=>e.date);
+let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
+let tlInited=false;
+let _tlApiEvents=[];  // cached from API
+function getAllTLEvents(){
+  const all=[...TL_EVENTS,..._tlApiEvents.map(e=>({
+    id:e.event_key,date:e.date,title:e.title,desc:e.description,
+    emoji:e.emoji||'✦',color:e.color||'pink',big:e.is_big,
+    _api:true,_dbId:e.id
+  }))];
+  return all.sort((a,b)=>a.date.localeCompare(b.date));
+}
+async function renderTimeline(){
+  tlInited=true;
+  if(S.isAdmin())document.getElementById('admin-tl-btn').style.display='block';
+  // Load API timeline events first
+  try{ _tlApiEvents = await api('GET','/api/timeline'); }catch(e){ _tlApiEvents=[]; }
+  renderCalendar();
+  renderSpecialList();
+  renderTLEvents();
+}
+async function submitAddTLDate(){
+  const date=document.getElementById('tl-date-input').value;
+  const title=document.getElementById('tl-title-input').value.trim();
+  const description=document.getElementById('tl-desc-input').value.trim();
+  const emoji=document.getElementById('tl-emoji-input').value.trim()||'✦';
+  const color=document.getElementById('tl-color-input').value;
+  const is_big=document.getElementById('tl-big-input').checked;
+  const err=document.getElementById('tl-err');
+  if(!date||!title){err.textContent='日期和标题不能为空';return;}
+  try{
+    await api('POST','/api/timeline',{date,title,description,emoji,color,is_big});
+    closeModal('modal-add-tldate');
+    ['tl-date-input','tl-title-input','tl-desc-input','tl-emoji-input'].forEach(id=>document.getElementById(id).value='');
+    err.textContent='';
+    tlInited=false;
+    renderTimeline();
+    toast('✨ 日期已添加');
+  }catch(e){err.textContent=e.message||'添加失败';}
+}
+
+/* ═══════════════════════════════════════════════════
+   PHOTOS
+═══════════════════════════════════════════════════ */
+let photosInited=false, currentPhotoFilter='all';
+async function renderPhotos(){
+  photosInited=true;
+  if(S.isAdmin()) document.getElementById('admin-photo-area').style.display='block';
+  await filterPhotos('all', null);
+}
+async function filterPhotos(cat, btn){
+  currentPhotoFilter = cat;
+  document.querySelectorAll('.pf-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const grid = document.getElementById('photo-grid');
+  grid.innerHTML = '<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:20px;">加载中...</div>';
+  try{
+    const url = (cat==='all') ? '/api/photos' : `/api/photos?category=${cat}`;
+    const apiPhotos = await api('GET', url);
+    // merge built-in seed + API photos
+    const seedFiltered = cat==='all' ? PHOTOS_DATA : PHOTOS_DATA.filter(p=>p.cat===cat);
+    const all = [...seedFiltered, ...apiPhotos.map(p=>({
+      id: 'api_'+p.id, cap: p.caption, url: p.url, emoji: p.emoji||'🌸',
+      author: p.author_name, platform: p.platform, cat: p.category,
+      h: p.height_px||200,
+      grad: p.gradient||'linear-gradient(135deg,rgba(168,212,245,.2),rgba(245,184,208,.15))',
+      _api: true, _dbId: p.id
+    }))];
+    if(!all.length){
+      grid.innerHTML='<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:40px 0;text-align:center;">暂无内容 ✦</div>';
+      return;
+    }
+    grid.innerHTML = all.map(p=>`
+      <div class="photo-item" style="--ph:${p.h||200}px;">
+        ${p.url
+          ? `<img src="${p.url}" style="width:100%;height:${p.h||200}px;object-fit:cover;display:block;"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+             <div class="photo-thumb" style="display:none;background:${p.grad};">${p.emoji||'🌸'}</div>`
+          : `<div class="photo-thumb" style="background:${p.grad||'linear-gradient(135deg,rgba(168,212,245,.2),rgba(245,184,208,.15))'}">${p.emoji||'🌸'}</div>`
+        }
+        <div class="photo-info">
+          <div class="photo-author">${p.author||''} · ${p.platform||''}</div>
+          <div class="photo-caption">${p.cap||''}</div>
+        </div>
+        <div class="photo-actions">
+          <span class="pa-like" id="pl-${p.id}" onclick="likePhoto('${p.id}',this)">🤍 赞</span>
+          ${p._api&&S.isAdmin()?`<span class="c-del" style="margin-left:auto;" onclick="deletePhoto(${p._dbId})">删除</span>`:''}
+        </div>
+      </div>`).join('');
+  }catch(e){
+    grid.innerHTML='<div style="color:#ff8aaa;font-size:12px;letter-spacing:2px;padding:20px;">加载失败，请检查后端连接</div>';
+  }
+}
+async function likePhoto(id, el){
+  if(!S.isFan()){toast('登录后才能点赞');return;}
+  try{
+    const r = await api('POST', `/api/likes/photo/${id}`);
+    el.classList.toggle('liked', r.liked);
+    el.innerHTML = r.liked ? '💗 已赞' : '🤍 赞';
+  }catch(e){ toast('点赞失败'); }
+}
+async function deletePhoto(dbId){
+  if(!S.isAdmin()) return;
+  try{
+    await api('DELETE', '/api/photos/'+dbId);
+    toast('已删除');
+    await filterPhotos(currentPhotoFilter, null);
+  }catch(e){ toast('删除失败'); }
+}
+async function submitAddPhoto(){
+  const caption     = document.getElementById('ph-caption').value.trim();
+  const url         = document.getElementById('ph-url').value.trim();
+  const emoji       = document.getElementById('ph-emoji').value.trim()||'🌸';
+  const author_name = document.getElementById('ph-author').value.trim();
+  const platform    = document.getElementById('ph-platform').value;
+  const category    = document.getElementById('ph-cat').value;
+  const err         = document.getElementById('ph-err');
+  if(!caption){ err.textContent='说明不能为空'; return; }
+  try{
+    await api('POST','/api/photos',{caption, url:url||null, emoji, author_name, platform, category});
+    closeModal('modal-add-photo');
+    ['ph-caption','ph-url','ph-emoji','ph-author'].forEach(id=>document.getElementById(id).value='');
+    err.textContent='';
+    photosInited=false;
+    renderPhotos();
+    toast('✨ 照片已添加');
+  }catch(e){ err.textContent=e.message||'添加失败'; }
+}
+
+/* ═══════════════════════════════════════════════════
+   OUTPUT ZONE 产量专区
+═══════════════════════════════════════════════════ */
+let outputInited=false, currentOutputType='video';
+async function renderOutput(){
+  outputInited=true;
+  if(S.isAdmin()) document.getElementById('admin-upload-area').style.display='block';
+  await switchOutput('video', document.querySelector('.ot-btn'));
+}
+async function switchOutput(type, btn){
+  currentOutputType = type;
+  document.querySelectorAll('.ot-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const grid = document.getElementById('output-grid');
+  grid.innerHTML = '<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:20px;">加载中...</div>';
+  const typeLabel = {video:'🎬 视频', article:'📝 文章', material:'🗂 物料'};
+  const typeColor = {video:'rgba(168,212,245,.3)', article:'rgba(212,184,245,.3)', material:'rgba(245,184,208,.3)'};
+  const seedItems = OUTPUT_SEED.filter(o=>o.type===type);
+  let apiItems = [];
+  try{ apiItems = await api('GET', `/api/media?type=${type}`); }catch(e){}
+  const all = [...seedItems, ...apiItems.map(o=>({
+    type:o.type, title:o.title, url:o.url,
+    cover:o.emoji||'🎬',
+    color:o.gradient||typeColor[o.type]||'rgba(168,212,245,.2)',
+    author:o.author_name||'', platform:o.platform||'',
+    date:new Date(o.created_at).toLocaleDateString('zh-CN'),
+    _api:true, _dbId:o.id
+  }))];
+  if(!all.length){
+    grid.innerHTML='<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:30px 0;">暂无内容</div>';
+    return;
+  }
+  grid.innerHTML = all.map(o=>`
+    <div class="output-card" onclick="window.open('${o.url}','_blank')">
+      <div class="oc-thumb" style="background:${o.color}">
+        <span style="font-size:50px;">${o.cover}</span>
+        <div class="oc-overlay">🔗</div>
+        <div class="oc-type-badge" style="background:${typeColor[o.type]};color:var(--t1);">${typeLabel[o.type]}</div>
+      </div>
+      <div class="oc-body">
+        <div class="oc-title">${o.title}</div>
+        <div class="oc-meta">由 ${o.author}${o.platform?' · '+o.platform:''} · ${o.date||''}</div>
+        <div class="oc-link">🔗 点击跳转</div>
+        ${o._api&&S.isAdmin()?`<div style="margin-top:8px;"><button class="btn-sm" style="color:#ff8aaa;border-color:rgba(255,100,130,.3);" onclick="event.stopPropagation();delOutput(${o._dbId})">删除</button></div>`:''}
+      </div>
+    </div>`).join('');
+}
+function openUploadModal(){ if(S.isAdmin()) openModal('modal-upload'); }
+async function submitUpload(){
+  const title       = document.getElementById('up-title').value.trim();
+  const type        = document.getElementById('up-type').value;
+  const url         = document.getElementById('up-url').value.trim();
+  const author_name = document.getElementById('up-author').value.trim()||'管理员';
+  const platform    = document.getElementById('up-platform').value;
+  const emoji       = document.getElementById('up-cover').value||'🎬';
+  const gradient    = document.getElementById('up-color').value;
+  const err         = document.getElementById('up-err');
+  if(!title||!url){ err.textContent='请填写标题和链接'; return; }
+  try{
+    await api('POST','/api/media',{type,title,url,author_name,platform,emoji,gradient});
+    closeModal('modal-upload');
+    ['up-title','up-url','up-cover','up-author'].forEach(id=>document.getElementById(id).value='');
+    err.textContent='';
+    await switchOutput(type, null);
+    toast('✨ 上传成功');
+  }catch(e){ err.textContent=e.message||'上传失败'; }
+}
+async function delOutput(dbId){
+  if(!S.isAdmin()) return;
+  try{
+    await api('DELETE','/api/media/'+dbId);
+    await switchOutput(currentOutputType, null);
+    toast('已删除');
+  }catch(e){ toast('删除失败'); }
+}
+
+/* ═══════════════════════════════════════════════════
+   WORLD 橹穆世界
+═══════════════════════════════════════════════════ */
+const WORLD_CONFIG={
+  lumu:   {title:'橹穆同人',    emoji:'💙'},
+  quanen: {title:'青梅果广场',  emoji:'🌸'},
+  jiec:   {title:'橹杰&祉丞',   emoji:'✨'},
+  tunman: {title:'日常碎碎念',  emoji:'🌙'}
+};
+let worldInited=false, currentWorld='lumu', postModalWorld='lumu';
+function renderWorld(){
+  worldInited=true;
+  switchWorld('lumu', document.querySelector('.wt-btn'));
+}
+async function switchWorld(w, btn){
+  currentWorld = w;
+  document.querySelectorAll('.wt-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.querySelectorAll('.world-section').forEach(s=>s.classList.remove('active'));
+  const sec = document.getElementById('world-'+w);
+  if(sec) sec.classList.add('active');
+  // Load posts from API
+  let apiPosts = [];
+  try{ apiPosts = await api('GET', '/api/world/'+w); }catch(e){}
+  const seedPosts = WORLD_SEED[w]||[];
+  const all = [
+    ...seedPosts,
+    ...apiPosts.map(p=>({
+      id:p.post_key, username:p.username, badge:p.badge,
+      time:p.created_at, body:p.body, likes:p.likes||0,
+      _api:true, _dbId:p.id
+    }))
+  ];
+  const postList = document.getElementById('world-posts-'+w);
+  if(!postList) return;
+  if(!all.length){
+    postList.innerHTML='<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:20px 0;">还没有帖子，来发第一条吧～</div>';
+    return;
+  }
+  postList.innerHTML = all.map(p=>renderWorldPost(p,w)).join('');
+}
+function renderWorldPost(p, w){
+  const av = p.username==='admin'?'👑':'💙';
+  return`<div class="wp-card" id="wp-${p.id}">
+    <div class="wp-header">
+      <div class="wp-av">${av}</div>
+      <div>
+        <span class="wp-user">${p.username}</span>
+        <span class="wp-badge">${p.badge||'访客'}</span>
+      </div>
+      <span class="wp-time">${fmtTime(p.time)}</span>
+    </div>
+    <div class="wp-body">${p.body}</div>
+    <div class="wp-actions">
+      <span class="wp-act" id="wpl-${p.id}" onclick="likeWorldPost('${p.id}',this)">🤍 ${p.likes||0}</span>
+      ${S.isAdmin()&&p._api?`<span class="wp-act" style="color:var(--t3);" onclick="deleteWorldPost(${p._dbId},'${w}')">🗑 删除</span>`:''}
+    </div>
+  </div>`;
+}
+async function likeWorldPost(postId, el){
+  if(!S.isFan()){toast('登录后才能点赞');return;}
+  try{
+    const r = await api('POST', `/api/likes/world_post/${postId}`);
+    const cur = parseInt(el.textContent.replace(/\D/g,''))||0;
+    el.innerHTML = (r.liked?'💗':'🤍')+' '+(r.liked?cur+1:Math.max(0,cur-1));
+    el.classList.toggle('liked', r.liked);
+  }catch(e){ toast('点赞失败'); }
+}
+async function deleteWorldPost(dbId, w){
+  if(!S.isAdmin()) return;
+  try{
+    await api('DELETE', '/api/world/post/'+dbId);
+    toast('已删除');
+    switchWorld(w, null);
+  }catch(e){ toast('删除失败'); }
+}
+function openPostModal(w){
+  postModalWorld = w;
+  const cfg = WORLD_CONFIG[w];
+  document.getElementById('post-modal-sub').textContent = cfg?cfg.title:'橹穆世界';
+  openModal('modal-post');
+}
+function insertEmoji(em){
+  const el = document.getElementById('post-content');
+  if(el) el.value += em;
+}
+async function submitPost(){
+  if(!S.isFan()){toast('请先登录');closeModal('modal-post');return;}
+  const body = document.getElementById('post-content').value.trim();
+  if(!body){document.getElementById('post-err').textContent='内容不能为空';return;}
+  try{
+    await api('POST', '/api/world/'+postModalWorld, {body});
+    document.getElementById('post-content').value='';
+    closeModal('modal-post');
+    if(currentPage==='world') switchWorld(postModalWorld, null);
+    toast('✨ 发布成功');
+  }catch(e){ document.getElementById('post-err').textContent=e.message||'发布失败'; }
+}
+
+/* ═══════════════════════════════════════════════════
+   EVENTS 橹穆大事件
+═══════════════════════════════════════════════════ */
+let eventsInited=false;
+async function renderEvents(){
+  eventsInited=true;
+  if(S.isAdmin()) document.getElementById('admin-event-area').style.display='block';
+  const el = document.getElementById('events-list');
+  el.innerHTML='<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:20px;">加载中...</div>';
+  let apiEvents = [];
+  try{ apiEvents = await api('GET','/api/events'); }catch(e){}
+  const all = [
+    ...EVENTS_SEED,
+    ...apiEvents.map(ev=>({
+      id:ev.event_key, title:ev.title, content:ev.content,
+      date:ev.date_label||new Date(ev.created_at).toLocaleDateString('zh-CN'),
+      admin:ev.admin||'管理员', _api:true, _dbId:ev.id
+    }))
+  ];
+  el.innerHTML = all.map(ev=>`
+    <div class="ev-card">
+      <div class="ev-top-bar"></div>
+      <div class="ev-body">
+        <div class="ev-type-tag">📣 官方公告</div>
+        <div class="ev-title">${ev.title}</div>
+        <div class="ev-content" style="white-space:pre-line;">${ev.content}</div>
+        <div class="ev-footer">
+          <span class="ev-date">📅 ${ev.date}</span>
+          <span class="ev-sig">— ${ev.admin}</span>
+          ${ev._api&&S.isAdmin()?`<button class="btn-sm" style="color:#ff8aaa;border-color:rgba(255,100,130,.3);margin-left:auto;" onclick="delEvent(${ev._dbId})">删除</button>`:''}
+        </div>
+      </div>
+      <div class="ev-comments">
+        <div style="font-size:11px;letter-spacing:2px;color:var(--t3);margin-bottom:10px;">💬 评论</div>
+        <div id="ev-cmts-${ev.id}"></div>
+        ${commentInputHTML('event', ev.id, 'ev-cmts-'+ev.id)}
+      </div>
+    </div>`).join('');
+  all.forEach(ev => loadComments('event', ev.id, 'ev-cmts-'+ev.id));
+}
+async function delEvent(dbId){
+  if(!S.isAdmin()) return;
+  try{ await api('DELETE','/api/events/'+dbId); eventsInited=false; renderEvents(); toast('已删除'); }
+  catch(e){ toast('删除失败'); }
+}
+async function publishEvent(){
+  if(!S.isAdmin()) return;
+  const title   = document.getElementById('ev-title-input').value.trim();
+  const content = document.getElementById('ev-content-input').value.trim();
+  if(!title||!content){toast('请填写标题和内容');return;}
+  try{
+    await api('POST','/api/events',{title,content});
+    document.getElementById('ev-title-input').value='';
+    document.getElementById('ev-content-input').value='';
+    eventsInited=false;
+    renderEvents();
+    toast('✨ 公告已发布，已通知全体粉丝');
+  }catch(e){ toast(e.message||'发布失败'); }
+}
+
+/* ═══════════════════════════════════════════════════
+   DM 私信
+═══════════════════════════════════════════════════ */
+let dmInited=false, currentThread=null;
+async function renderDM(){
+  dmInited=true;
+  if(!S.isFan()){
+    document.getElementById('dm-chat-col').innerHTML='<div class="locked-msg">💌 <a href="lumu-index.html">登录后</a> 才能使用私信功能</div>';
+    document.getElementById('dm-thread-list').innerHTML='<div class="locked-msg">请先登录</div>';
+    return;
+  }
+  const el = document.getElementById('dm-thread-list');
+  el.innerHTML='<div style="color:var(--t3);font-size:12px;padding:16px;">加载中...</div>';
+  try{
+    const threads = await api('GET','/api/messages/threads');
+    if(!threads.length){
+      el.innerHTML='<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:20px;">暂无私信 · 向管理员发消息打个招呼吧 ✦</div>';
+      // Show button to message admin
+      el.innerHTML += `<button class="btn-g" style="width:100%;margin-top:8px;" onclick="openDMThread('admin')">💌 联系管理员</button>`;
+      return;
+    }
+    el.innerHTML = threads.map(t=>`
+      <div class="dm-thread" id="dmt-${t.other_user}" onclick="openDMThread('${t.other_user}')">
+        <div class="dt-av">💙</div>
+        <div class="dt-info">
+          <div class="dt-name">${t.other_user}</div>
+          <div class="dt-preview">${t.last_message||''}</div>
+        </div>
+        <div class="dt-badge ${t.unread?'':'read'}" id="dtb-${t.other_user}"></div>
+      </div>`).join('');
+  }catch(e){
+    el.innerHTML='<div style="color:#ff8aaa;font-size:12px;padding:16px;">加载失败</div>';
+  }
+}
+async function openDMThread(otherId){
+  currentThread = otherId;
+  document.querySelectorAll('.dm-thread').forEach(t=>t.classList.remove('active'));
+  const tEl = document.getElementById('dmt-'+otherId);
+  if(tEl) tEl.classList.add('active');
+  const badge = document.getElementById('dtb-'+otherId);
+  if(badge) badge.classList.add('read');
+  const chatCol = document.getElementById('dm-chat-col');
+  chatCol.innerHTML=`
+    <div class="chat-header">
+      <div class="ch-av">💙</div>
+      <div>
+        <div class="ch-name">${otherId}</div>
+        <div class="ch-status">橹穆国成员</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="chat-msgs-${otherId}"></div>
+    <div class="chat-input-area">
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="chat-input" placeholder="发一条消息..." rows="2"></textarea>
+        <button class="chat-send" onclick="sendDM('${otherId}')">➤</button>
+      </div>
+    </div>`;
+  try{
+    const msgs = await api('GET','/api/messages/'+otherId);
+    renderDMMessages(otherId, msgs);
+  }catch(e){ renderDMMessages(otherId, []); }
+  const inp = document.getElementById('chat-input');
+  if(inp) inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendDM(otherId);}
+  });
+}
+function renderDMMessages(otherId, msgs){
+  const el = document.getElementById('chat-msgs-'+otherId);
+  if(!el) return;
+  if(!msgs.length){
+    el.innerHTML='<div style="text-align:center;font-size:11px;color:var(--t3);padding:8px 0;">👋 开始聊天吧！</div>';
+    return;
+  }
+  el.innerHTML = msgs.map(m=>{
+    const isMe = m.from_user===S.username();
+    return`<div class="chat-msg ${isMe?'mine':''}">
+      <div class="cm-av">${isMe?(S.isAdmin()?'👑':'🌸'):'💙'}</div>
+      <div>
+        <div class="cm-bubble">${m.body}</div>
+        <div class="cm-time">${fmtTime(m.created_at)}</div>
+      </div>
+    </div>`;
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+async function sendDM(toId){
+  const input = document.getElementById('chat-input');
+  if(!input||!input.value.trim()) return;
+  const body = input.value.trim();
+  input.value = '';
+  try{
+    await api('POST','/api/messages/'+toId,{body});
+    const msgs = await api('GET','/api/messages/'+toId);
+    renderDMMessages(toId, msgs);
+  }catch(e){ toast('发送失败'); }
+}
+
+/* ═══════════════════════════════════════════════════
+   HOME CARD HOVER
+═══════════════════════════════════════════════════ */
+document.querySelectorAll('.hnc').forEach(c=>{
+  if(c.classList.contains('home-fan-card')&&!S.isFan()){
+    c.style.opacity='.38'; c.style.cursor='not-allowed';
+    c.onclick=()=>toast('🌸 该功能需要登录才能使用');
+    return;
+  }
+  c.addEventListener('mouseenter',()=>{c.style.transform='translateY(-5px)';c.style.boxShadow='0 14px 36px rgba(0,0,0,.28)';});
+  c.addEventListener('mouseleave',()=>{c.style.transform='';c.style.boxShadow='';});
+});
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+(async function(){
+  const sess = S.get();
+  if(!sess||!sess.role){
+    window.location.replace('lumu-index.html');
+    return;
+  }
+  initNav();
+  if(S.isFan()){ N.fetch().catch(()=>{}); }
+  if(S.isGuest()){
+    const gm = document.getElementById('home-guest-msg');
+    if(gm) gm.style.display='block';
+  }
+})();
+</script>
+</body>
+</html>
