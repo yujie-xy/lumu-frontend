@@ -1397,6 +1397,7 @@ function commentInputHTML(type, targetId, containerId) {
 }
 function addCiEmoji(key, em) { const el = document.getElementById('ci-' + key); if (el) el.value += em; }
 async function submitComment(type, targetId, containerId) {
+  if(!S.isFan()){toast('🌸 请先登录后才能评论');return;}
   const key = type + '_' + targetId;
   const el = document.getElementById('ci-' + key);
   if (!el || !el.value.trim()) { toast('评论内容不能为空'); return; }
@@ -1516,6 +1517,7 @@ async function renderStory(){
   }).join('');
 }
 async function submitAddChapter(){
+  if(!S.isAdmin()){toast("⚠️ 仅管理员可操作");return;}
   const title=document.getElementById('ch-title').value.trim();
   const date_label=document.getElementById('ch-date').value.trim();
   const emoji=document.getElementById('ch-emoji').value.trim()||'✨';
@@ -1732,6 +1734,7 @@ async function renderTimeline(){
   renderTLEvents();
 }
 async function submitAddTLDate(){
+  if(!S.isAdmin()){toast("⚠️ 仅管理员可操作");return;}
   const date=document.getElementById('tl-date-input').value;
   const title=document.getElementById('tl-title-input').value.trim();
   const description=document.getElementById('tl-desc-input').value.trim();
@@ -1820,6 +1823,7 @@ async function deletePhoto(dbId){
   }catch(e){ toast('删除失败'); }
 }
 async function submitAddPhoto(){
+  if(!S.isAdmin()){toast("⚠️ 仅管理员可操作");return;}
   const caption     = document.getElementById('ph-caption').value.trim();
   const url         = document.getElementById('ph-url').value.trim();
   const emoji       = document.getElementById('ph-emoji').value.trim()||'🌸';
@@ -1888,6 +1892,7 @@ async function switchOutput(type, btn){
 }
 function openUploadModal(){ if(S.isAdmin()) openModal('modal-upload'); }
 async function submitUpload(){
+  if(!S.isAdmin()){toast("⚠️ 仅管理员可操作");return;}
   const title       = document.getElementById('up-title').value.trim();
   const type        = document.getElementById('up-type').value;
   const url         = document.getElementById('up-url').value.trim();
@@ -2160,6 +2165,7 @@ function renderDMMessages(otherId, msgs){
   el.scrollTop = el.scrollHeight;
 }
 async function sendDM(toId){
+  if(!S.isFan()){toast("🌸 请先登录后才能发消息");return;}
   const input = document.getElementById('chat-input');
   if(!input||!input.value.trim()) return;
   const body = input.value.trim();
