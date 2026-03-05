@@ -1169,7 +1169,7 @@ function toast(m,d=3000){const t=document.getElementById('toast');t.textContent=
    本地测试时：http://localhost:3000
    部署到 Railway 后：https://你的项目名.railway.app
 ══════════════════════════════════════════════════════════════ */
-const API_BASE = 'https://lumu-backend-production.up.railway.app'; // ← ★ 部署后改这里
+const API_BASE = 'https://你的后端地址.railway.app'; // ← ★ 部署后改这里
 
 /* 封装 API 请求工具函数 */
 async function api(method, path, body) {
@@ -1588,6 +1588,140 @@ function getAllTLEvents(){
   }))];
   return all.sort((a,b)=>a.date.localeCompare(b.date));
 }
+/* ═══════════════════════════════════════════════════
+   PHOTOS SEED DATA
+═══════════════════════════════════════════════════ */
+const PHOTOS_DATA=[
+  {id:1,cat:'lumu',emoji:'🌸',grad:'linear-gradient(135deg,rgba(245,184,208,.25),rgba(168,212,245,.2))',h:220,caption:'后台合照',author:'橹穆后援会',platform:'微博'},
+  {id:2,cat:'wlj', emoji:'🎤',grad:'linear-gradient(135deg,rgba(168,212,245,.25),rgba(90,159,212,.15))',h:180,caption:'王橹杰演出现场',author:'lujiefan',platform:'微博'},
+  {id:3,cat:'mzc', emoji:'🕺',grad:'linear-gradient(135deg,rgba(245,184,208,.2),rgba(232,122,171,.12))',h:260,caption:'穆祉丞练习室',author:'mzc_fan',platform:'微博'},
+  {id:4,cat:'lumu',emoji:'✨',grad:'linear-gradient(135deg,rgba(212,184,245,.2),rgba(160,100,240,.1))',h:200,caption:'跨年同框',author:'yumeifan🌸',platform:'微博'},
+  {id:5,cat:'fan', emoji:'🎨',grad:'linear-gradient(135deg,rgba(168,212,245,.2),rgba(212,184,245,.15))',h:170,caption:'粉丝手绘',author:'drawfan',platform:'lofter'},
+  {id:6,cat:'lumu',emoji:'💙',grad:'linear-gradient(135deg,rgba(100,180,245,.2),rgba(168,212,245,.15))',h:230,caption:'夏日演出合照',author:'橹穆CP站',platform:'微博'},
+  {id:7,cat:'wlj', emoji:'🌙',grad:'linear-gradient(135deg,rgba(168,212,245,.15),rgba(100,140,200,.1))',h:190,caption:'王橹杰夜间直播',author:'lujiefan',platform:'抖音'},
+  {id:8,cat:'mzc', emoji:'🌺',grad:'linear-gradient(135deg,rgba(245,184,208,.15),rgba(212,122,171,.1))',h:240,caption:'穆祉丞生日应援',author:'mzc生日会',platform:'微博'},
+  {id:9,cat:'fan', emoji:'🖼',grad:'linear-gradient(135deg,rgba(212,184,245,.15),rgba(180,120,240,.1))',h:200,caption:'粉丝应援物料',author:'cp_design',platform:'lofter'},
+  {id:10,cat:'lumu',emoji:'🌈',grad:'linear-gradient(135deg,rgba(245,184,208,.2),rgba(168,212,245,.2))',h:210,caption:'重归同台',author:'橹穆CP站',platform:'微博'},
+];
+
+/* ═══════════════════════════════════════════════════
+   OUTPUT SEED DATA
+═══════════════════════════════════════════════════ */
+const OUTPUT_SEED=[
+  {type:'video',title:'橹穆经典片段合集',url:'https://bilibili.com',cover:'🎬',color:'linear-gradient(135deg,rgba(168,212,245,.2),rgba(90,159,212,.12))',author:'橹穆国',date:'2024-06-10'},
+  {type:'video',title:'夏日演出全程录像',url:'https://bilibili.com',cover:'🎤',color:'linear-gradient(135deg,rgba(245,184,208,.2),rgba(232,122,171,.12))',author:'CP站',date:'2024-06-09'},
+  {type:'article',title:'橹穆关系进化论',url:'https://weibo.com',cover:'📝',color:'linear-gradient(135deg,rgba(212,184,245,.2),rgba(160,100,240,.12))',author:'CP分析站',date:'2024-05-01'},
+  {type:'article',title:'他们的默契是怎么来的',url:'https://weibo.com',cover:'✍️',color:'linear-gradient(135deg,rgba(168,212,245,.15),rgba(212,184,245,.1))',author:'橹穆国',date:'2024-04-15'},
+  {type:'material',title:'应援物料打包下载',url:'https://pan.baidu.com',cover:'🎁',color:'linear-gradient(135deg,rgba(245,184,208,.15),rgba(168,212,245,.15))',author:'设计组',date:'2024-03-20'},
+  {type:'material',title:'高清同框图合集',url:'https://pan.baidu.com',cover:'🖼',color:'linear-gradient(135deg,rgba(212,184,245,.15),rgba(245,184,208,.12))',author:'图组',date:'2024-02-14'},
+];
+
+/* ═══════════════════════════════════════════════════
+   WORLD SEED DATA
+═══════════════════════════════════════════════════ */
+const WORLD_SEED={
+  lumu:[
+    {id:'w1',username:'yumeifan🌸',badge:'青梅果',time:'2024-10-01T10:00:00Z',body:'今天看了夏日演出的返图，橹穆的眼神交流真的太甜了😭💙',likes:28},
+    {id:'w2',username:'cp_fan',badge:'青梅果',time:'2024-10-02T14:00:00Z',body:'穆祉丞给橹杰备饮料这件事，我要说一辈子！🌸✨',likes:45},
+    {id:'w3',username:'lumustan',badge:'青梅果',time:'2024-10-03T09:00:00Z',body:'风波期间守候橹穆是什么体验…现在终于好了！哭😭',likes:67},
+  ],
+  quanen:[{id:'q1',username:'quanen_fan',badge:'青梅果',time:'2024-10-01T10:00:00Z',body:'全恩的互动也太可爱了！💛',likes:12}],
+  jiec:[{id:'j1',username:'jiec_fan',badge:'青梅果',time:'2024-10-01T10:00:00Z',body:'杰丞的默契不输任何人！💙',likes:9}],
+  tunman:[{id:'t1',username:'tunman_fan',badge:'青梅果',time:'2024-10-01T10:00:00Z',body:'豚馒最可爱！🐷',likes:7}],
+};
+
+/* ═══════════════════════════════════════════════════
+   EVENTS SEED DATA
+═══════════════════════════════════════════════════ */
+const EVENTS_SEED=[
+  {id:'ev1',title:'🎉 橹穆国正式成立公告',content:'亲爱的全体青梅果们：\n橹穆国官方粉丝站正式成立！这里将成为我们共同守护橹穆的专属宇宙。感谢每一位加入的粉丝，我们会持续更新大家的故事线、时间线和精彩合集。\n橹穆forever！',date:'2024-09-15',admin:'管理员'},
+  {id:'ev2',title:'📣 重大消息：橹穆夏日演出视频发布',content:'经过多方努力，橹穆2024夏日演出完整录像现已上传至产量专区，请粉丝们前往查看！高质量版本，珍藏级别，请勿私自转载。',date:'2024-09-20',admin:'管理员'},
+  {id:'ev3',title:'🌸 橹穆两周年纪念日倒计时',content:'距离橹穆初次相遇两周年还有三个月！我们正在筹备专属纪念活动，包括：应援物料定制、故事线特别版、以及橹穆最甜回忆大投票。敬请期待！',date:'2024-10-01',admin:'管理员'},
+];
+
+/* ═══════════════════════════════════════════════════
+   CALENDAR FUNCTIONS
+═══════════════════════════════════════════════════ */
+function renderCalendar(){
+  const months=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+  document.getElementById('cal-ym').textContent=`${calYear} · ${months[calMonth]}`;
+  const grid=document.getElementById('cal-grid');
+  const dows=['日','一','二','三','四','五','六'];
+  let html=dows.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  const first=new Date(calYear,calMonth,1).getDay();
+  const days=new Date(calYear,calMonth+1,0).getDate();
+  const today=new Date();
+  const specialDates=getAllTLEvents().map(e=>e.date);
+  for(let i=0;i<first;i++) html+=`<div class="cal-day empty"></div>`;
+  for(let d=1;d<=days;d++){
+    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===d;
+    const isSpecial=specialDates.includes(ds);
+    html+=`<div class="cal-day ${isToday?'today':''} ${isSpecial?'special':''}" onclick="calClickDay('${ds}')" title="${isSpecial?'橹穆重要时刻':''}">${d}</div>`;
+  }
+  grid.innerHTML=html;
+}
+function calNav(dir){
+  calMonth+=dir;
+  if(calMonth>11){calMonth=0;calYear++;}
+  if(calMonth<0){calMonth=11;calYear--;}
+  renderCalendar();
+}
+function calClickDay(dateStr){
+  const event=getAllTLEvents().find(e=>e.date===dateStr);
+  if(event){
+    const evEl=document.getElementById('tl-ev-'+event.id);
+    if(evEl){evEl.scrollIntoView({behavior:'smooth',block:'center'});}
+  }
+}
+function renderSpecialList(){
+  const el=document.getElementById('tl-special-list');
+  if(!el) return;
+  el.innerHTML=getAllTLEvents().filter(e=>e.big).map(e=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer;border-bottom:1px solid var(--border);"
+      onclick="calClickDay('${e.date}')">
+      <span style="font-size:16px;">${e.emoji}</span>
+      <div>
+        <div style="font-size:11px;color:var(--t1);letter-spacing:1px;">${e.title}</div>
+        <div style="font-size:10px;color:var(--blue-deep);letter-spacing:1px;">${e.date}</div>
+      </div>
+    </div>`).join('');
+}
+function renderTLEvents(){
+  const line=document.getElementById('tl-line');
+  if(!line) return;
+  line.innerHTML=getAllTLEvents().map(e=>`
+    <div class="tl-event ${e.color||'pink'} ${e.big?'big':''}" id="tl-ev-${e.id}">
+      <div class="tl-event-card" onclick="toggleTLComment('${e.id}')">
+        <div class="tl-event-img">${e.emoji}</div>
+        <div class="tl-event-body">
+          <div class="tl-event-date">${e.date}</div>
+          <div class="tl-event-title">${e.title}</div>
+          <div class="tl-event-desc">${e.desc||e.description||''}</div>
+          ${e._api&&S.isAdmin()?`<button class="btn-sm" style="margin-top:8px;color:#ff8aaa;border-color:rgba(255,100,130,.3);" onclick="event.stopPropagation();delTLDate(${e._dbId})">🗑 删除</button>`:''}
+        </div>
+        <div class="tl-comment-area" id="tl-ca-${e.id}" style="display:none;">
+          <div id="tl-cmts-${e.id}"></div>
+          ${commentInputHTML('timeline', e.id, 'tl-cmts-'+e.id)}
+        </div>
+      </div>
+    </div>`).join('');
+  getAllTLEvents().forEach(e=>loadComments('timeline', e.id, 'tl-cmts-'+e.id));
+}
+function toggleTLComment(id){
+  const ca=document.getElementById('tl-ca-'+id);
+  if(ca) ca.style.display=ca.style.display==='none'?'block':'none';
+}
+async function delTLDate(dbId){
+  if(!S.isAdmin()) return;
+  try{
+    await api('DELETE','/api/timeline/'+dbId);
+    toast('已删除');
+    tlInited=false;
+    renderTimeline();
+  }catch(e){ toast('删除失败'); }
+}
+
 async function renderTimeline(){
   tlInited=true;
   if(S.isAdmin())document.getElementById('admin-tl-btn').style.display='block';
