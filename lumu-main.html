@@ -1955,11 +1955,27 @@ async function switchWorld(w, btn){
   ];
   const postList = document.getElementById('world-posts-'+w);
   if(!postList) return;
+
+  // 发帖区域（粉丝和管理员都能发）
+  const postBox = S.isFan() ? `
+    <div class="new-post-box" style="margin-bottom:20px;padding:18px;border-radius:var(--r);
+      background:var(--card);border:1px solid var(--border);">
+      <div style="font-size:12px;color:var(--t3);letter-spacing:2px;margin-bottom:10px;">✦ 发布新内容</div>
+      <textarea class="fi" id="world-post-input-${w}" placeholder="分享视频链接、文章链接或想法..." style="min-height:80px;width:100%;box-sizing:border-box;"></textarea>
+      <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+        <button class="btn-p" onclick="submitPost()">发布 ✦</button>
+      </div>
+    </div>` : `<div style="margin-bottom:20px;padding:14px 18px;border-radius:var(--r);
+      background:rgba(245,184,208,.06);border:1px solid rgba(245,184,208,.15);
+      font-size:12px;color:var(--t3);letter-spacing:2px;text-align:center;line-height:2;">
+      路人身份仅可浏览 &nbsp;·&nbsp; <a href="lumu-index.html" style="color:var(--pink);">登录</a> 后可发帖
+    </div>`;
+
   if(!all.length){
-    postList.innerHTML='<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:20px 0;">还没有帖子，来发第一条吧～</div>';
+    postList.innerHTML = postBox + '<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:20px 0;">还没有帖子，来发第一条吧～</div>';
     return;
   }
-  postList.innerHTML = all.map(p=>renderWorldPost(p,w)).join('');
+  postList.innerHTML = postBox + all.map(p=>renderWorldPost(p,w)).join('');
 }
 function renderWorldPost(p, w){
   const av = p.username==='admin'?'👑':'💙';
@@ -1975,7 +1991,7 @@ function renderWorldPost(p, w){
     <div class="wp-body">${p.body}</div>
     <div class="wp-actions">
       <span class="wp-act" id="wpl-${p.id}" onclick="likeWorldPost('${p.id}',this)">🤍 ${p.likes||0}</span>
-      ${S.isAdmin()&&p._api?`<span class="wp-act" style="color:var(--t3);" onclick="deleteWorldPost(${p._dbId},'${w}')">🗑 删除</span>`:''}
+      ${S.isAdmin()&&p._api?`<span class="wp-act" style="color:#ff8aaa;margin-left:auto;" onclick="deleteWorldPost(${p._dbId},'${w}')">🗑 删除</span>`:''}
     </div>
   </div>`;
 }
@@ -2007,16 +2023,17 @@ function insertEmoji(em){
   if(el) el.value += em;
 }
 async function submitPost(){
-  if(!S.isFan()){toast('请先登录');closeModal('modal-post');return;}
-  const body = document.getElementById('post-content').value.trim();
-  if(!body){document.getElementById('post-err').textContent='内容不能为空';return;}
+  if(!S.isFan()){toast('🌸 请先登录后才能发帖');return;}
+  // 直接从世界板块的 textarea 取内容
+  const textarea = document.getElementById('world-post-input-'+currentWorld);
+  const body = textarea ? textarea.value.trim() : '';
+  if(!body){toast('内容不能为空');return;}
   try{
-    await api('POST', '/api/world/'+postModalWorld, {body});
-    document.getElementById('post-content').value='';
-    closeModal('modal-post');
-    if(currentPage==='world') switchWorld(postModalWorld, null);
+    await api('POST', '/api/world/'+currentWorld, {body});
+    if(textarea) textarea.value='';
+    await switchWorld(currentWorld, null);
     toast('✨ 发布成功');
-  }catch(e){ document.getElementById('post-err').textContent=e.message||'发布失败'; }
+  }catch(e){ toast(e.message||'发布失败'); }
 }
 
 /* ═══════════════════════════════════════════════════
