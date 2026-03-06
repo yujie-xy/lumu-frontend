@@ -292,8 +292,11 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
 .world-links-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:20px;}
 .wl-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:all .3s;cursor:pointer;}
 .wl-card:hover{border-color:var(--border2);transform:translateY(-2px);}
-.wl-thumb{height:120px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;}
-.wl-thumb img{width:100%;height:100%;object-fit:cover;}
+.wl-thumb{height:160px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;background:linear-gradient(135deg,rgba(168,212,245,.1),rgba(245,184,208,.08));overflow:hidden;}
+.wl-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.wl-thumb-video{height:160px;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;overflow:hidden;background:linear-gradient(135deg,rgba(20,10,40,.6),rgba(10,20,40,.7));}
+.wl-thumb-video:hover > div > div{transform:scale(1.1);}
+.wl-thumb-video img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
 .wl-type-badge{position:absolute;top:8px;left:8px;font-size:9px;letter-spacing:2px;
   padding:3px 8px;border-radius:8px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);}
 .wl-body{padding:12px 14px;}
@@ -669,9 +672,17 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
       <div class="modal-title">添加照片</div>
       <div class="modal-sub" id="modal-photo-mode-sub">新增照片</div>
       <input type="hidden" id="ph-edit-id">
+      <input type="hidden" id="ph-base64">
       <div class="fg"><label class="fl">说明/标题</label><input class="fi" id="ph-caption" placeholder="照片说明"></div>
-      <div class="fg"><label class="fl">图片链接（可选）</label><input class="fi" id="ph-url" placeholder="https://图片直链...（无则用表情代替）"></div>
-      <div class="fg"><label class="fl">表情（无图时显示）</label><input class="fi" id="ph-emoji" placeholder="🌸" style="font-size:20px;"></div>
+      <div class="fg">
+        <label class="fl">上传图片文件</label>
+        <div id="ph-upload-area" style="border:2px dashed var(--border2);border-radius:var(--r-sm);padding:20px;text-align:center;cursor:pointer;transition:all .3s;" onclick="document.getElementById('ph-file').click()">
+          <div id="ph-preview" style="display:none;margin-bottom:10px;"><img id="ph-preview-img" style="max-width:100%;max-height:160px;border-radius:8px;object-fit:contain;"></div>
+          <div id="ph-upload-hint" style="font-size:12px;color:var(--t3);letter-spacing:1px;">📷 点击选择图片文件</div>
+          <input type="file" id="ph-file" accept="image/*" style="display:none;" onchange="previewPhoto(this)">
+        </div>
+      </div>
+      <div class="fg"><label class="fl">或填写图片链接（二选一）</label><input class="fi" id="ph-url" placeholder="https://图片直链..."></div>
       <div class="fg"><label class="fl">上传者名字</label><input class="fi" id="ph-author" placeholder="例如：橹穆后援会"></div>
       <div class="fg"><label class="fl">来源平台</label>
         <select class="fi" id="ph-platform">
@@ -689,6 +700,13 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
       <button class="btn-full" onclick="submitPhoto()">保存 ✦</button>
     </div>
   </div>
+</div>
+
+<!-- 图片全屏预览 -->
+<div id="photo-lightbox" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.92);backdrop-filter:blur(20px);cursor:zoom-out;align-items:center;justify-content:center;" onclick="closeLightbox()">
+  <button style="position:absolute;top:16px;right:20px;background:none;border:none;color:white;font-size:28px;cursor:pointer;z-index:1;">✕</button>
+  <img id="lightbox-img" style="max-width:92vw;max-height:88vh;object-fit:contain;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.6);">
+  <div id="lightbox-caption" style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-size:13px;color:rgba(255,255,255,.7);letter-spacing:2px;"></div>
 </div>
 
 <!-- Add World Link (video/article/material) -->
@@ -721,6 +739,18 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
       <button class="btn-full" onclick="submitLink()">保存 ✦</button>
     </div>
   </div>
+</div>
+
+<!-- Video Player Modal -->
+<div id="video-player-modal" style="display:none;position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,.94);backdrop-filter:blur(20px);align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;width:min(900px,95vw);padding:0 4px;">
+    <div id="vp-title" style="font-size:14px;letter-spacing:2px;color:rgba(255,255,255,.8);max-width:80%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
+    <button onclick="closeVideoPlayer()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:50%;width:36px;height:36px;color:white;font-size:18px;cursor:pointer;flex-shrink:0;">✕</button>
+  </div>
+  <div style="width:min(900px,95vw);aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.7);">
+    <iframe id="vp-frame" src="" allowfullscreen style="width:100%;height:100%;border:none;" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share"></iframe>
+  </div>
+  <div style="font-size:11px;color:rgba(255,255,255,.3);letter-spacing:2px;">点击空白处关闭</div>
 </div>
 
 <!-- Edit Event Modal -->
@@ -923,31 +953,24 @@ async function submitComment(type,targetId,containerId){
 /* ═══════════════════════════════════════
    STORY LINE 故事线
 ═══════════════════════════════════════ */
-const CHAPTERS=[
-  {num:1,title:'初 见',date:'2023.01',emoji:'🌱',grad:'linear-gradient(135deg,rgba(168,212,245,.25),rgba(100,180,200,.15))',
-    content:`<p>一切从那场演出开始。</p><p>那年冬天，穆祉丞第一次踏上那个舞台，灯光还没完全亮起的时候，他就已经开始进入状态了。台下坐着的观众里，有一个人格外专注地看着他——那是王橹杰。</p><p>两个人在后台碰上了。王橹杰说：<span class="highlight">「你跳得很好，但有一个地方我觉得可以更自由一点。」</span></p><p>穆祉丞转过头，带着一点不服气，说：<span class="blue-text">「那你来示范一下？」</span></p><p>就是这样一个开始。没有什么戏剧性的相遇，没有刻意的安排，只是两个爱音乐的人，在一个小小的后台，开始了一段说不清楚从哪里算起的故事。</p>`},
-  {num:2,title:'磨 合',date:'2023.04',emoji:'🌊',grad:'linear-gradient(135deg,rgba(245,184,208,.2),rgba(212,150,180,.1))',
-    content:`<p>一起排练的日子并不总是那么甜蜜。</p><p>穆祉丞是个完美主义者，他可以为了一个动作的角度反复练上两个小时。有一次，两人因为一首歌的处理方式僵持了很久。</p><p><span class="blue-text">「你总是这样，太按规矩了，音乐不是做数学题。」</span></p><p><span class="highlight">「规矩是基础，没有基础的发挥只是乱来。」</span></p><p>但第二天，穆祉丞发来了一段改编后的录音——他把王橹杰想要的那种即兴融进了自己的版本里，听起来，出奇的好。王橹杰听完，只发了一个字：<span class="blue-text">「服。」</span></p>`},
-  {num:3,title:'默 契',date:'2023.08',emoji:'✨',grad:'linear-gradient(135deg,rgba(212,184,245,.2),rgba(180,150,230,.1))',
-    content:`<p>有些默契是悄悄长出来的，等你意识到的时候，已经根深蒂固。</p><p>他们开始能预判对方的下一个动作。在舞台上，穆祉丞走向左边，王橹杰就自然地补到右边。</p><p>那年夏天，导演说：<span class="blue-text">「你们两个……是配合最默契的。」</span>穆祉丞看了王橹杰一眼，没说话，但嘴角压着笑。王橹杰低下头，假装在看歌词本，耳朵悄悄红了。</p>`},
-  {num:4,title:'风 波',date:'2024.01',emoji:'🌧',grad:'linear-gradient(135deg,rgba(100,140,180,.2),rgba(80,100,160,.1))',
-    content:`<p>最难熬的日子，是在年初那段时间。因为一些外部的舆论压力，他们被迫减少了公开合作。</p><p>王橹杰发来消息：<span class="blue-text">「别看那些，你又不是不知道网上的人说话没有代价。」</span></p><p>但当天深夜，王橹杰还是出现在了穆祉丞的楼下。带了两杯热咖啡，什么都没说，就站在那里。那杯咖啡的温度，穆祉丞记了很久很久。</p>`},
-  {num:5,title:'重 回',date:'2024.06',emoji:'🌈',grad:'linear-gradient(135deg,rgba(245,184,208,.25),rgba(168,212,245,.2))',
-    content:`<p>夏天回来了，他们也回来了。六月的那场演出，是他们时隔半年的公开合作。台下的粉丝举着荧光棒，有人哭了，有人拼命鼓掌。</p><p>他们走上台的时候，穆祉丞悄悄说了一句：<span class="highlight">「好久不见。」</span></p><p>演出结束，后台灯光昏黄，<span class="blue-text">「还会有风波，但我不怕了。」</span>穆祉丞看着天花板，过了一会儿，说：<span class="highlight">「我也是。」</span></p><p>那个夏天，橹穆国的粉丝们说：我们等到了。</p>`}
-];
 let storyInited=false,currentChapter=0;
 async function renderStory(){
   storyInited=true;
   if(S.isAdmin())document.getElementById('admin-story-btn').style.display='block';
   let apiChapters=[];
   try{apiChapters=await api('GET','/api/chapters');}catch(e){}
-  const allCh=[...CHAPTERS,...apiChapters.map((c,i)=>({
-    num:CHAPTERS.length+i+1,title:c.title,date:c.date_label,emoji:c.emoji,
+  const allCh=apiChapters.map((c,i)=>({
+    num:i+1,title:c.title,date:c.date_label,emoji:c.emoji,
     grad:c.gradient,content:c.content,_api:true,_id:c.id
-  }))];
+  }));
   const nums=['一','二','三','四','五','六','七','八','九','十','十一','十二'];
   const toc=document.getElementById('toc-list');
   const wrap=document.getElementById('story-chapters');
+  if(!allCh.length){
+    toc.innerHTML='<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:10px 0;">暂无章节</div>';
+    wrap.innerHTML='<div style="color:var(--t3);font-size:13px;letter-spacing:3px;padding:60px 0;text-align:center;">还没有章节 · 管理员可添加</div>';
+    return;
+  }
   toc.innerHTML=allCh.map((c,i)=>`
     <div class="toc-item ${i===0?'active':''}" onclick="switchChapter(${i})">
       <div class="toc-num">${c.num}</div>
@@ -1036,23 +1059,14 @@ function toggleStoryComments(i){
 /* ═══════════════════════════════════════
    TIMELINE 时间线
 ═══════════════════════════════════════ */
-const TL_EVENTS=[
-  {id:'e1',date:'2023-01-15',title:'初次相遇',desc:'在那场冬日演出的后台，两人第一次正式交谈。',emoji:'🌱',color:'pink',big:true},
-  {id:'e2',date:'2023-04-02',title:'第一次合作演出',desc:'穆祉丞与王橹杰第一次作为搭档共同出现在舞台上，粉丝反响热烈。',emoji:'🎤',color:'blue',big:true},
-  {id:'e3',date:'2023-06-18',title:'联合排练花絮流出',desc:'排练花絮意外流出，两人的默契瞬间引发大量关注。',emoji:'🎬',color:'pink'},
-  {id:'e4',date:'2023-08-05',title:'夏日联合演出',desc:'夏日演出，穆祉丞提前为王橹杰准备了他最爱喝的饮料，被后援会拍到。',emoji:'✨',color:'blue',big:true},
-  {id:'e5',date:'2023-12-31',title:'跨年夜同框',desc:'跨年夜，两人同时出现在同一活动，留下了本年度最甜蜜同框。',emoji:'🎆',color:'blue',big:true},
-  {id:'e6',date:'2024-06-08',title:'重归同框',desc:'时隔半年，两人终于在夏日演出重新同台，台下粉丝泪目。',emoji:'🌈',color:'pink',big:true},
-  {id:'e7',date:'2024-09-15',title:'橹穆国成立',desc:'粉丝们自发创立橹穆国，成为两人最大的联合应援站。',emoji:'🏳️',color:'blue',big:true},
-];
 let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
 let tlInited=false,_tlApiEvents=[];
 function getAllTLEvents(){
-  return [...TL_EVENTS,..._tlApiEvents.map(e=>({
+  return _tlApiEvents.map(e=>({
     id:e.event_key,date:e.date,title:e.title,desc:e.description,
     emoji:e.emoji||'✦',color:e.color||'pink',big:e.is_big,img:e.image_url,
     _api:true,_dbId:e.id
-  }))].sort((a,b)=>a.date.localeCompare(b.date));
+  })).sort((a,b)=>a.date.localeCompare(b.date));
 }
 async function renderTimeline(){
   tlInited=true;
@@ -1162,14 +1176,6 @@ async function delTLDate(dbId){
 /* ═══════════════════════════════════════
    PHOTOS 照片合集
 ═══════════════════════════════════════ */
-const PHOTOS_DATA=[
-  {id:'s1',cat:'lumu',emoji:'🌸',grad:'linear-gradient(135deg,rgba(245,184,208,.25),rgba(168,212,245,.2))',h:220,caption:'后台合照',author:'橹穆后援会',platform:'微博'},
-  {id:'s2',cat:'wlj',emoji:'🎤',grad:'linear-gradient(135deg,rgba(168,212,245,.25),rgba(90,159,212,.15))',h:180,caption:'王橹杰演出现场',author:'lujiefan',platform:'微博'},
-  {id:'s3',cat:'mzc',emoji:'🕺',grad:'linear-gradient(135deg,rgba(245,184,208,.2),rgba(232,122,171,.12))',h:260,caption:'穆祉丞练习室',author:'mzc_fan',platform:'微博'},
-  {id:'s4',cat:'lumu',emoji:'✨',grad:'linear-gradient(135deg,rgba(212,184,245,.2),rgba(160,100,240,.1))',h:200,caption:'跨年同框',author:'yumeifan🌸',platform:'微博'},
-  {id:'s5',cat:'fan',emoji:'🎨',grad:'linear-gradient(135deg,rgba(168,212,245,.2),rgba(212,184,245,.15))',h:170,caption:'粉丝手绘',author:'drawfan',platform:'lofter'},
-  {id:'s6',cat:'lumu',emoji:'💙',grad:'linear-gradient(135deg,rgba(100,180,245,.2),rgba(168,212,245,.15))',h:230,caption:'夏日演出合照',author:'橹穆CP站',platform:'微博'},
-];
 let photosInited=false,currentPhotoFilter='all';
 async function renderPhotos(){
   photosInited=true;
@@ -1187,70 +1193,136 @@ async function filterPhotos(cat,btn){
     const url=cat==='all'?'/api/photos':'/api/photos?category='+cat;
     apiPhotos=await api('GET',url);
   }catch(e){}
-  const seed=cat==='all'?PHOTOS_DATA:PHOTOS_DATA.filter(p=>p.cat===cat);
-  const all=[...seed,...apiPhotos.map(p=>({
-    id:'a'+p.id,cat:p.category,emoji:p.emoji||'🌸',
-    grad:p.gradient||'linear-gradient(135deg,rgba(245,184,208,.2),rgba(168,212,245,.15))',
-    h:p.height_px||200,caption:p.caption,author:p.author_name,platform:p.platform,
-    url:p.url,_api:true,_dbId:p.id
-  }))];
-  if(!all.length){grid.innerHTML='<div style="color:var(--t3);font-size:12px;padding:30px;">暂无照片</div>';return;}
-  grid.innerHTML=all.map(p=>`
-    <div class="photo-item">
-      ${p.url?`<img src="${p.url}" style="width:100%;height:${p.h}px;object-fit:cover;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-      <div class="photo-thumb" style="height:${p.h}px;background:${p.grad};display:none;">${p.emoji}</div>`
-      :`<div class="photo-thumb" style="height:${p.h}px;background:${p.grad};">${p.emoji}</div>`}
+  const all=apiPhotos.map(p=>({
+    id:'a'+p.id, cat:p.category, caption:p.caption,
+    author:p.author_name,platform:p.platform,
+    url:p.url||'',_api:true,_dbId:p.id
+  }));
+  if(!all.length){
+    grid.innerHTML='<div style="color:var(--t3);font-size:13px;padding:60px;text-align:center;letter-spacing:2px;">暂无照片 · 管理员可点击上方按钮添加</div>';
+    return;
+  }
+  grid.innerHTML=all.map(p=>{
+    const safeUrl=p.url.replace(/\\/g,'\\\\').replace(/'/g,'\\\'');
+    const safeCap=(p.caption||'').replace(/'/g,'\\\'');
+    return`<div class="photo-item">
+      ${p.url
+        ?`<img src="${p.url}" loading="lazy"
+            style="width:100%;display:block;cursor:zoom-in;border-radius:var(--r) var(--r) 0 0;max-height:280px;object-fit:cover;"
+            onclick="openLightbox('${safeUrl}','${safeCap}')"
+            onerror="this.style.display='none'">`
+        :`<div style="height:160px;display:flex;align-items:center;justify-content:center;font-size:44px;background:rgba(255,255,255,.04);border-radius:var(--r) var(--r) 0 0;">🌸</div>`
+      }
       <div class="photo-info">
         <div class="photo-caption">${p.caption||''}</div>
         <div class="photo-author">📷 ${p.author||''} ${p.platform?'· '+p.platform:''}</div>
       </div>
       <div class="photo-actions">
         <span class="pa-like" onclick="likePhoto('${p.id}',this)">🤍</span>
-        ${p._api&&S.isAdmin()?`<div class="photo-admin-bar" style="display:inline-flex;gap:6px;">
-          <button class="btn-edit" onclick="openEditPhoto(${p._dbId},'${encodeURIComponent(p.caption||'')}','${encodeURIComponent(p.url||'')}','${p.emoji}','${encodeURIComponent(p.author||'')}','${p.platform||'微博'}','${p.cat}')">✏️</button>
-          <button class="btn-danger" onclick="deletePhoto(${p._dbId})">🗑</button>
-        </div>`:''}
+        ${p._api&&S.isAdmin()?`<button class="btn-edit" onclick="openEditPhoto(${p._dbId},'${encodeURIComponent(p.caption||'')}'  ,'${encodeURIComponent(p.url||'')}'  ,'${encodeURIComponent(p.author||'')}'  ,'${p.platform||'微博'}','${p.cat}')">✏️</button>
+          <button class="btn-danger" onclick="deletePhoto(${p._dbId})">🗑</button>`:''}
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 async function likePhoto(id,el){
   if(!S.isFan()){toast('登录后才能点赞');return;}
   try{const r=await api('POST','/api/likes/photo/'+id);el.innerHTML=r.liked?'💗':'🤍';el.classList.toggle('liked',r.liked);}catch(e){toast('点赞失败');}
 }
+/* lightbox */
+function openLightbox(url,cap){
+  const lb=document.getElementById('photo-lightbox');
+  document.getElementById('lightbox-img').src=url;
+  document.getElementById('lightbox-caption').textContent=cap||'';
+  lb.style.display='flex';
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(){
+  document.getElementById('photo-lightbox').style.display='none';
+  document.getElementById('lightbox-img').src='';
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLightbox();closeVideoPlayer();}});
+document.getElementById('video-player-modal').addEventListener('click',function(e){if(e.target===this)closeVideoPlayer();});
+
+/* file preview + compress */
+function previewPhoto(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>10*1024*1024){toast('⚠️ 图片超过10MB，请选择小一点的文件');return;}
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    // Compress to max 1200px wide / < 800KB
+    const img=new Image();
+    img.onload=()=>{
+      const MAX=1200,quality=0.82;
+      let w=img.width,h=img.height;
+      if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+      const canvas=document.createElement('canvas');
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      const b64=canvas.toDataURL('image/jpeg',quality);
+      document.getElementById('ph-base64').value=b64;
+      document.getElementById('ph-preview-img').src=b64;
+      document.getElementById('ph-preview').style.display='block';
+      document.getElementById('ph-upload-hint').textContent='✅ '+file.name+' (已压缩)';
+      document.getElementById('ph-upload-area').style.borderColor='var(--pink)';
+      document.getElementById('ph-url').value='';
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 async function submitPhoto(){
   if(!S.isAdmin()){toast('⚠️ 仅管理员可操作');return;}
   const editId=document.getElementById('ph-edit-id').value;
   const caption=document.getElementById('ph-caption').value.trim();
-  const url=document.getElementById('ph-url').value.trim();
-  const emoji=document.getElementById('ph-emoji').value.trim()||'🌸';
+  const base64=document.getElementById('ph-base64').value;
+  const urlInput=document.getElementById('ph-url').value.trim();
   const author_name=document.getElementById('ph-author').value.trim()||'管理员';
   const platform=document.getElementById('ph-platform').value;
   const category=document.getElementById('ph-cat').value;
   const err=document.getElementById('ph-err');
   if(!caption){err.textContent='请填写说明';return;}
+  if(!base64&&!urlInput&&!editId){err.textContent='请上传图片文件或填写图片链接';return;}
+  const url=base64||urlInput;
+  const btn=document.querySelector('#modal-add-photo .btn-full');
+  if(btn){btn.disabled=true;btn.textContent='保存中...';}
   try{
     if(editId){
-      await api('PUT','/api/photos/'+editId,{caption,url,emoji,author_name,platform,category});
+      const payload={caption,author_name,platform,category};
+      if(url)payload.url=url;
+      await api('PUT','/api/photos/'+editId,payload);
       toast('✨ 照片已更新');
     }else{
-      await api('POST','/api/photos',{caption,url,emoji,author_name,platform,category});
+      await api('POST','/api/photos',{caption,url,emoji:'🌸',author_name,platform,category});
       toast('✨ 照片已添加');
     }
     closeModal('modal-add-photo');
-    ['ph-caption','ph-url','ph-emoji','ph-author'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('ph-edit-id').value='';
-    document.getElementById('modal-photo-mode-sub').textContent='新增照片';
-    err.textContent='';await filterPhotos(currentPhotoFilter,document.querySelector('.pf-btn.active'));
+    resetPhotoForm();
+    await filterPhotos(currentPhotoFilter,document.querySelector('.pf-btn.active'));
   }catch(e){err.textContent=e.message||'操作失败';}
+  finally{if(btn){btn.disabled=false;btn.textContent='保存 ✦';}}
 }
-function openEditPhoto(id,caption,url,emoji,author,platform,cat){
+function resetPhotoForm(){
+  ['ph-caption','ph-url','ph-author'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ph-edit-id').value='';
+  document.getElementById('ph-base64').value='';
+  document.getElementById('ph-preview').style.display='none';
+  document.getElementById('ph-upload-hint').textContent='📷 点击选择图片文件';
+  document.getElementById('ph-upload-area').style.borderColor='';
+  const fi=document.getElementById('ph-file');if(fi)fi.value='';
+  document.getElementById('ph-err').textContent='';
+  document.getElementById('modal-photo-mode-sub').textContent='新增照片';
+}
+function openEditPhoto(id,caption,url,author,platform,cat){
   document.getElementById('ph-edit-id').value=id;
   document.getElementById('ph-caption').value=decodeURIComponent(caption);
   document.getElementById('ph-url').value=decodeURIComponent(url);
-  document.getElementById('ph-emoji').value=emoji;
   document.getElementById('ph-author').value=decodeURIComponent(author);
   document.getElementById('ph-platform').value=platform;
   document.getElementById('ph-cat').value=cat;
+  document.getElementById('ph-base64').value='';
   document.getElementById('modal-photo-mode-sub').textContent='编辑照片';
   openModal('modal-add-photo');
 }
@@ -1273,23 +1345,6 @@ const WORLD_CONFIG={
   article:{title:'文章合集',emoji:'📝',desc:'橹穆相关文章'},
   material:{title:'物料专区',emoji:'🗂',desc:'应援物料下载'},
 };
-const WORLD_SEED={
-  lumu:[
-    {id:'w1',username:'yumeifan🌸',badge:'青梅果',time:'2024-10-01T10:00:00Z',body:'今天看了夏日演出的返图，橹穆的眼神交流真的太甜了😭💙',likes:28},
-    {id:'w2',username:'cp_fan',badge:'青梅果',time:'2024-10-02T14:00:00Z',body:'穆祉丞给橹杰备饮料这件事，我要说一辈子！🌸✨',likes:45},
-  ],
-  quanen:[{id:'q1',username:'quanen_fan',badge:'青梅果',time:'2024-10-01T10:00:00Z',body:'全恩的互动也太可爱了！💛',likes:12}],
-  jiec:[{id:'j1',username:'jiec_fan',badge:'青梅果',time:'2024-10-01T10:00:00Z',body:'杰丞的默契不输任何人！💙',likes:9}],
-  tunman:[{id:'t1',username:'tunman_fan',badge:'青梅果',time:'2024-10-01T10:00:00Z',body:'豚馒最可爱！🐷',likes:7}],
-};
-const OUTPUT_SEED=[
-  {type:'video',title:'橹穆经典片段合集',url:'https://bilibili.com',emoji:'🎬',author:'橹穆国',platform:'bilibili',tags:['同框','经典'],date:'2024-06-10'},
-  {type:'video',title:'夏日演出全程录像',url:'https://bilibili.com',emoji:'🎤',author:'CP站',platform:'bilibili',tags:['演出'],date:'2024-06-09'},
-  {type:'article',title:'橹穆关系进化论',url:'https://weibo.com',emoji:'📝',author:'CP分析站',platform:'微博',tags:['分析'],date:'2024-05-01'},
-  {type:'article',title:'他们的默契是怎么来的',url:'https://weibo.com',emoji:'✍️',author:'橹穆国',platform:'微博',tags:['默契'],date:'2024-04-15'},
-  {type:'material',title:'应援物料打包下载',url:'https://pan.baidu.com',emoji:'🎁',author:'设计组',platform:'其他',tags:['物料'],date:'2024-03-20'},
-  {type:'material',title:'高清同框图合集',url:'https://pan.baidu.com',emoji:'🖼',author:'图组',platform:'其他',tags:['图片'],date:'2024-02-14'},
-];
 let worldInited=false,currentWorld='lumu';
 function renderWorld(){
   worldInited=true;
@@ -1308,9 +1363,20 @@ async function switchWorld(w,btn){
     await renderWorldPosts(w,area,cfg);
   }
 }
+/* ── 视频链接转换为可嵌入 embed URL ── */
+function getEmbedUrl(url){
+  if(!url) return null;
+  // bilibili: https://www.bilibili.com/video/BVxxxxxxx  or  /video/av123
+  const bv = url.match(/bilibili\.com\/video\/(BV[^/?&#]+|av\d+)/i);
+  if(bv) return 'https://player.bilibili.com/player.html?bvid='+bv[1]+'&autoplay=0&high_quality=1';
+  // YouTube: youtu.be/ID  or  youtube.com/watch?v=ID  or  youtube.com/shorts/ID
+  const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([A-Za-z0-9_-]{11})/);
+  if(yt) return 'https://www.youtube.com/embed/'+yt[1];
+  return null;
+}
+
 async function renderWorldLinks(type,area,cfg){
   area.innerHTML=`<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:20px;">加载中...</div>`;
-  // Admin add button
   let adminBar='';
   if(S.isAdmin()){
     adminBar=`<div class="admin-panel" style="margin-bottom:20px;">
@@ -1322,48 +1388,78 @@ async function renderWorldLinks(type,area,cfg){
   }
   let apiItems=[];
   try{apiItems=await api('GET','/api/media?type='+type);}catch(e){}
-  const seedItems=OUTPUT_SEED.filter(o=>o.type===type);
-  const all=[...seedItems,...apiItems.map(o=>({
+  const all=apiItems.map(o=>({
     type:o.type,title:o.title,url:o.url,emoji:o.emoji||'🎬',
     author:o.author_name||'',platform:o.platform||'',
     tags:o.tags?JSON.parse(o.tags||'[]'):[],
     img:o.image_url||'',
     date:new Date(o.created_at).toLocaleDateString('zh-CN'),
     _api:true,_dbId:o.id
-  }))];
+  }));
   if(!all.length){
-    area.innerHTML=adminBar+'<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:30px;">暂无内容，管理员可添加</div>';
+    area.innerHTML=adminBar+'<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:60px;text-align:center;">暂无内容 · 管理员可点击上方按钮添加</div>';
     return;
   }
-  const cards=all.map(o=>`
-    <div class="wl-card">
-      <div class="wl-thumb" style="background:linear-gradient(135deg,rgba(168,212,245,.15),rgba(245,184,208,.1));" onclick="window.open('${o.url}','_blank')">
-        ${o.img?`<img src="${o.img}" onerror="this.style.display='none'">`:''}
-        <span style="font-size:44px;${o.img?'display:none;':''}">${o.emoji}</span>
+  const isVideo = type==='video';
+  const cards=all.map(o=>{
+    const embed=isVideo?getEmbedUrl(o.url):null;
+    const safeTitle=o.title.replace(/'/g,"\\'").replace(/"/g,'&quot;');
+    const safeUrl=o.url.replace(/'/g,"\\'");
+    // thumb area: if video+embed → show play button overlay; if has cover img → show img; else emoji
+    let thumbHtml='';
+    if(embed){
+      thumbHtml=`<div class="wl-thumb wl-thumb-video" onclick="openVideoPlayer('${embed}','${safeTitle}')">
+        ${o.img?`<img src="${o.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">`:''}
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);">
+          <div style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.15);backdrop-filter:blur(4px);border:2px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-size:22px;padding-left:4px;">▶</div>
+        </div>
         <div class="wl-type-badge">${cfg.emoji} ${o.platform||''}</div>
-      </div>
+      </div>`;
+    } else {
+      thumbHtml=`<div class="wl-thumb" onclick="window.open('${safeUrl}','_blank')" style="cursor:pointer;">
+        ${o.img?`<img src="${o.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">`:''}
+        <span style="font-size:44px;${o.img?'position:absolute;opacity:.12;':''}">${o.emoji}</span>
+        <div class="wl-type-badge">${cfg.emoji} ${o.platform||''}</div>
+      </div>`;
+    }
+    return`<div class="wl-card">
+      ${thumbHtml}
       <div class="wl-body">
         <div class="wl-title">${o.title}</div>
         <div class="wl-meta">由 ${o.author||'未知'} · ${o.date||''}</div>
         ${o.tags&&o.tags.length?`<div class="wl-tags">${o.tags.map(t=>`<span class="wl-tag">${t}</span>`).join('')}</div>`:''}
       </div>
       <div class="wl-actions">
-        <span style="font-size:11px;color:var(--blue);cursor:pointer;" onclick="window.open('${o.url}','_blank')">🔗 查看链接</span>
+        ${embed?`<span style="font-size:11px;color:var(--pink);cursor:pointer;" onclick="openVideoPlayer('${embed}','${safeTitle}')">▶ 在线播放</span>`:''}
+        <span style="font-size:11px;color:var(--blue);cursor:pointer;" onclick="window.open('${safeUrl}','_blank')">🔗 原链接</span>
         ${o._api&&S.isAdmin()?`<button class="btn-edit" onclick="openEditLink(${o._dbId},'${encodeURIComponent(o.title)}','${encodeURIComponent(o.url)}','${encodeURIComponent(o.img||'')}','${o.emoji}','${encodeURIComponent(o.author||'')}','${o.platform||'bilibili'}','${encodeURIComponent(JSON.stringify(o.tags||[]))}')">✏️</button>
         <button class="btn-danger" onclick="deleteLink(${o._dbId})">🗑</button>`:''}
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   area.innerHTML=adminBar+`<div class="world-links-grid">${cards}</div>`;
+}
+
+/* ── 视频播放弹窗 ── */
+function openVideoPlayer(embedUrl,title){
+  document.getElementById('vp-title').textContent=title||'';
+  document.getElementById('vp-frame').src=embedUrl;
+  document.getElementById('video-player-modal').style.display='flex';
+  document.body.style.overflow='hidden';
+}
+function closeVideoPlayer(){
+  document.getElementById('video-player-modal').style.display='none';
+  document.getElementById('vp-frame').src='';
+  document.body.style.overflow='';
 }
 async function renderWorldPosts(w,area,cfg){
   let apiPosts=[];
   try{apiPosts=await api('GET','/api/world/'+w);}catch(e){}
-  const seedPosts=WORLD_SEED[w]||[];
-  const all=[...seedPosts,...apiPosts.map(p=>({
+  const all=apiPosts.map(p=>({
     id:p.post_key,username:p.username,badge:p.badge,
     time:p.created_at,body:p.body,likes:p.likes||0,
     _api:true,_dbId:p.id
-  }))];
+  }));
   let adminBar='';
   if(S.isAdmin()){
     adminBar=`<div class="admin-panel" style="margin-bottom:20px;">
@@ -1473,10 +1569,6 @@ async function deleteLink(dbId){
 /* ═══════════════════════════════════════
    EVENTS 大事件
 ═══════════════════════════════════════ */
-const EVENTS_SEED=[
-  {id:'ev1',title:'🎉 橹穆国正式成立公告',content:'亲爱的全体青梅果们：\n橹穆国官方粉丝站正式成立！这里将成为我们共同守护橹穆的专属宇宙。感谢每一位加入的粉丝，我们会持续更新大家的故事线、时间线和精彩合集。\n橹穆forever！',date:'2024-09-15',admin:'管理员'},
-  {id:'ev2',title:'📣 重大消息：橹穆夏日演出视频发布',content:'经过多方努力，橹穆2024夏日演出完整录像现已上传至橹穆世界，请粉丝们前往查看！高质量版本，珍藏级别，请勿私自转载。',date:'2024-09-20',admin:'管理员'},
-];
 let eventsInited=false;
 async function renderEvents(){
   eventsInited=true;
@@ -1485,13 +1577,17 @@ async function renderEvents(){
   el.innerHTML='<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:20px;">加载中...</div>';
   let apiEvents=[];
   try{apiEvents=await api('GET','/api/events');}catch(e){}
-  const all=[...EVENTS_SEED,...apiEvents.map(ev=>({
+  const all=apiEvents.map(ev=>({
     id:ev.event_key,title:ev.title,content:ev.content,
     date:ev.date_label||new Date(ev.created_at).toLocaleDateString('zh-CN'),
     admin:ev.admin||'管理员',img:ev.image_url||'',
     _api:true,_dbId:ev.id
-  }))];
-  el.innerHTML=all.map(ev=>`
+  }));
+  if(!all.length){
+    el.innerHTML='<div style="color:var(--t3);font-size:13px;letter-spacing:3px;padding:60px;text-align:center;">暂无公告 · 管理员可在上方发布</div>';
+    return;
+  }
+  el.innerHTML=all.map
     <div class="ev-card">
       <div class="ev-top-bar"></div>
       <div class="ev-body">
