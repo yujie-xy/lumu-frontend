@@ -1587,7 +1587,7 @@ async function renderEvents(){
     el.innerHTML='<div style="color:var(--t3);font-size:13px;letter-spacing:3px;padding:60px;text-align:center;">暂无公告 · 管理员可在上方发布</div>';
     return;
   }
-  el.innerHTML=all.map
+  el.innerHTML=all.map(ev=>`
     <div class="ev-card">
       <div class="ev-top-bar"></div>
       <div class="ev-body">
