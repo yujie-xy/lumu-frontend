@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>橹穆国 · 欢迎回家</title>
+<title>橹穆宇宙 · 欢迎回家</title>
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@300;400;600;900&family=Noto+Sans+SC:wght@300;400;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════════
-   CSS VARIABLES · 橹穆国 Design System
+   CSS VARIABLES · 橹穆宇宙 Design System
 ══════════════════════════════════════════ */
 :root {
   --pink:       #f5b8d0;
@@ -889,7 +889,7 @@ body { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'
 
 <!-- ══════ LOADING SCREEN ══════ -->
 <div id="loading-screen">
-  <div class="loading-logo">橹穆国</div>
+  <div class="loading-logo">橹穆宇宙</div>
   <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
   <div class="loading-text">正在进入星域...</div>
 </div>
@@ -914,7 +914,7 @@ body { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'
 
     <div class="site-logo">
       <div class="logo-glow-ring"></div>
-      <span class="logo-text">橹穆国</span>
+      <span class="logo-text">橹穆宇宙</span>
     </div>
 
     <div class="site-tagline">王橹杰 × 穆祉丞 的专属宇宙</div>
@@ -1012,11 +1012,11 @@ body { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'
 
 <!-- FOOTER -->
 <footer class="site-footer">
-  <span class="footer-tag">橹穆国 LUMU KINGDOM</span>
+  <span class="footer-tag">橹穆宇宙 LUMU UNIVERSE</span>
   <span class="footer-dot"></span>
   <span class="footer-tag">SINCE 2025</span>
   <span class="footer-dot"></span>
-  <span class="footer-tag">穆祉丞 × 王橹杰</span>
+  <span class="footer-tag">王橹杰 × 穆祉丞</span>
 </footer>
 
 <!-- ══════════════════════════════════════════
@@ -1031,7 +1031,7 @@ body { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'
       <div style="font-size:48px;margin-bottom:14px;">🌙</div>
       <div class="modal-title" style="font-size:22px;letter-spacing:5px;margin-bottom:8px;">路人进入</div>
       <div class="modal-sub" style="line-height:1.9;margin-bottom:20px;">
-        你将以 <span style="color:var(--blue);">路人</span> 身份浏览橹穆国<br>
+        你将以 <span style="color:var(--blue);">路人</span> 身份浏览橹穆宇宙<br>
         部分功能将不可使用<br>
         <span style="font-size:11px;opacity:0.5;">（无法评论 · 无法发帖 · 无法私信）</span>
       </div>
@@ -1078,7 +1078,7 @@ body { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'
           <input class="form-input" type="password" id="login-pass" placeholder="输入密码">
         </div>
         <div class="form-error" id="login-error"></div>
-        <button class="form-submit" onclick="doLogin()">进入橹穆国 ✦</button>
+        <button class="form-submit" onclick="doLogin()">进入橹穆宇宙 ✦</button>
         <div class="form-note">
           还没有账号？<a onclick="switchTab('register')">去注册</a>
         </div>
@@ -1168,8 +1168,8 @@ body { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'
       <div id="quiz-success" style="display:none" class="form-success">
         <span class="success-icon">🎉</span>
         <div class="success-title">验证通过！</div>
-        <div class="success-sub">欢迎加入橹穆国，青梅果！</div>
-        <button class="form-submit" style="margin-top:20px" onclick="completeRegister()">进入橹穆国 ✦</button>
+        <div class="success-sub">欢迎加入橹穆宇宙，青梅果！</div>
+        <button class="form-submit" style="margin-top:20px" onclick="completeRegister()">进入橹穆宇宙 ✦</button>
       </div>
 
       <div id="quiz-fail" style="display:none" class="form-success">
@@ -1401,7 +1401,7 @@ async function doLogin() {
   } catch(e) {
     shakeError(err, '网络错误，请确认后端服务已启动');
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '进入橹穆国 ✦'; }
+    if (btn) { btn.disabled = false; btn.textContent = '进入橹穆宇宙 ✦'; }
   }
 }
 
@@ -1466,16 +1466,16 @@ function confirmPasserby() {
 const QUESTION_BANK = [
   { q: '穆祉丞的身份是？', opts: ['爱豆', '唱跳艺人', '主播', '演员'], ans: 1 },
   { q: '王橹杰的身份是？', opts: ['唱跳艺人', '演员', '爱豆', '主播'], ans: 2 },
-  { q: '橹穆国的 CP 名字是由哪两个字组合而成？', opts: ['穆王', '橹穆', '杰丞', '橹丞'], ans: 1 },
+  { q: '橹穆宇宙的 CP 名字是由哪两个字组合而成？', opts: ['穆王', '橹穆', '杰丞', '橹丞'], ans: 1 },
   { q: '王橹杰与穆祉丞所在的 CP 粉圈，粉丝自称？', opts: ['路人', '青梅果', '小橹', '丞粉'], ans: 1 },
-  { q: '橹穆国网站的主色调是什么颜色？', opts: ['红黄', '绿白', '粉蓝', '黑金'], ans: 2 },
+  { q: '橹穆宇宙网站的主色调是什么颜色？', opts: ['红黄', '绿白', '粉蓝', '黑金'], ans: 2 },
   { q: '以下哪个是穆祉丞的名字中的字？', opts: ['橹', '杰', '丞', '王'], ans: 2 },
   { q: '以下哪个是王橹杰的名字中的字？', opts: ['穆', '丞', '祉', '橹'], ans: 3 },
-  { q: '「橹穆国」这个名称中，「橹」字来自哪位成员？', opts: ['穆祉丞', '王橹杰', '两人都有', '都没有'], ans: 1 },
-  { q: '「橹穆国」中，「穆」字来自哪位成员？', opts: ['王橹杰', '穆祉丞', '管理员', '都没有'], ans: 1 },
+  { q: '「橹穆宇宙」这个名称中，「橹」字来自哪位成员？', opts: ['穆祉丞', '王橹杰', '两人都有', '都没有'], ans: 1 },
+  { q: '「橹穆宇宙」中，「穆」字来自哪位成员？', opts: ['王橹杰', '穆祉丞', '管理员', '都没有'], ans: 1 },
   { q: '本站专属粉丝的身份称号是？', opts: ['路人', '访客', '青梅果', '管理员'], ans: 2 },
-  { q: '在橹穆国，路人与粉丝最大的区别是？', opts: ['能看故事线', '能查看时间线', '能发言和评论', '能看照片'], ans: 2 },
-  { q: '橹穆国大事件由谁发布？', opts: ['所有粉丝', '路人', '管理员', '任何人'], ans: 2 },
+  { q: '在橹穆宇宙，路人与粉丝最大的区别是？', opts: ['能看故事线', '能查看时间线', '能发言和评论', '能看照片'], ans: 2 },
+  { q: '橹穆宇宙大事件由谁发布？', opts: ['所有粉丝', '路人', '管理员', '任何人'], ans: 2 },
 ];
 
 let quizState = { questions: [], current: 0, wrong: 0, regData: null };
@@ -1708,7 +1708,7 @@ async function completeRegister() {
     // 注册成功：保存 token 到 localStorage
     setSession({ token: data.token, username: data.username, role: data.role, badge: data.badge });
     closeModal('modal-quiz');
-    showToast(`🌸 注册成功！欢迎加入橹穆国，${data.username}！`);
+    showToast(`🌸 注册成功！欢迎加入橹穆宇宙，${data.username}！`);
     setTimeout(() => { window.location.href = 'lumu-main.html'; }, 1800);
 
   } catch(e) {

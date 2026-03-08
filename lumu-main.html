@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>橹穆国</title>
+<title>橹穆宇宙</title>
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@300;400;600;900&family=Noto+Sans+SC:wght@300;400;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -226,7 +226,8 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
 .chapter-admin-bar{display:flex;gap:8px;margin-top:10px;padding:10px 0;border-top:1px dashed rgba(212,170,112,.2);}
 
 /* TIMELINE */
-.tl-wrap{display:grid;grid-template-columns:300px 1fr;gap:24px;max-width:1100px;margin:0 auto;padding:0 20px 60px;}
+.tl-wrap{display:grid;grid-template-columns:280px 1fr;gap:24px;max-width:1200px;margin:0 auto;padding:0 20px 60px;}
+@media(max-width:900px){.tl-wrap{grid-template-columns:1fr;}}
 .cal-box{padding:20px;}
 .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .cal-ym{font-family:'ZCOOL XiaoWei',serif;font-size:16px;letter-spacing:3px;}
@@ -235,43 +236,85 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
 .cal-nav-btn:hover{border-color:var(--pink);color:var(--pink);}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
 .cal-dow{font-size:10px;color:var(--t3);text-align:center;padding:4px 0;letter-spacing:1px;}
-.cal-day{font-size:11px;text-align:center;padding:5px;border-radius:6px;cursor:pointer;transition:all .2s;}
+.cal-day{font-size:11px;text-align:center;padding:5px;border-radius:6px;cursor:pointer;transition:all .2s;position:relative;}
 .cal-day:hover{background:var(--card2);}
 .cal-day.today{background:var(--blue-soft);color:var(--blue);font-weight:700;}
-.cal-day.special{background:var(--pink-soft);color:var(--pink);}
+.cal-day.special{background:linear-gradient(135deg,rgba(90,159,212,.25),rgba(232,122,171,.25));color:#a8d4f5;font-weight:700;}
+.cal-day.special::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));}
 .cal-day.empty{cursor:default;}
 .cal-legend{display:flex;gap:16px;margin-top:12px;}
 .cal-leg-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--t3);}
 .cal-leg-dot{width:8px;height:8px;border-radius:50%;}
-.tl-scroll{position:relative;}
-.tl-line{position:relative;padding-left:30px;}
-.tl-line::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--pink-deep),var(--blue-deep),transparent);}
-.tl-event{position:relative;margin-bottom:20px;}
-.tl-event::before{content:'';position:absolute;left:-26px;top:24px;width:10px;height:10px;border-radius:50%;background:var(--pink-deep);box-shadow:0 0 10px var(--gp);}
-.tl-event.blue::before{background:var(--blue-deep);box-shadow:0 0 10px var(--gb);}
-.tl-event.big .tl-event-card{border-color:rgba(245,184,208,.25);}
-.tl-event-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .3s;}
-.tl-event-card:hover{border-color:var(--border2);}
-.tl-event-img{font-size:28px;margin-bottom:10px;}
-.tl-event-date{font-size:10px;color:var(--t3);letter-spacing:2px;margin-bottom:4px;}
-.tl-event-title{font-family:'ZCOOL XiaoWei',serif;font-size:16px;letter-spacing:2px;margin-bottom:6px;}
+/* 左右交替poster时间轴 */
+.tl-poster{position:relative;padding-bottom:20px;}
+/* 发光时间轴 */
+.tl-spine{position:absolute;left:50%;transform:translateX(-50%);top:0;bottom:0;width:10px;
+  background:linear-gradient(180deg,var(--blue-deep),var(--pink-deep),var(--blue-deep));
+  background-size:100% 400%;border-radius:5px;z-index:1;
+  animation:spine-flow 6s ease-in-out infinite;}
+.tl-spine::after{content:'';position:absolute;inset:0;background:inherit;filter:blur(12px);opacity:.35;border-radius:5px;animation:spine-flow 6s ease-in-out infinite;}
+@keyframes spine-flow{0%{background-position:0% 0%}50%{background-position:0% 100%}100%{background-position:0% 0%}}
+/* 年份标签 */
+.tl-year-stamp{position:relative;z-index:5;display:flex;justify-content:center;padding:28px 0 6px;}
+.tl-year-stamp:first-child{padding-top:10px;}
+.tl-year-inner{background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));box-shadow:0 4px 24px rgba(90,159,212,.5);color:#fff;font-family:'ZCOOL XiaoWei',serif;font-size:22px;letter-spacing:5px;padding:7px 22px;border-radius:4px;line-height:1.2;}
+/* 事件行 */
+.tl-row{position:relative;z-index:4;display:grid;grid-template-columns:1fr 10px 1fr;margin-bottom:0;min-height:120px;align-items:center;scroll-margin-top:90px;}
+.tl-row+.tl-row{margin-top:10px;}
+.tl-year-stamp+.tl-row{margin-top:8px;}
+.tl-row-dot{grid-column:2;display:flex;align-items:center;justify-content:center;z-index:6;position:relative;}
+.tl-row-dot::before{content:'';width:16px;height:16px;border-radius:50%;position:absolute;z-index:7;background:#fff;border:3px solid var(--blue-deep);box-shadow:0 0 0 3px rgba(90,159,212,.2),0 0 12px rgba(90,159,212,.4);}
+.tl-row.big .tl-row-dot::before{width:22px;height:22px;background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));border:3px solid #fff;box-shadow:0 0 0 4px rgba(90,159,212,.3),0 0 18px rgba(168,212,245,.6);}
+.tl-left{grid-column:1;padding-right:28px;display:flex;justify-content:flex-end;}
+.tl-right{grid-column:3;padding-left:28px;display:flex;justify-content:flex-start;}
+.tl-empty{display:block;}
+.tl-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;width:100%;max-width:440px;transition:border-color .3s,transform .3s,box-shadow .3s;}
+.tl-card:hover{border-color:rgba(90,159,212,.45);transform:scale(1.02);box-shadow:0 8px 30px rgba(90,159,212,.15);}
+.tl-card-bar{height:3px;background:linear-gradient(90deg,var(--blue-deep),var(--pink-deep));}
+.tl-card-body{padding:14px 16px;}
+.tl-date-num{font-family:'ZCOOL XiaoWei',serif;font-size:36px;line-height:1;background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;margin-bottom:5px;}
+.tl-date-num span{font-size:12px;letter-spacing:4px;vertical-align:middle;margin-left:5px;-webkit-text-fill-color:var(--t3);}
+.tl-event-title{font-family:'ZCOOL XiaoWei',serif;font-size:16px;letter-spacing:3px;margin-bottom:6px;color:var(--t1);}
 .tl-event-desc{font-size:12px;color:var(--t2);line-height:1.8;}
-.tl-event-img-preview{width:100%;max-height:200px;object-fit:cover;border-radius:var(--r-sm);margin-top:10px;}
+.tl-event-img-preview{width:100%;max-height:200px;object-fit:cover;border-radius:var(--r-sm);margin-top:10px;cursor:pointer;}
 .tl-comment-area{border-top:1px solid var(--border);margin-top:12px;padding-top:12px;display:none;}
 .tl-event-admin-bar{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.tl-end{position:relative;z-index:5;display:flex;justify-content:center;padding:20px 0;}
+.tl-end-dot{width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));box-shadow:0 0 0 4px rgba(90,159,212,.2),0 0 16px rgba(90,159,212,.4);}
+/* 移动端时间轴退化为左轴 */
+@media(max-width:700px){
+  .tl-poster{padding-left:28px;}
+  .tl-spine{left:6px;transform:none;width:4px;}
+  .tl-row{grid-template-columns:1fr;min-height:auto;}
+  .tl-row-dot{display:none;}
+  .tl-left,.tl-right{grid-column:1;padding:0;justify-content:flex-start;}
+  .tl-empty{display:none;}
+  .tl-card{max-width:100%;}
+}
 
 /* PHOTOS */
 .photos-wrap{max-width:1100px;margin:0 auto;padding:0 20px 60px;}
 .photos-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .pf-btn{padding:7px 16px;border-radius:50px;border:1px solid var(--border);background:transparent;color:var(--t2);font-size:11px;letter-spacing:2px;cursor:pointer;transition:all .3s;}
 .pf-btn:hover,.pf-btn.active{border-color:var(--pink);color:var(--pink);background:var(--pink-soft);}
-.photo-grid{columns:3;column-gap:16px;}
-@media(max-width:768px){.photo-grid{columns:2;}}
-.photo-item{break-inside:avoid;margin-bottom:16px;border-radius:var(--r);overflow:hidden;background:var(--card);border:1px solid var(--border);transition:all .3s;}
-.photo-item:hover{border-color:var(--border2);transform:translateY(-2px);}
-.photo-thumb{display:flex;align-items:center;justify-content:center;font-size:44px;}
+/* 4列正方形网格 */
+.photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+@media(max-width:900px){.photo-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:600px){.photo-grid{grid-template-columns:repeat(2,1fr);}}
+.photo-item{border-radius:var(--r);overflow:hidden;background:var(--card);border:1px solid var(--border);transition:border-color .3s,transform .3s,box-shadow .3s;}
+.photo-item:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.3);}
+/* 正方形图片区域 */
+.photo-img-wrap{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;background:rgba(255,255,255,.03);cursor:pointer;}
+.photo-img-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;display:block;transition:transform .4s;}
+.photo-item:hover .photo-img-wrap img{transform:scale(1.06);}
+.photo-img-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--t3);font-size:11px;letter-spacing:2px;background:linear-gradient(135deg,rgba(168,212,245,.06),rgba(232,122,171,.04));}
 .photo-info{padding:10px 12px 6px;}
-.photo-caption{font-size:12px;letter-spacing:.5px;color:var(--t1);margin-bottom:3px;}
+.photo-tag{display:inline-block;font-size:9px;letter-spacing:2px;padding:2px 8px;border-radius:6px;margin-bottom:5px;}
+.tag-lumu{background:rgba(245,184,208,.15);color:var(--pink);}
+.tag-wlj{background:rgba(168,212,245,.15);color:var(--blue);}
+.tag-mzc{background:rgba(212,184,245,.15);color:var(--lilac);}
+.tag-fan{background:rgba(255,255,255,.08);color:var(--t2);}
+.photo-caption{font-size:12px;letter-spacing:.5px;color:var(--t1);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .photo-author{font-size:10px;color:var(--t3);letter-spacing:1px;}
 .photo-actions{padding:6px 12px 10px;display:flex;align-items:center;gap:8px;}
 .pa-like{font-size:11px;color:var(--t3);cursor:pointer;transition:color .2s;}
@@ -322,14 +365,20 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
 
 /* EVENTS */
 .events-wrap{max-width:800px;margin:0 auto;padding:0 20px 60px;}
-.ev-card{border-radius:var(--r);overflow:hidden;margin-bottom:20px;background:var(--card);border:1px solid var(--border);transition:all .3s;}
+.ev-card{border-radius:var(--r);overflow:hidden;margin-bottom:20px;background:var(--card);border:1px solid var(--border);transition:border-color .3s;}
 .ev-card:hover{border-color:var(--border2);}
 .ev-top-bar{height:3px;background:linear-gradient(90deg,var(--blue-deep),var(--pink-deep));}
+/* 置顶公告发光顶条 */
+.ev-card.featured .ev-top-bar{height:4px;background:linear-gradient(90deg,#d4aa70,var(--pink-deep),var(--blue-deep),#d4aa70);background-size:200%;animation:bar-shimmer 3s linear infinite;}
+@keyframes bar-shimmer{from{background-position:0%}to{background-position:200%}}
 .ev-body{padding:20px 22px;}
+.ev-pin{display:inline-flex;align-items:center;gap:5px;font-size:9px;letter-spacing:2px;color:#d4aa70;margin-bottom:8px;}
 .ev-type-tag{display:inline-flex;align-items:center;gap:6px;font-size:10px;letter-spacing:3px;color:var(--pink);margin-bottom:10px;}
+.ev-type-tag.gold{color:#d4aa70;}
 .ev-title{font-family:'ZCOOL XiaoWei',serif;font-size:20px;letter-spacing:3px;margin-bottom:10px;}
 .ev-content{font-family:'Noto Serif SC',serif;font-size:13px;color:var(--t2);line-height:2;letter-spacing:.5px;}
-.ev-img{width:100%;max-height:280px;object-fit:cover;border-radius:var(--r-sm);margin:12px 0;}
+.ev-img{width:100%;max-height:300px;object-fit:cover;border-radius:var(--r-sm);margin:12px 0;cursor:pointer;transition:transform .3s;}
+.ev-img:hover{transform:scale(1.01);}
 .ev-footer{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);}
 .ev-date{font-size:10px;color:var(--t3);letter-spacing:2px;}
 .ev-sig{font-size:11px;color:var(--t3);letter-spacing:1px;}
@@ -391,6 +440,37 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
 .c-like:hover,.c-like.liked{color:var(--pink);}
 .c-del{font-size:10px;color:#ff8aaa;cursor:pointer;letter-spacing:1px;}
 
+/* VIDEOS — 独立视频合集页 */
+.videos-wrap{max-width:1100px;margin:0 auto;padding:0 20px 60px;}
+.vf-btn{padding:7px 16px;border-radius:50px;border:1px solid var(--border);background:transparent;color:var(--t2);font-size:11px;letter-spacing:2px;cursor:pointer;transition:all .3s;}
+.vf-btn:hover,.vf-btn.active{border-color:var(--blue);color:var(--blue);background:var(--blue-soft);}
+.video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+@media(max-width:600px){.video-grid{grid-template-columns:1fr;}}
+.vg-card{border-radius:var(--r);overflow:hidden;background:var(--card);border:1px solid var(--border);transition:border-color .3s,transform .3s;animation:fadeUp .4s ease both;}
+.vg-card:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:0 14px 32px rgba(0,0,0,.3);}
+.vg-thumb{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:linear-gradient(135deg,rgba(168,212,245,.08),rgba(232,122,171,.05));display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.vg-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:transform .4s;}
+.vg-card:hover .vg-thumb img{transform:scale(1.06);}
+.vg-play{position:relative;z-index:2;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.3);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;transition:all .3s;}
+.vg-play::after{content:'';width:0;height:0;border-style:solid;border-width:9px 0 9px 18px;border-color:transparent transparent transparent rgba(255,255,255,.9);margin-left:4px;}
+.vg-card:hover .vg-play{background:rgba(90,159,212,.3);border-color:var(--blue);}
+.vg-badge{position:absolute;top:8px;left:8px;z-index:3;font-size:9px;letter-spacing:2px;padding:3px 8px;border-radius:8px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);}
+.vg-dur{position:absolute;bottom:8px;right:10px;z-index:3;font-size:10px;letter-spacing:1px;background:rgba(0,0,0,.7);color:rgba(255,255,255,.9);padding:2px 7px;border-radius:4px;}
+.vg-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--t3);font-size:11px;letter-spacing:2px;}
+.vg-info{padding:14px 16px;}
+.vg-title{font-size:13px;letter-spacing:.5px;color:var(--t1);margin-bottom:5px;line-height:1.5;}
+.vg-meta{font-size:10px;color:var(--t3);letter-spacing:1px;}
+.vg-desc{font-size:11px;color:var(--t2);margin-top:6px;line-height:1.7;}
+.vg-actions{padding:8px 14px;border-top:1px solid var(--border);display:flex;gap:8px;}
+
+/* 故事线章节照片 */
+.chapter-photos{margin-top:28px;padding-top:20px;border-top:1px solid var(--border);}
+.cp-title{font-size:11px;letter-spacing:3px;color:var(--t3);margin-bottom:14px;}
+.cp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+.cp-photo{border-radius:var(--r-sm);overflow:hidden;aspect-ratio:4/3;cursor:pointer;border:1px solid var(--border);transition:transform .3s;}
+.cp-photo:hover{transform:scale(1.02);}
+.cp-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+
 /* HOME */
 .home-logo-wrap{position:relative;width:fit-content;margin:60px auto 20px;}
 .home-logo{font-family:'ZCOOL XiaoWei',serif;font-size:clamp(48px,8vw,80px);letter-spacing:clamp(8px,2vw,18px);background:linear-gradient(135deg,var(--blue) 0%,var(--pink) 50%,var(--blue) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:pulse 4s ease-in-out infinite;}
@@ -406,11 +486,12 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
 <canvas id="starfield"></canvas>
 
 <nav class="nav">
-  <span class="nav-logo" onclick="showPage('home')">橹穆国</span>
+  <span class="nav-logo" onclick="showPage('home')">橹穆宇宙</span>
   <div class="nav-links" id="nav-links">
     <button class="nl" data-page="story" onclick="showPage('story')">故事线</button>
     <button class="nl" data-page="timeline" onclick="showPage('timeline')">时间线</button>
     <button class="nl" data-page="photos" onclick="showPage('photos')">照片合集</button>
+    <button class="nl" data-page="videos" onclick="showPage('videos')">视频合集</button>
     <button class="nl" data-page="world" onclick="showPage('world')">橹穆世界</button>
     <button class="nl" data-page="events" onclick="showPage('events')">大事件</button>
     <button class="nl fan-only" data-page="messages" onclick="showPage('messages')">私信</button>
@@ -446,12 +527,12 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
   <div style="max-width:980px;margin:0 auto;padding:16px 28px 80px;text-align:center;">
     <div class="home-logo-wrap">
       <div class="home-logo-glow"></div>
-      <div class="home-logo">橹穆国</div>
+      <div class="home-logo">橹穆宇宙</div>
     </div>
     <div style="font-size:13px;letter-spacing:5px;color:var(--t3);margin-bottom:44px;margin-top:4px;">
-      穆祉丞 &nbsp;×&nbsp; 王橹杰 &nbsp;·&nbsp; 专属粉丝宇宙
+      王橹杰 &nbsp;×&nbsp; 穆祉丞 &nbsp;·&nbsp; 专属粉丝宇宙
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:820px;margin:0 auto 36px;">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:960px;margin:0 auto 36px;">
       <div class="hnc" onclick="showPage('story')" style="padding:28px 16px 22px;border-radius:var(--r);background:linear-gradient(145deg,rgba(168,212,245,.09),rgba(90,159,212,.04));border:1px solid rgba(168,212,245,.2);cursor:pointer;text-align:center;">
         <div style="font-size:36px;margin-bottom:14px;">📖</div>
         <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;letter-spacing:4px;margin-bottom:7px;">故 事 线</div>
@@ -466,6 +547,11 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
         <div style="font-size:36px;margin-bottom:14px;">🖼️</div>
         <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;letter-spacing:4px;margin-bottom:7px;">照 片 合 集</div>
         <div style="font-size:11px;color:var(--t3);letter-spacing:2px;">同框 · 回忆</div>
+      </div>
+      <div class="hnc" onclick="showPage('videos')" style="padding:28px 16px 22px;border-radius:var(--r);background:linear-gradient(145deg,rgba(168,212,245,.09),rgba(90,159,212,.04));border:1px solid rgba(168,212,245,.2);cursor:pointer;text-align:center;">
+        <div style="font-size:36px;margin-bottom:14px;">🎬</div>
+        <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;letter-spacing:4px;margin-bottom:7px;">视 频 合 集</div>
+        <div style="font-size:11px;color:var(--t3);letter-spacing:2px;">同框 · 直播 · 剪辑</div>
       </div>
       <div class="hnc" onclick="showPage('world')" style="padding:28px 16px 22px;border-radius:var(--r);background:linear-gradient(145deg,rgba(212,184,245,.09),rgba(160,100,240,.04));border:1px solid rgba(212,184,245,.2);cursor:pointer;text-align:center;">
         <div style="font-size:36px;margin-bottom:14px;">🌍</div>
@@ -487,6 +573,27 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
       你正在以路人身份浏览 · 可查看全部板块，但无法评论 / 发帖<br>
       <a href="lumu-index.html" style="color:var(--pink);text-decoration:underline;text-underline-offset:3px;font-size:11px;">← 注册粉丝账号，解锁互动功能</a>
     </div>
+  </div>
+</div>
+
+<!-- VIDEOS — 独立视频合集页 -->
+<div class="page" id="page-videos">
+  <div class="videos-wrap">
+    <div class="sh"><h2>视 频 合 集</h2><div class="sh-line"></div><span class="sh-tag">VIDEOS</span></div>
+    <div id="admin-video-area" style="display:none;margin-bottom:16px;">
+      <div class="admin-panel">
+        <div class="admin-panel-title">👑 管理员工具</div>
+        <button class="admin-upload-btn" onclick="openAddLink('video')">＋ 添加视频链接</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;" id="video-filters">
+      <button class="vf-btn active" onclick="filterVideos('all',this)">全部</button>
+      <button class="vf-btn" onclick="filterVideos('lumu',this)">橹穆同框</button>
+      <button class="vf-btn" onclick="filterVideos('live',this)">直播片段</button>
+      <button class="vf-btn" onclick="filterVideos('clip',this)">综艺/节目</button>
+      <button class="vf-btn" onclick="filterVideos('fan',this)">粉丝剪辑</button>
+    </div>
+    <div class="video-grid" id="video-grid"></div>
   </div>
 </div>
 
@@ -518,12 +625,12 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
         </div>
         <div class="cal-grid" id="cal-grid"></div>
         <div class="cal-legend">
-          <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--pink);"></div>重要时刻</div>
+          <div class="cal-leg-item"><div class="cal-leg-dot" style="background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));"></div>重要时刻</div>
           <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--blue);"></div>今天</div>
         </div>
       </div>
       <div style="margin-top:14px;padding:14px;border-radius:var(--r);background:var(--card);border:1px solid var(--border);">
-        <div style="font-size:11px;letter-spacing:3px;color:var(--t3);margin-bottom:10px;">橹穆 重要日期</div>
+        <div style="font-size:11px;letter-spacing:3px;color:var(--t3);margin-bottom:10px;">王橹杰 × 穆祉丞 · 重要日期</div>
         <div id="tl-special-list"></div>
       </div>
     </div>
@@ -532,8 +639,9 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
       <div id="admin-tl-btn" style="display:none;margin-bottom:16px;">
         <button class="admin-upload-btn" onclick="openModal('modal-add-tldate')">＋ 添加重要日期</button>
       </div>
-      <div class="tl-scroll">
-        <div class="tl-line" id="tl-line"></div>
+      <div class="tl-poster" id="tl-poster">
+        <div class="tl-spine"></div>
+        <div id="tl-rows"></div>
       </div>
     </div>
   </div>
@@ -860,12 +968,13 @@ function showPage(id){
   if(id==='story'&&!storyInited)renderStory();
   if(id==='timeline'&&!tlInited)renderTimeline();
   if(id==='photos'&&!photosInited)renderPhotos();
+  if(id==='videos'&&!videosInited)renderVideos();
   if(id==='world'&&!worldInited)renderWorld();
   if(id==='events'&&!eventsInited)renderEvents();
   if(id==='messages'&&!dmInited)renderDM();
 }
 
-function doLogout(){S.clear();toast('已退出橹穆国 🌙');setTimeout(()=>window.location.href='lumu-index.html',1200);}
+function doLogout(){S.clear();toast('已退出橹穆宇宙 🌙');setTimeout(()=>window.location.href='lumu-index.html',1200);}
 
 /* ── NOTIF ── */
 let notifOpen=false;
@@ -1093,7 +1202,7 @@ function renderCalendar(){
   grid.innerHTML=html;
 }
 function calNav(dir){calMonth+=dir;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
-function calClickDay(ds){const ev=getAllTLEvents().find(e=>e.date===ds);if(ev){const el=document.getElementById('tl-ev-'+ev.id);if(el)el.scrollIntoView({behavior:'smooth',block:'center'});}}
+function calClickDay(ds){const ev=getAllTLEvents().find(e=>e.date===ds);if(ev){const el=document.getElementById('tl-row-'+ev.id)||document.getElementById('tl-ev-'+ev.id);if(el)el.scrollIntoView({behavior:'smooth',block:'center'});}}
 function renderSpecialList(){
   const el=document.getElementById('tl-special-list');if(!el)return;
   el.innerHTML=getAllTLEvents().filter(e=>e.big).map(e=>`
@@ -1103,28 +1212,56 @@ function renderSpecialList(){
     </div>`).join('');
 }
 function renderTLEvents(){
-  const line=document.getElementById('tl-line');if(!line)return;
-  line.innerHTML=getAllTLEvents().map(e=>`
-    <div class="tl-event ${e.color||'pink'} ${e.big?'big':''}" id="tl-ev-${e.id}">
-      <div class="tl-event-card" onclick="toggleTLComment('${e.id}')">
-        <div class="tl-event-img">${e.emoji}</div>
-        <div class="tl-event-body">
-          <div class="tl-event-date">${e.date}</div>
-          <div class="tl-event-title">${e.title}</div>
-          <div class="tl-event-desc">${e.desc||''}</div>
-          ${e.img?`<img src="${e.img}" class="tl-event-img-preview" onerror="this.style.display='none'">`:''}
-          ${e._api&&S.isAdmin()?`<div class="tl-event-admin-bar" onclick="event.stopPropagation()">
-            <button class="btn-edit" onclick="openEditTL(${e._dbId},'${encodeURIComponent(e.title)}','${e.date}','${encodeURIComponent(e.desc||'')}','${e.emoji}','${encodeURIComponent(e.img||'')}','${e.color}',${e.big})">✏️ 编辑</button>
-            <button class="btn-danger" onclick="delTLDate(${e._dbId})">🗑 删除</button>
-          </div>`:''}
-        </div>
-        <div class="tl-comment-area" id="tl-ca-${e.id}">
-          <div id="tl-cmts-${e.id}"></div>
-          ${commentInputHTML('timeline',e.id,'tl-cmts-'+e.id)}
-        </div>
+  const rows=document.getElementById('tl-rows');if(!rows)return;
+  const events=getAllTLEvents();
+  if(!events.length){rows.innerHTML='<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:60px;text-align:center;">暂无时间线事件 · 管理员可点击上方按钮添加</div>';return;}
+  let html='',lastYear='',idx=0;
+  events.forEach(e=>{
+    const yr=e.date?e.date.slice(0,4):'';
+    if(yr&&yr!==lastYear){html+=`<div class="tl-year-stamp"><div class="tl-year-inner">${yr}</div></div>`;lastYear=yr;}
+    const isLeft=idx%2===0;
+    const safeTitle=e.title.replace(/'/g,"\\'").replace(/"/g,'&quot;');
+    const safeDesc=(e.desc||'').replace(/'/g,"\\'");
+    const dateDisp=e.date?e.date.slice(5):'';
+    const cardHtml=`<div class="tl-card" id="tl-ev-${e.id}">
+      <div class="tl-card-bar"></div>
+      <div class="tl-card-body">
+        <div class="tl-date-num">${dateDisp}<span>${yr}</span></div>
+        <div class="tl-event-title">${e.emoji||'✦'} ${e.title}</div>
+        <div class="tl-event-desc">${e.desc||''}</div>
+        ${e.img?`<img src="${e.img}" class="tl-event-img-preview" onerror="this.style.display='none'" onclick="openLightbox('${e.img.replace(/'/g,"\\'")}','${safeTitle}')">`:''}
+        ${e._api&&S.isAdmin()?`<div class="tl-event-admin-bar" onclick="event.stopPropagation()">
+          <button class="btn-edit" onclick="openEditTL(${e._dbId},'${encodeURIComponent(e.title)}','${e.date}','${encodeURIComponent(e.desc||'')}','${e.emoji}','${encodeURIComponent(e.img||'')}','${e.color}',${e.big})">✏️ 编辑</button>
+          <button class="btn-danger" onclick="delTLDate(${e._dbId})">🗑 删除</button>
+        </div>`:''}
       </div>
-    </div>`).join('');
-  getAllTLEvents().forEach(e=>loadComments('timeline',e.id,'tl-cmts-'+e.id));
+      <div class="tl-comment-area" id="tl-ca-${e.id}" onclick="event.stopPropagation()">
+        <div id="tl-cmts-${e.id}"></div>
+        ${commentInputHTML('timeline',e.id,'tl-cmts-'+e.id)}
+      </div>
+    </div>`;
+    if(isLeft){
+      html+=`<div class="tl-row ${e.big?'big':''}" id="tl-row-${e.id}">
+        <div class="tl-left">${cardHtml}</div>
+        <div class="tl-row-dot"></div>
+        <div class="tl-right tl-empty"></div>
+      </div>`;
+    }else{
+      html+=`<div class="tl-row ${e.big?'big':''}" id="tl-row-${e.id}">
+        <div class="tl-left tl-empty"></div>
+        <div class="tl-row-dot"></div>
+        <div class="tl-right">${cardHtml}</div>
+      </div>`;
+    }
+    idx++;
+  });
+  html+=`<div class="tl-end"><div class="tl-end-dot"></div></div>`;
+  rows.innerHTML=html;
+  events.forEach(e=>{
+    const card=document.getElementById('tl-ev-'+e.id);
+    if(card)card.addEventListener('click',()=>toggleTLComment(e.id));
+    loadComments('timeline',e.id,'tl-cmts-'+e.id);
+  });
 }
 function toggleTLComment(id){const ca=document.getElementById('tl-ca-'+id);if(ca)ca.style.display=ca.style.display==='none'||ca.style.display===''?'block':'none';}
 async function submitTLDate(){
@@ -1202,29 +1339,93 @@ async function filterPhotos(cat,btn){
     grid.innerHTML='<div style="color:var(--t3);font-size:13px;padding:60px;text-align:center;letter-spacing:2px;">暂无照片 · 管理员可点击上方按钮添加</div>';
     return;
   }
+  const tagMap={lumu:'tag-lumu',wlj:'tag-wlj',mzc:'tag-mzc',fan:'tag-fan'};
+  const tagLabelMap={lumu:'橹穆同框',wlj:'王橹杰',mzc:'穆祉丞',fan:'粉丝投稿'};
   grid.innerHTML=all.map(p=>{
     const safeUrl=p.url.replace(/\\/g,'\\\\').replace(/'/g,'\\\'');
     const safeCap=(p.caption||'').replace(/'/g,'\\\'');
+    const tagCls=tagMap[p.cat]||'tag-fan';
+    const tagLabel=tagLabelMap[p.cat]||p.cat;
     return`<div class="photo-item">
-      ${p.url
-        ?`<img src="${p.url}" loading="lazy"
-            style="width:100%;display:block;cursor:zoom-in;border-radius:var(--r) var(--r) 0 0;max-height:280px;object-fit:cover;"
-            onclick="openLightbox('${safeUrl}','${safeCap}')"
-            onerror="this.style.display='none'">`
-        :`<div style="height:160px;display:flex;align-items:center;justify-content:center;font-size:44px;background:rgba(255,255,255,.04);border-radius:var(--r) var(--r) 0 0;">🌸</div>`
-      }
+      <div class="photo-img-wrap" onclick="openLightbox('${safeUrl}','${safeCap}')">
+        ${p.url
+          ?`<img src="${p.url}" loading="lazy" alt="${safeCap}" onerror="this.style.display='none'">`
+          :`<div class="photo-img-ph"><span style="font-size:26px;opacity:.5;">🌸</span><span>暂无图片</span></div>`
+        }
+      </div>
       <div class="photo-info">
+        <div class="photo-tag ${tagCls}">${tagLabel}</div>
         <div class="photo-caption">${p.caption||''}</div>
         <div class="photo-author">📷 ${p.author||''} ${p.platform?'· '+p.platform:''}</div>
       </div>
       <div class="photo-actions">
         <span class="pa-like" onclick="likePhoto('${p.id}',this)">🤍</span>
-        ${p._api&&S.isAdmin()?`<button class="btn-edit" onclick="openEditPhoto(${p._dbId},'${encodeURIComponent(p.caption||'')}'  ,'${encodeURIComponent(p.url||'')}'  ,'${encodeURIComponent(p.author||'')}'  ,'${p.platform||'微博'}','${p.cat}')">✏️</button>
+        ${p._api&&S.isAdmin()?`<button class="btn-edit" onclick="openEditPhoto(${p._dbId},'${encodeURIComponent(p.caption||'')}','${encodeURIComponent(p.url||'')}','${encodeURIComponent(p.author||'')}','${p.platform||'微博'}','${p.cat}')">✏️</button>
           <button class="btn-danger" onclick="deletePhoto(${p._dbId})">🗑</button>`:''}
       </div>
     </div>`;
   }).join('');
 }
+/* ═══════════════════════════════════════
+   VIDEOS 独立视频合集页
+═══════════════════════════════════════ */
+let videosInited=false,currentVideoFilter='all';
+const VIDEO_TAG_LABELS={lumu:'橹穆同框',live:'直播片段',clip:'综艺/节目',fan:'粉丝剪辑'};
+const VIDEO_TAG_COLORS={lumu:'color:var(--pink)',live:'color:#f0c050',clip:'color:var(--blue)',fan:'color:var(--lilac)'};
+async function renderVideos(){
+  videosInited=true;
+  if(S.isAdmin())document.getElementById('admin-video-area').style.display='block';
+  await filterVideos('all',document.querySelector('.vf-btn'));
+}
+async function filterVideos(tag,btn){
+  currentVideoFilter=tag;
+  document.querySelectorAll('.vf-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  const grid=document.getElementById('video-grid');
+  grid.innerHTML='<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:20px;">加载中...</div>';
+  let apiItems=[];
+  try{apiItems=await api('GET','/api/media?type=video');}catch(e){}
+  // 用tags里的第一个tag作为分类，或fallback 'lumu'
+  const all=apiItems.map(o=>({
+    id:o.id,title:o.title,url:o.url,img:o.image_url||'',
+    platform:o.platform||'',author:o.author_name||'',
+    tags:o.tags?JSON.parse(o.tags||'[]'):[],
+    date:new Date(o.created_at).toLocaleDateString('zh-CN'),
+    vtag:(o.tags?JSON.parse(o.tags||'[]'):[]).find(t=>['lumu','live','clip','fan'].includes(t))||'lumu',
+    _dbId:o.id
+  })).filter(o=>tag==='all'||o.vtag===tag);
+  if(!all.length){
+    grid.innerHTML='<div style="color:var(--t3);font-size:13px;padding:60px;text-align:center;letter-spacing:2px;">暂无视频 · 管理员可点击上方按钮添加</div>';
+    return;
+  }
+  grid.innerHTML=all.map(o=>{
+    const embed=getEmbedUrl(o.url);
+    const safeTitle=o.title.replace(/'/g,"\\'").replace(/"/g,'&quot;');
+    const safeUrl=o.url.replace(/'/g,"\\'");
+    const tagLabel=VIDEO_TAG_LABELS[o.vtag]||o.vtag;
+    const tagColor=VIDEO_TAG_COLORS[o.vtag]||'color:var(--t2)';
+    return`<div class="vg-card">
+      <div class="vg-thumb" onclick="${embed?`openVideoPlayer('${embed}','${safeTitle}')`:`window.open('${safeUrl}','_blank')`}">
+        ${o.img?`<img src="${o.img}" onerror="this.style.display='none'">`:``}
+        <div class="vg-play"></div>
+        <span class="vg-badge" style="${tagColor}">${tagLabel}</span>
+        <span class="vg-dur">${o.platform||''}</span>
+      </div>
+      <div class="vg-info">
+        <div class="vg-title">${o.title}</div>
+        <div class="vg-meta">由 ${o.author||'未知'} · ${o.date||''}</div>
+        ${o.tags&&o.tags.length?`<div class="vg-desc">${o.tags.filter(t=>!['lumu','live','clip','fan'].includes(t)).join(' · ')}</div>`:''}
+      </div>
+      <div class="vg-actions">
+        ${embed?`<span style="font-size:11px;color:var(--pink);cursor:pointer;" onclick="openVideoPlayer('${embed}','${safeTitle}')">▶ 在线播放</span>`:''}
+        <span style="font-size:11px;color:var(--blue);cursor:pointer;" onclick="window.open('${safeUrl}','_blank')">🔗 原链接</span>
+        ${S.isAdmin()?`<button class="btn-edit" onclick="openEditLink(${o._dbId},'${encodeURIComponent(o.title)}','${encodeURIComponent(o.url)}','${encodeURIComponent(o.img||'')}','🎬','${encodeURIComponent(o.author||'')}','${o.platform||'bilibili'}','${encodeURIComponent(JSON.stringify(o.tags||[]))}')">✏️</button>
+          <button class="btn-danger" onclick="deleteLink(${o._dbId})">🗑</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
 async function likePhoto(id,el){
   if(!S.isFan()){toast('登录后才能点赞');return;}
   try{const r=await api('POST','/api/likes/photo/'+id);el.innerHTML=r.liked?'💗':'🤍';el.classList.toggle('liked',r.liked);}catch(e){toast('点赞失败');}
@@ -1587,13 +1788,14 @@ async function renderEvents(){
     el.innerHTML='<div style="color:var(--t3);font-size:13px;letter-spacing:3px;padding:60px;text-align:center;">暂无公告 · 管理员可在上方发布</div>';
     return;
   }
-  el.innerHTML=all.map(ev=>`
-    <div class="ev-card">
+  el.innerHTML=all.map((ev,idx)=>`
+    <div class="ev-card ${idx===0?'featured':''}">
       <div class="ev-top-bar"></div>
       <div class="ev-body">
-        <div class="ev-type-tag">📣 官方公告</div>
+        ${idx===0?'<div class="ev-pin">★ 最新公告</div>':''}
+        <div class="ev-type-tag ${idx===0?'gold':''}">📣 ${idx===0?'橹穆宇宙公告':'官方公告'}</div>
         <div class="ev-title">${ev.title}</div>
-        ${ev.img?`<img src="${ev.img}" class="ev-img" onerror="this.style.display='none'">`:'' }
+        ${ev.img?`<img src="${ev.img}" class="ev-img" onerror="this.style.display='none'" onclick="openLightbox('${ev.img.replace(/'/g,"\\'")}','${(ev.title||'').replace(/'/g,"\\'")}')">`:'' }
         <div class="ev-content" style="white-space:pre-line;">${ev.content}</div>
         <div class="ev-footer">
           <span class="ev-date">📅 ${ev.date}</span>
@@ -1687,7 +1889,7 @@ async function openDMThread(otherId){
   chatCol.innerHTML=`
     <div class="chat-header">
       <div class="ch-av">💙</div>
-      <div><div class="ch-name">${otherId}</div><div class="ch-status">橹穆国成员</div></div>
+      <div><div class="ch-name">${otherId}</div><div class="ch-status">橹穆宇宙成员</div></div>
     </div>
     <div class="chat-messages" id="chat-msgs-${otherId}"></div>
     <div class="chat-input-area">
