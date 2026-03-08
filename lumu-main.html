@@ -225,71 +225,138 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
 .sc-list.open{max-height:2000px;}
 .chapter-admin-bar{display:flex;gap:8px;margin-top:10px;padding:10px 0;border-top:1px dashed rgba(212,170,112,.2);}
 
-/* TIMELINE */
-.tl-wrap{display:grid;grid-template-columns:280px 1fr;gap:24px;max-width:1200px;margin:0 auto;padding:0 20px 60px;}
-@media(max-width:900px){.tl-wrap{grid-template-columns:1fr;}}
-.cal-box{padding:20px;}
-.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.cal-ym{font-family:'ZCOOL XiaoWei',serif;font-size:16px;letter-spacing:3px;}
+/* ── TIMELINE ── */
+.tl-wrap{max-width:1200px;margin:0 auto;padding:0 20px 60px;}
+/* 双Tab */
+.tl-tabs{display:flex;gap:0;margin-bottom:28px;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:5px;width:fit-content;}
+.tl-tab{padding:10px 28px;border-radius:50px;cursor:pointer;font-family:'Noto Sans SC',sans-serif;font-size:12px;letter-spacing:3px;color:var(--t2);border:none;background:transparent;transition:all .3s;}
+.tl-tab.active-rose{background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));color:#fff;box-shadow:0 4px 16px rgba(90,159,212,.45);}
+.tl-tab.active-blue{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;box-shadow:0 4px 16px rgba(124,58,237,.45);}
+/* 面板 */
+.tl-panel{display:none;}
+.tl-panel.active{display:grid;grid-template-columns:270px 1fr;gap:32px;align-items:start;}
+@media(max-width:900px){.tl-panel.active{grid-template-columns:1fr;}}
+/* 侧边栏 */
+.tl-sidebar{position:sticky;top:calc(var(--nav-h)+16px);display:flex;flex-direction:column;gap:16px;}
+@media(max-width:900px){.tl-sidebar{position:static;}}
+/* 日历卡 */
+.cal-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.cal-header{padding:15px 18px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.cal-title{font-family:'ZCOOL XiaoWei',serif;font-size:15px;letter-spacing:4px;}
 .cal-nav{display:flex;gap:6px;}
-.cal-nav-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--t2);cursor:pointer;transition:all .2s;}
-.cal-nav-btn:hover{border-color:var(--pink);color:var(--pink);}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
-.cal-dow{font-size:10px;color:var(--t3);text-align:center;padding:4px 0;letter-spacing:1px;}
-.cal-day{font-size:11px;text-align:center;padding:5px;border-radius:6px;cursor:pointer;transition:all .2s;position:relative;}
-.cal-day:hover{background:var(--card2);}
+.cal-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--t2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.cal-btn:hover{border-color:var(--pink);color:var(--pink);}
+.cal-body{padding:12px 16px 16px;}
+.cal-dow-row{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:5px;}
+.cal-dow{text-align:center;font-size:10px;color:var(--t3);padding:3px 0;letter-spacing:1px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:11px;border-radius:6px;color:var(--t2);position:relative;transition:transform .15s;}
+.cal-day.other{color:var(--t3);opacity:.35;}
 .cal-day.today{background:var(--blue-soft);color:var(--blue);font-weight:700;}
-.cal-day.special{background:linear-gradient(135deg,rgba(90,159,212,.25),rgba(232,122,171,.25));color:#a8d4f5;font-weight:700;}
-.cal-day.special::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));}
-.cal-day.empty{cursor:default;}
-.cal-legend{display:flex;gap:16px;margin-top:12px;}
-.cal-leg-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--t3);}
-.cal-leg-dot{width:8px;height:8px;border-radius:50%;}
-/* 左右交替poster时间轴 */
+.cal-day.special-rose{background:linear-gradient(135deg,rgba(90,159,212,.25),rgba(232,122,171,.25));color:#a8d4f5;font-weight:700;cursor:pointer;}
+.cal-day.special-rose::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));}
+.cal-day.special-rose:hover{transform:scale(1.2);}
+.cal-day.special-blue{background:rgba(168,85,247,.2);color:#c084fc;font-weight:700;cursor:pointer;}
+.cal-day.special-blue::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:#a855f7;}
+.cal-day.special-blue:hover{transform:scale(1.2);}
+.cal-legend{display:flex;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap;}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t3);}
+.leg-dot{width:7px;height:7px;border-radius:50%;}
+/* 日期列表 */
+.sd-list-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;}
+.sl-title{font-size:10px;letter-spacing:4px;color:var(--t3);margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.sd-item{display:flex;align-items:center;gap:10px;padding:9px 8px;border-bottom:1px solid rgba(255,255,255,.04);border-radius:8px;cursor:pointer;transition:background .2s;}
+.sd-item:last-child{border-bottom:none;}
+.sd-item:hover{background:rgba(255,255,255,.06);}
+.sd-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sd-dot.rose{background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));box-shadow:0 0 6px rgba(90,159,212,.5);}
+.sd-dot.purple{background:#a855f7;box-shadow:0 0 6px rgba(168,85,247,.5);}
+.sd-dot.violet{background:#7c3aed;box-shadow:0 0 6px rgba(124,58,237,.5);}
+.sd-info{flex:1;min-width:0;}
+.sd-date{font-size:10px;letter-spacing:2px;margin-bottom:2px;color:var(--blue-deep);}
+.sd-dot.purple~.sd-info .sd-date,.sd-dot.violet~.sd-info .sd-date{color:#c084fc;}
+.sd-label{font-size:12px;color:var(--t1);letter-spacing:.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.sd-arrow{font-size:10px;color:var(--t3);flex-shrink:0;transition:transform .2s;}
+.sd-item:hover .sd-arrow{transform:translateX(3px);}
+/* 海报时间轴 */
 .tl-poster{position:relative;padding-bottom:20px;}
-/* 发光时间轴 */
-.tl-spine{position:absolute;left:50%;transform:translateX(-50%);top:0;bottom:0;width:10px;
-  background:linear-gradient(180deg,var(--blue-deep),var(--pink-deep),var(--blue-deep));
-  background-size:100% 400%;border-radius:5px;z-index:1;
-  animation:spine-flow 6s ease-in-out infinite;}
-.tl-spine::after{content:'';position:absolute;inset:0;background:inherit;filter:blur(12px);opacity:.35;border-radius:5px;animation:spine-flow 6s ease-in-out infinite;}
+.spine-rose{position:absolute;left:50%;transform:translateX(-50%);top:0;bottom:0;width:10px;background:linear-gradient(180deg,var(--blue-deep),var(--pink-deep),var(--blue-deep));background-size:100% 400%;border-radius:5px;z-index:1;animation:spine-flow 6s ease-in-out infinite;}
+.spine-rose::after{content:'';position:absolute;inset:0;background:inherit;filter:blur(12px);opacity:.35;border-radius:5px;animation:spine-flow 6s ease-in-out infinite;}
+.spine-blue{position:absolute;left:50%;transform:translateX(-50%);top:0;bottom:0;width:10px;background:linear-gradient(180deg,#7c3aed,#a855f7,#7c3aed);background-size:100% 400%;border-radius:5px;z-index:1;animation:spine-flow 6s ease-in-out infinite;}
+.spine-blue::after{content:'';position:absolute;inset:0;background:inherit;filter:blur(10px);opacity:.4;border-radius:5px;animation:spine-flow 6s ease-in-out infinite;}
 @keyframes spine-flow{0%{background-position:0% 0%}50%{background-position:0% 100%}100%{background-position:0% 0%}}
 /* 年份标签 */
 .tl-year-stamp{position:relative;z-index:5;display:flex;justify-content:center;padding:28px 0 6px;}
 .tl-year-stamp:first-child{padding-top:10px;}
-.tl-year-inner{background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));box-shadow:0 4px 24px rgba(90,159,212,.5);color:#fff;font-family:'ZCOOL XiaoWei',serif;font-size:22px;letter-spacing:5px;padding:7px 22px;border-radius:4px;line-height:1.2;}
+.year-inner-rose{background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));box-shadow:0 4px 24px rgba(90,159,212,.5);}
+.year-inner-blue{background:linear-gradient(135deg,#7c3aed,#a855f7);box-shadow:0 4px 24px rgba(124,58,237,.6);}
+.tl-year-inner{color:#fff;font-family:'ZCOOL XiaoWei',serif;font-size:24px;letter-spacing:5px;padding:7px 22px;border-radius:4px;line-height:1.2;}
 /* 事件行 */
-.tl-row{position:relative;z-index:4;display:grid;grid-template-columns:1fr 10px 1fr;margin-bottom:0;min-height:120px;align-items:center;scroll-margin-top:90px;}
+.tl-row{position:relative;z-index:4;display:grid;grid-template-columns:1fr 10px 1fr;margin-bottom:0;min-height:130px;align-items:center;scroll-margin-top:90px;}
 .tl-row+.tl-row{margin-top:10px;}
 .tl-year-stamp+.tl-row{margin-top:8px;}
 .tl-row-dot{grid-column:2;display:flex;align-items:center;justify-content:center;z-index:6;position:relative;}
-.tl-row-dot::before{content:'';width:16px;height:16px;border-radius:50%;position:absolute;z-index:7;background:#fff;border:3px solid var(--blue-deep);box-shadow:0 0 0 3px rgba(90,159,212,.2),0 0 12px rgba(90,159,212,.4);}
-.tl-row.big .tl-row-dot::before{width:22px;height:22px;background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));border:3px solid #fff;box-shadow:0 0 0 4px rgba(90,159,212,.3),0 0 18px rgba(168,212,245,.6);}
+.tl-row-dot::before{content:'';width:16px;height:16px;border-radius:50%;position:absolute;z-index:7;}
+.dot-rose .tl-row-dot::before{background:#fff;border:3px solid var(--blue-deep);box-shadow:0 0 0 3px rgba(90,159,212,.2),0 0 12px rgba(90,159,212,.4);}
+.dot-rose.big .tl-row-dot::before{width:22px;height:22px;background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));border:3px solid #fff;box-shadow:0 0 0 4px rgba(90,159,212,.3),0 0 18px rgba(168,212,245,.6);}
+.dot-blue .tl-row-dot::before{background:#fff;border:3px solid #a855f7;box-shadow:0 0 0 3px rgba(168,85,247,.25),0 0 12px rgba(168,85,247,.5);}
+.dot-blue.big .tl-row-dot::before{width:22px;height:22px;background:linear-gradient(135deg,#7c3aed,#a855f7);border:3px solid #fff;box-shadow:0 0 0 4px rgba(124,58,237,.3),0 0 20px rgba(168,85,247,.6);}
+/* 跳转高亮 */
+@keyframes tl-highlight{0%{background:rgba(255,255,255,.06)}50%{background:rgba(255,255,255,.12)}100%{background:transparent}}
+.tl-row.jumped .tl-card{animation:tl-highlight 1.2s ease;}
 .tl-left{grid-column:1;padding-right:28px;display:flex;justify-content:flex-end;}
 .tl-right{grid-column:3;padding-left:28px;display:flex;justify-content:flex-start;}
-.tl-empty{display:block;}
+/* 卡片 */
 .tl-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;width:100%;max-width:440px;transition:border-color .3s,transform .3s,box-shadow .3s;}
-.tl-card:hover{border-color:rgba(90,159,212,.45);transform:scale(1.02);box-shadow:0 8px 30px rgba(90,159,212,.15);}
-.tl-card-bar{height:3px;background:linear-gradient(90deg,var(--blue-deep),var(--pink-deep));}
+.dot-rose .tl-card:hover{border-color:rgba(90,159,212,.45);transform:scale(1.025);box-shadow:0 8px 30px rgba(90,159,212,.2);}
+.dot-blue .tl-card:hover{border-color:rgba(168,85,247,.4);transform:scale(1.025);box-shadow:0 8px 30px rgba(168,85,247,.2);}
+.tl-card-bar-rose{height:3px;background:linear-gradient(90deg,var(--blue-deep),var(--pink-deep));}
+.tl-card-bar-blue{height:3px;background:linear-gradient(90deg,#7c3aed,#a855f7);}
 .tl-card-body{padding:14px 16px;}
-.tl-date-num{font-family:'ZCOOL XiaoWei',serif;font-size:36px;line-height:1;background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;margin-bottom:5px;}
-.tl-date-num span{font-size:12px;letter-spacing:4px;vertical-align:middle;margin-left:5px;-webkit-text-fill-color:var(--t3);}
-.tl-event-title{font-family:'ZCOOL XiaoWei',serif;font-size:16px;letter-spacing:3px;margin-bottom:6px;color:var(--t1);}
-.tl-event-desc{font-size:12px;color:var(--t2);line-height:1.8;}
-.tl-event-img-preview{width:100%;max-height:200px;object-fit:cover;border-radius:var(--r-sm);margin-top:10px;cursor:pointer;}
-.tl-comment-area{border-top:1px solid var(--border);margin-top:12px;padding-top:12px;display:none;}
-.tl-event-admin-bar{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
-.tl-end{position:relative;z-index:5;display:flex;justify-content:center;padding:20px 0;}
-.tl-end-dot{width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));box-shadow:0 0 0 4px rgba(90,159,212,.2),0 0 16px rgba(90,159,212,.4);}
-/* 移动端时间轴退化为左轴 */
+.tl-event-tag-rose{display:inline-block;font-size:9px;letter-spacing:3px;background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:5px;}
+.tl-event-tag-blue{display:inline-block;font-size:9px;letter-spacing:3px;color:#a855f7;margin-bottom:5px;}
+.tl-date-rose{font-family:'ZCOOL XiaoWei',serif;font-size:38px;line-height:1;font-weight:900;background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:2px;margin-bottom:5px;}
+.tl-date-rose span{font-size:13px;letter-spacing:4px;vertical-align:middle;margin-left:6px;-webkit-text-fill-color:var(--t3);}
+.tl-date-blue{font-family:'ZCOOL XiaoWei',serif;font-size:38px;line-height:1;font-weight:900;background:linear-gradient(135deg,#7c3aed,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:2px;margin-bottom:5px;}
+.tl-date-blue span{font-size:13px;letter-spacing:4px;color:var(--t3);vertical-align:middle;margin-left:6px;-webkit-text-fill-color:var(--t3);}
+.tl-title{font-family:'ZCOOL XiaoWei',serif;font-size:16px;letter-spacing:3px;color:var(--t1);margin-bottom:6px;line-height:1.4;}
+.tl-desc{font-size:12px;color:var(--t2);line-height:1.9;letter-spacing:.5px;}
+/* 卡片图片 */
+.tl-card-img{width:100%;max-height:260px;object-fit:cover;display:block;cursor:pointer;transition:transform .4s;border-top:1px solid var(--border);}
+.tl-card:hover .tl-card-img{transform:scale(1.03);}
+/* 多图横滚 */
+.tl-photos{display:flex;gap:6px;overflow-x:auto;padding:10px 14px 12px;scrollbar-width:thin;border-top:1px solid var(--border);}
+.tl-photos::-webkit-scrollbar{height:2px;}
+.tl-photos::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);}
+.tl-photo-thumb{flex-shrink:0;width:90px;height:65px;border-radius:6px;overflow:hidden;cursor:pointer;border:1px solid var(--border);transition:transform .2s;}
+.tl-photo-thumb:hover{transform:scale(1.08);}
+.tl-photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+/* 占位图 */
+.img-ph{width:100%;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--t3);font-size:11px;letter-spacing:2px;background:linear-gradient(135deg,rgba(201,104,126,.04),rgba(168,212,245,.03));border-top:1px dashed rgba(255,255,255,.07);}
+.img-ph .ph-icon{font-size:24px;opacity:.5;}
+/* 视频按钮 */
+.tl-video-btn{display:flex;align-items:center;gap:8px;margin:0 14px 12px;padding:9px 14px;border-radius:8px;font-size:11px;letter-spacing:2px;text-decoration:none;transition:all .2s;}
+.tl-video-btn-rose{background:linear-gradient(135deg,rgba(90,159,212,.1),rgba(232,122,171,.1));border:1px solid rgba(90,159,212,.3);color:var(--blue);}
+.tl-video-btn-blue{background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);color:#c084fc;}
+.tl-video-btn:hover{opacity:.8;transform:translateX(2px);}
+.tl-video-btn::before{content:'▶';font-size:9px;}
+/* 评论区 */
+.tl-comment-area{border-top:1px solid var(--border);padding:12px 14px;display:none;}
+.tl-event-admin-bar{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;padding:0 16px 12px;}
+/* 终点 */
+.tl-end{position:relative;z-index:5;display:flex;justify-content:center;padding:22px 0 10px;}
+.tl-end-dot-rose{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));box-shadow:0 0 16px rgba(90,159,212,.7),0 0 32px rgba(168,212,245,.3);}
+.tl-end-dot-blue{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a855f7);box-shadow:0 0 16px rgba(168,85,247,.7),0 0 32px rgba(168,85,247,.3);}
+/* 移动端 */
 @media(max-width:700px){
-  .tl-poster{padding-left:28px;}
-  .tl-spine{left:6px;transform:none;width:4px;}
-  .tl-row{grid-template-columns:1fr;min-height:auto;}
-  .tl-row-dot{display:none;}
-  .tl-left,.tl-right{grid-column:1;padding:0;justify-content:flex-start;}
-  .tl-empty{display:none;}
-  .tl-card{max-width:100%;}
+  .spine-rose,.spine-blue{left:16px;transform:none;}
+  .tl-row{grid-template-columns:0 10px 1fr;}
+  .tl-left{display:none;}
+  .tl-right{padding-left:20px;}
+  .tl-row-dot{justify-content:flex-start;}
+  .tl-year-stamp{justify-content:flex-start;padding-left:34px;}
+  .tl-end{justify-content:flex-start;padding-left:11px;}
+  .tl-date-rose,.tl-date-blue{font-size:28px;}
 }
 
 /* PHOTOS */
@@ -614,34 +681,85 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
 <!-- TIMELINE -->
 <div class="page" id="page-timeline">
   <div class="tl-wrap">
-    <div>
-      <div class="cal-box card">
-        <div class="cal-head">
-          <span class="cal-ym" id="cal-ym"></span>
-          <div class="cal-nav">
-            <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
-            <button class="cal-nav-btn" onclick="calNav(1)">›</button>
+    <div class="sh"><h2>时 间 线</h2><div class="sh-line"></div><span class="sh-tag">TIMELINE</span></div>
+
+    <!-- 双Tab切换 -->
+    <div class="tl-tabs">
+      <button class="tl-tab active-rose" id="tab-important" onclick="switchTLTab('important')">★ 重要日期</button>
+      <button class="tl-tab"             id="tab-daily"     onclick="switchTLTab('daily')">🌸 日常记录</button>
+    </div>
+
+    <!-- 面板一：重要日期（蓝粉轴） -->
+    <div class="tl-panel active" id="panel-important">
+      <aside class="tl-sidebar">
+        <div class="cal-card">
+          <div class="cal-header">
+            <span class="cal-title" id="cal-ym-rose"></span>
+            <div class="cal-nav">
+              <button class="cal-btn" onclick="calNav('rose',-1)">‹</button>
+              <button class="cal-btn" onclick="calNav('rose',1)">›</button>
+            </div>
+          </div>
+          <div class="cal-body">
+            <div class="cal-dow-row">
+              <div class="cal-dow">日</div><div class="cal-dow">一</div><div class="cal-dow">二</div>
+              <div class="cal-dow">三</div><div class="cal-dow">四</div><div class="cal-dow">五</div><div class="cal-dow">六</div>
+            </div>
+            <div class="cal-grid" id="cal-grid-rose"></div>
+            <div class="cal-legend">
+              <div class="leg-item"><div class="leg-dot" style="background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));"></div>点击跳转</div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--blue);"></div>今天</div>
+            </div>
           </div>
         </div>
-        <div class="cal-grid" id="cal-grid"></div>
-        <div class="cal-legend">
-          <div class="cal-leg-item"><div class="cal-leg-dot" style="background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));"></div>重要时刻</div>
-          <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--blue);"></div>今天</div>
+        <div class="sd-list-card">
+          <div class="sl-title">重要日期 · 点击跳转</div>
+          <div id="sd-list-rose"></div>
         </div>
-      </div>
-      <div style="margin-top:14px;padding:14px;border-radius:var(--r);background:var(--card);border:1px solid var(--border);">
-        <div style="font-size:11px;letter-spacing:3px;color:var(--t3);margin-bottom:10px;">王橹杰 × 穆祉丞 · 重要日期</div>
-        <div id="tl-special-list"></div>
+        <div id="admin-tl-btn" style="display:none;">
+          <button class="admin-upload-btn" style="width:100%;justify-content:center;" onclick="openModal('modal-add-tldate')">＋ 添加重要日期</button>
+        </div>
+      </aside>
+      <div class="tl-poster" id="poster-important">
+        <div class="spine-rose"></div>
+        <div id="tl-rows-rose"></div>
       </div>
     </div>
-    <div>
-      <div class="sh"><h2>时 间 线</h2><div class="sh-line"></div><span class="sh-tag">TIMELINE</span></div>
-      <div id="admin-tl-btn" style="display:none;margin-bottom:16px;">
-        <button class="admin-upload-btn" onclick="openModal('modal-add-tldate')">＋ 添加重要日期</button>
-      </div>
-      <div class="tl-poster" id="tl-poster">
-        <div class="tl-spine"></div>
-        <div id="tl-rows"></div>
+
+    <!-- 面板二：日常记录（紫色轴） -->
+    <div class="tl-panel" id="panel-daily">
+      <aside class="tl-sidebar">
+        <div class="cal-card">
+          <div class="cal-header">
+            <span class="cal-title" id="cal-ym-blue"></span>
+            <div class="cal-nav">
+              <button class="cal-btn" onclick="calNav('blue',-1)">‹</button>
+              <button class="cal-btn" onclick="calNav('blue',1)">›</button>
+            </div>
+          </div>
+          <div class="cal-body">
+            <div class="cal-dow-row">
+              <div class="cal-dow">日</div><div class="cal-dow">一</div><div class="cal-dow">二</div>
+              <div class="cal-dow">三</div><div class="cal-dow">四</div><div class="cal-dow">五</div><div class="cal-dow">六</div>
+            </div>
+            <div class="cal-grid" id="cal-grid-blue"></div>
+            <div class="cal-legend">
+              <div class="leg-item"><div class="leg-dot" style="background:#a855f7;"></div>点击跳转</div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--blue);"></div>今天</div>
+            </div>
+          </div>
+        </div>
+        <div class="sd-list-card">
+          <div class="sl-title">日常记录 · 点击跳转</div>
+          <div id="sd-list-blue"></div>
+        </div>
+        <div id="admin-tl-btn-daily" style="display:none;">
+          <button class="admin-upload-btn" style="width:100%;justify-content:center;" onclick="openAddTLDate('daily')">＋ 添加日常记录</button>
+        </div>
+      </aside>
+      <div class="tl-poster" id="poster-daily">
+        <div class="spine-blue"></div>
+        <div id="tl-rows-blue"></div>
       </div>
     </div>
   </div>
@@ -749,20 +867,22 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.7;}
       <div class="modal-title">时间线事件</div>
       <div class="modal-sub" id="modal-tl-mode-sub">新增时间线事件</div>
       <input type="hidden" id="tl-edit-id">
+      <div class="fg"><label class="fl">类型</label>
+        <select class="fi" id="tl-type-input">
+          <option value="important">★ 重要日期（蓝粉轴）</option>
+          <option value="daily">🌸 日常记录（紫色轴）</option>
+        </select>
+      </div>
       <div class="fg"><label class="fl">日期</label><input class="fi" type="date" id="tl-date-input"></div>
+      <div class="fg"><label class="fl">事件标签（如：同台演出）</label><input class="fi" id="tl-tag-input" placeholder="例如：同台演出"></div>
       <div class="fg"><label class="fl">标题</label><input class="fi" id="tl-title-input" placeholder="例如：初次相遇"></div>
       <div class="fg"><label class="fl">描述</label><textarea class="fi" id="tl-desc-input" placeholder="描述这个时刻..."></textarea></div>
       <div class="fg"><label class="fl">表情</label><input class="fi" id="tl-emoji-input" placeholder="✨" style="font-size:20px;"></div>
       <div class="fg"><label class="fl">配图链接（可选）</label><input class="fi" id="tl-img-input" placeholder="https://图片直链..."></div>
-      <div class="fg"><label class="fl">颜色</label>
-        <select class="fi" id="tl-color-input">
-          <option value="pink">粉色</option>
-          <option value="blue">蓝色</option>
-        </select>
-      </div>
+      <div class="fg"><label class="fl">视频链接（可选）</label><input class="fi" id="tl-video-input" placeholder="https://b23.tv/..."></div>
       <div class="fg" style="display:flex;align-items:center;gap:10px;">
         <input type="checkbox" id="tl-big-input" style="width:16px;height:16px;">
-        <label style="font-size:12px;color:var(--t2);letter-spacing:1px;">标记为重大时刻（在侧边栏显示）</label>
+        <label style="font-size:12px;color:var(--t2);letter-spacing:1px;">标记为重大时刻（节点放大）</label>
       </div>
       <div class="ferr" id="tl-err"></div>
       <button class="btn-full" onclick="submitTLDate()">保存 ✦</button>
@@ -1166,139 +1286,221 @@ function toggleStoryComments(i){
 }
 
 /* ═══════════════════════════════════════
-   TIMELINE 时间线
+   TIMELINE 时间线（双Tab）
 ═══════════════════════════════════════ */
-let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
 let tlInited=false,_tlApiEvents=[];
-function getAllTLEvents(){
-  return _tlApiEvents.map(e=>({
-    id:e.event_key,date:e.date,title:e.title,desc:e.description,
-    emoji:e.emoji||'✦',color:e.color||'pink',big:e.is_big,img:e.image_url,
-    _api:true,_dbId:e.id
-  })).sort((a,b)=>a.date.localeCompare(b.date));
-}
+const calState={
+  rose:{year:new Date().getFullYear(),month:new Date().getMonth()},
+  blue:{year:new Date().getFullYear(),month:new Date().getMonth()}
+};
+
+function getImportantEvents(){return _tlApiEvents.filter(e=>e.color!=='blue').sort((a,b)=>a.date.localeCompare(b.date));}
+function getDailyEvents(){return _tlApiEvents.filter(e=>e.color==='blue').sort((a,b)=>a.date.localeCompare(b.date));}
+
 async function renderTimeline(){
   tlInited=true;
-  if(S.isAdmin())document.getElementById('admin-tl-btn').style.display='block';
-  try{_tlApiEvents=await api('GET','/api/timeline');}catch(e){_tlApiEvents=[];}
-  renderCalendar();renderSpecialList();renderTLEvents();
-}
-function renderCalendar(){
-  const months=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
-  document.getElementById('cal-ym').textContent=`${calYear} · ${months[calMonth]}`;
-  const grid=document.getElementById('cal-grid');
-  let html=['日','一','二','三','四','五','六'].map(d=>`<div class="cal-dow">${d}</div>`).join('');
-  const first=new Date(calYear,calMonth,1).getDay();
-  const days=new Date(calYear,calMonth+1,0).getDate();
-  const today=new Date();
-  const specialDates=getAllTLEvents().map(e=>e.date);
-  for(let i=0;i<first;i++)html+=`<div class="cal-day empty"></div>`;
-  for(let d=1;d<=days;d++){
-    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isToday=today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===d;
-    const isSpecial=specialDates.includes(ds);
-    html+=`<div class="cal-day ${isToday?'today':''} ${isSpecial?'special':''}" onclick="calClickDay('${ds}')">${d}</div>`;
+  if(S.isAdmin()){
+    document.getElementById('admin-tl-btn').style.display='block';
+    const d=document.getElementById('admin-tl-btn-daily');if(d)d.style.display='block';
   }
-  grid.innerHTML=html;
+  try{_tlApiEvents=await api('GET','/api/timeline');}catch(e){_tlApiEvents=[];}
+  renderCal('rose');renderCal('blue');
+  renderSDList('rose');renderSDList('blue');
+  renderTLRows('rose');renderTLRows('blue');
 }
-function calNav(dir){calMonth+=dir;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
-function calClickDay(ds){const ev=getAllTLEvents().find(e=>e.date===ds);if(ev){const el=document.getElementById('tl-row-'+ev.id)||document.getElementById('tl-ev-'+ev.id);if(el)el.scrollIntoView({behavior:'smooth',block:'center'});}}
-function renderSpecialList(){
-  const el=document.getElementById('tl-special-list');if(!el)return;
-  el.innerHTML=getAllTLEvents().filter(e=>e.big).map(e=>`
-    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer;border-bottom:1px solid var(--border);" onclick="calClickDay('${e.date}')">
-      <span style="font-size:16px;">${e.emoji}</span>
-      <div><div style="font-size:11px;color:var(--t1);">${e.title}</div><div style="font-size:10px;color:var(--blue-deep);">${e.date}</div></div>
+
+/* 日历渲染 */
+function renderCal(type){
+  const {year,month}=calState[type];
+  const months=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+  document.getElementById('cal-ym-'+type).textContent=year+' 年 '+String(month+1).padStart(2,'0')+' 月';
+  const grid=document.getElementById('cal-grid-'+type);
+  const events=type==='rose'?getImportantEvents():getDailyEvents();
+  const specialSet=new Set(events.map(e=>e.date));
+  const spClass=type==='rose'?'special-rose':'special-blue';
+  const today=new Date();
+  const firstDay=new Date(year,month,1).getDay();
+  const lastDate=new Date(year,month+1,0).getDate();
+  const prevLast=new Date(year,month,0).getDate();
+  let cells=[];
+  for(let i=firstDay-1;i>=0;i--)cells.push({day:prevLast-i,curr:false});
+  for(let d=1;d<=lastDate;d++)cells.push({day:d,curr:true});
+  let t=1;while(cells.length%7!==0)cells.push({day:t++,curr:false});
+  grid.innerHTML='';
+  cells.forEach(({day,curr})=>{
+    const el=document.createElement('div');
+    el.className='cal-day';el.textContent=day;
+    if(!curr){el.classList.add('other');}
+    else{
+      const ds=year+'-'+String(month+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+      if(specialSet.has(ds)){el.classList.add(spClass);el.addEventListener('click',()=>jumpToTLEvent(type,ds));}
+      if(day===today.getDate()&&month===today.getMonth()&&year===today.getFullYear())el.classList.add('today');
+    }
+    grid.appendChild(el);
+  });
+}
+function calNav(type,dir){
+  calState[type].month+=dir;
+  if(calState[type].month>11){calState[type].month=0;calState[type].year++;}
+  if(calState[type].month<0){calState[type].month=11;calState[type].year--;}
+  renderCal(type);
+}
+
+/* 日期列表 */
+function renderSDList(type){
+  const el=document.getElementById('sd-list-'+type);if(!el)return;
+  const events=type==='rose'?getImportantEvents():getDailyEvents();
+  if(!events.length){el.innerHTML='<div style="font-size:11px;color:var(--t3);letter-spacing:2px;padding:8px 0;">暂无记录</div>';return;}
+  el.innerHTML=events.map(e=>`
+    <div class="sd-item" onclick="jumpToTLEvent('${type}','${e.date}')">
+      <span class="sd-dot ${type==='rose'?'rose':'purple'}"></span>
+      <div class="sd-info">
+        <div class="sd-date">${e.date}</div>
+        <div class="sd-label">${e.title}</div>
+      </div>
+      <span class="sd-arrow">›</span>
     </div>`).join('');
 }
-function renderTLEvents(){
-  const rows=document.getElementById('tl-rows');if(!rows)return;
-  const events=getAllTLEvents();
-  if(!events.length){rows.innerHTML='<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:60px;text-align:center;">暂无时间线事件 · 管理员可点击上方按钮添加</div>';return;}
+
+/* 跳转+高亮 */
+function jumpToTLEvent(type,dateId){
+  const targetTab=type==='rose'?'important':'daily';
+  if(!document.getElementById('panel-'+targetTab).classList.contains('active'))switchTLTab(targetTab);
+  setTimeout(()=>{
+    const target=document.getElementById('tl-row-'+dateId);
+    if(!target)return;
+    target.scrollIntoView({behavior:'smooth',block:'center'});
+    target.classList.remove('jumped');void target.offsetWidth;
+    target.classList.add('jumped');
+    setTimeout(()=>target.classList.remove('jumped'),1500);
+  },80);
+}
+
+/* Tab切换 */
+function switchTLTab(tab){
+  document.querySelectorAll('.tl-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tl-tab').forEach(b=>b.classList.remove('active-rose','active-blue'));
+  if(tab==='important'){
+    document.getElementById('panel-important').classList.add('active');
+    document.getElementById('tab-important').classList.add('active-rose');
+  }else{
+    document.getElementById('panel-daily').classList.add('active');
+    document.getElementById('tab-daily').classList.add('active-blue');
+  }
+}
+
+/* 渲染事件行 */
+function renderTLRows(type){
+  const containerId=type==='rose'?'tl-rows-rose':'tl-rows-blue';
+  const rows=document.getElementById(containerId);if(!rows)return;
+  const events=(type==='rose'?getImportantEvents():getDailyEvents()).map(e=>({...e,_api:true,_dbId:e.id}));
+  const isDot=type==='rose'?'dot-rose':'dot-blue';
+  const barClass=type==='rose'?'tl-card-bar-rose':'tl-card-bar-blue';
+  const dateClass=type==='rose'?'tl-date-rose':'tl-date-blue';
+  const tagClass=type==='rose'?'tl-event-tag-rose':'tl-event-tag-blue';
+  const endDot=type==='rose'?'tl-end-dot-rose':'tl-end-dot-blue';
+  const yearInnerCls=type==='rose'?'year-inner-rose':'year-inner-blue';
+  if(!events.length){rows.innerHTML='<div style="color:var(--t3);font-size:12px;letter-spacing:2px;padding:60px;text-align:center;">暂无记录 · 管理员可点击上方按钮添加</div>';return;}
   let html='',lastYear='',idx=0;
   events.forEach(e=>{
     const yr=e.date?e.date.slice(0,4):'';
-    if(yr&&yr!==lastYear){html+=`<div class="tl-year-stamp"><div class="tl-year-inner">${yr}</div></div>`;lastYear=yr;}
+    if(yr&&yr!==lastYear){html+=`<div class="tl-year-stamp"><div class="tl-year-inner ${yearInnerCls}">${yr}</div></div>`;lastYear=yr;}
     const isLeft=idx%2===0;
-    const safeTitle=e.title.replace(/'/g,"\\'").replace(/"/g,'&quot;');
-    const safeDesc=(e.desc||'').replace(/'/g,"\\'");
     const dateDisp=e.date?e.date.slice(5):'';
-    const cardHtml=`<div class="tl-card" id="tl-ev-${e.id}">
-      <div class="tl-card-bar"></div>
+    const safeTitle=(e.title||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+    const safeImg=(e.image_url||'').replace(/'/g,"\\'");
+    // 卡片内容
+    const cardInner=`<div class="${barClass}"></div>
       <div class="tl-card-body">
-        <div class="tl-date-num">${dateDisp}<span>${yr}</span></div>
-        <div class="tl-event-title">${e.emoji||'✦'} ${e.title}</div>
-        <div class="tl-event-desc">${e.desc||''}</div>
-        ${e.img?`<img src="${e.img}" class="tl-event-img-preview" onerror="this.style.display='none'" onclick="openLightbox('${e.img.replace(/'/g,"\\'")}','${safeTitle}')">`:''}
-        ${e._api&&S.isAdmin()?`<div class="tl-event-admin-bar" onclick="event.stopPropagation()">
-          <button class="btn-edit" onclick="openEditTL(${e._dbId},'${encodeURIComponent(e.title)}','${e.date}','${encodeURIComponent(e.desc||'')}','${e.emoji}','${encodeURIComponent(e.img||'')}','${e.color}',${e.big})">✏️ 编辑</button>
-          <button class="btn-danger" onclick="delTLDate(${e._dbId})">🗑 删除</button>
+        ${e.description&&e.description.includes('|')?`<div class="${tagClass}">${e.description.split('|')[0]}</div>`:(e.description?`<div class="${tagClass}">${e.description.slice(0,12)}</div>`:'')}
+        <div class="${dateClass}">${dateDisp} <span>${yr}</span></div>
+        <div class="tl-title">${e.title}</div>
+        ${e.description?`<div class="tl-desc">${e.description.includes('|')?e.description.split('|').slice(1).join('|'):e.description}</div>`:''}
+        ${e._api&&S.isAdmin()?`<div class="tl-event-admin-bar">
+          <button class="btn-edit" onclick="event.stopPropagation();openEditTL(${e._dbId},'${encodeURIComponent(e.title)}','${e.date}','${encodeURIComponent(e.description||'')}','${e.emoji||''}','${encodeURIComponent(e.image_url||'')}','${e.color}',${e.is_big||false})">✏️ 编辑</button>
+          <button class="btn-danger" onclick="event.stopPropagation();delTLDate(${e._dbId})">🗑 删除</button>
         </div>`:''}
       </div>
-      <div class="tl-comment-area" id="tl-ca-${e.id}" onclick="event.stopPropagation()">
-        <div id="tl-cmts-${e.id}"></div>
-        ${commentInputHTML('timeline',e.id,'tl-cmts-'+e.id)}
-      </div>
-    </div>`;
+      ${e.video_url?`<a class="tl-video-btn tl-video-btn-${type==='rose'?'rose':'blue'}" href="${e.video_url}" target="_blank" onclick="event.stopPropagation()">观看视频</a>`:''}
+      ${e.image_url?`<img class="tl-card-img" src="${e.image_url}" onerror="this.style.display='none'" onclick="event.stopPropagation();openLightbox('${safeImg}','${safeTitle}')">`:'<div class="img-ph"><span class="ph-icon">📷</span>暂无图片</div>'}
+      <div class="tl-comment-area" id="tl-ca-${e.event_key}" onclick="event.stopPropagation()">
+        <div id="tl-cmts-${e.event_key}"></div>
+        ${commentInputHTML('timeline',e.event_key,'tl-cmts-'+e.event_key)}
+      </div>`;
+    const card=`<div class="tl-card" onclick="toggleTLComment('${e.event_key}')">${cardInner}</div>`;
     if(isLeft){
-      html+=`<div class="tl-row ${e.big?'big':''}" id="tl-row-${e.id}">
-        <div class="tl-left">${cardHtml}</div>
+      html+=`<div class="tl-row ${isDot} ${(e.is_big)?'big':''}" id="tl-row-${e.date}">
+        <div class="tl-left">${card}</div>
         <div class="tl-row-dot"></div>
-        <div class="tl-right tl-empty"></div>
+        <div class="tl-right" style="display:block;"></div>
       </div>`;
     }else{
-      html+=`<div class="tl-row ${e.big?'big':''}" id="tl-row-${e.id}">
-        <div class="tl-left tl-empty"></div>
+      html+=`<div class="tl-row ${isDot} ${(e.is_big)?'big':''}" id="tl-row-${e.date}">
+        <div class="tl-left" style="display:flex;"></div>
         <div class="tl-row-dot"></div>
-        <div class="tl-right">${cardHtml}</div>
+        <div class="tl-right">${card}</div>
       </div>`;
     }
     idx++;
   });
-  html+=`<div class="tl-end"><div class="tl-end-dot"></div></div>`;
+  html+=`<div class="tl-end"><div class="${endDot}"></div></div>`;
   rows.innerHTML=html;
-  events.forEach(e=>{
-    const card=document.getElementById('tl-ev-'+e.id);
-    if(card)card.addEventListener('click',()=>toggleTLComment(e.id));
-    loadComments('timeline',e.id,'tl-cmts-'+e.id);
-  });
+  events.forEach(e=>loadComments('timeline',e.event_key,'tl-cmts-'+e.event_key));
 }
-function toggleTLComment(id){const ca=document.getElementById('tl-ca-'+id);if(ca)ca.style.display=ca.style.display==='none'||ca.style.display===''?'block':'none';}
+function toggleTLComment(key){const ca=document.getElementById('tl-ca-'+key);if(ca)ca.style.display=ca.style.display==='block'?'none':'block';}
+
+function openAddTLDate(type){
+  document.getElementById('tl-type-input').value=type||'important';
+  document.getElementById('tl-edit-id').value='';
+  document.getElementById('modal-tl-mode-sub').textContent='新增时间线事件';
+  ['tl-date-input','tl-title-input','tl-desc-input','tl-emoji-input','tl-img-input','tl-tag-input'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const vi=document.getElementById('tl-video-input');if(vi)vi.value='';
+  document.getElementById('tl-big-input').checked=false;
+  openModal('modal-add-tldate');
+}
 async function submitTLDate(){
   if(!S.isAdmin()){toast('⚠️ 仅管理员可操作');return;}
   const editId=document.getElementById('tl-edit-id').value;
+  const tlType=document.getElementById('tl-type-input').value; // 'important'|'daily'
+  const color=tlType==='daily'?'blue':'pink';
   const date=document.getElementById('tl-date-input').value;
+  const tag=(document.getElementById('tl-tag-input').value||'').trim();
   const title=document.getElementById('tl-title-input').value.trim();
-  const description=document.getElementById('tl-desc-input').value.trim();
+  const descBody=document.getElementById('tl-desc-input').value.trim();
+  // tag存在时拼接到description前：tag|描述（前端渲染时以|分割）
+  const description=tag?(tag+'|'+descBody):descBody;
   const emoji=document.getElementById('tl-emoji-input').value.trim()||'✦';
   const image_url=document.getElementById('tl-img-input').value.trim();
-  const color=document.getElementById('tl-color-input').value;
+  const video_url=(document.getElementById('tl-video-input').value||'').trim();
   const is_big=document.getElementById('tl-big-input').checked;
   const err=document.getElementById('tl-err');
   if(!date||!title){err.textContent='日期和标题不能为空';return;}
+  // event_key = date（唯一键）
+  const event_key=date+(editId?'':'-'+Date.now());
   try{
+    const body={date,title,description,emoji,image_url,color,is_big,event_key};
+    if(video_url)body.video_url=video_url;
     if(editId){
-      await api('PUT','/api/timeline/'+editId,{date,title,description,emoji,image_url,color,is_big});
-      toast('✨ 已更新');
+      await api('PUT','/api/timeline/'+editId,body);toast('✨ 已更新');
     }else{
-      await api('POST','/api/timeline',{date,title,description,emoji,image_url,color,is_big});
-      toast('✨ 日期已添加');
+      await api('POST','/api/timeline',body);toast('✨ 日期已添加');
     }
     closeModal('modal-add-tldate');
-    ['tl-date-input','tl-title-input','tl-desc-input','tl-emoji-input','tl-img-input'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('tl-edit-id').value='';
-    document.getElementById('tl-big-input').checked=false;
     err.textContent='';tlInited=false;renderTimeline();
   }catch(e){err.textContent=e.message||'操作失败';}
 }
 function openEditTL(id,title,date,desc,emoji,img,color,big){
   document.getElementById('tl-edit-id').value=id;
-  document.getElementById('tl-title-input').value=decodeURIComponent(title);
+  document.getElementById('tl-type-input').value=color==='blue'?'daily':'important';
   document.getElementById('tl-date-input').value=date;
-  document.getElementById('tl-desc-input').value=decodeURIComponent(desc);
+  const fullDesc=decodeURIComponent(desc||'');
+  const parts=fullDesc.split('|');
+  document.getElementById('tl-tag-input').value=parts.length>1?parts[0]:'';
+  document.getElementById('tl-desc-input').value=parts.length>1?parts.slice(1).join('|'):fullDesc;
+  document.getElementById('tl-title-input').value=decodeURIComponent(title);
   document.getElementById('tl-emoji-input').value=emoji;
-  document.getElementById('tl-img-input').value=decodeURIComponent(img);
-  document.getElementById('tl-color-input').value=color;
+  document.getElementById('tl-img-input').value=decodeURIComponent(img||'');
+  const vi=document.getElementById('tl-video-input');if(vi)vi.value='';
   document.getElementById('tl-big-input').checked=big;
   document.getElementById('modal-tl-mode-sub').textContent='编辑时间线事件';
   openModal('modal-add-tldate');
