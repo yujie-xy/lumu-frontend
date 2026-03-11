@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>橹穆宇宙</title>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@300;400;600;900&family=Noto+Sans+SC:wght@300;400;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/lumu-main-style.css">
+<script src="assets/js/lumu-main-script.js" defer></script>
+</head>
+<body>
+<div class="bg-cosmos"></div>
+<div class="bg-glow"></div>
+<canvas id="starfield"></canvas>
+
+<nav class="nav">
+  <span class="nav-logo" onclick="showPage('home')">橹穆宇宙</span>
+  <div class="nav-links" id="nav-links">
+    <button class="nl" data-page="story" onclick="showPage('story')">故事线</button>
+    <button class="nl" data-page="timeline" onclick="showPage('timeline')">时间线</button>
+    <button class="nl" data-page="photos" onclick="showPage('photos')">照片合集</button>
+    <button class="nl" data-page="videos" onclick="showPage('videos')">视频合集</button>
+    <button class="nl" data-page="world" onclick="showPage('world')">橹穆世界</button>
+    <button class="nl" data-page="events" onclick="showPage('events')">大事件</button>
+    <button class="nl fan-only" data-page="messages" onclick="showPage('messages')">私信</button>
+  </div>
+  <div class="nav-sp"></div>
+  <div class="nav-acts">
+    <div class="nav-bell fan-only" id="nav-bell" onclick="toggleNotif()">◉
+      <span class="bell-badge hide" id="bell-badge">0</span>
+    </div>
+    <button class="nav-dm fan-only" onclick="showPage('messages')">私信</button>
+    <div class="nav-user" id="nav-user-btn">
+      <div class="u-av" id="u-av">●</div>
+      <span class="u-name" id="u-name">路人</span>
+      <span class="u-badge" id="u-badge">路人</span>
+    </div>
+    <button class="nav-logout" onclick="doLogout()">退出</button>
+    <span id="guest-chip" style="display:none;font-size:10px;letter-spacing:2px;color:var(--t3);padding:3px 10px;border:1px solid var(--border);border-radius:10px;">路人模式</span>
+  </div>
+</nav>
+
+<div class="notif-drop" id="notif-drop">
+  <div class="nd-head">
+    <span class="nd-title">通 知</span>
+    <span class="nd-all" onclick="markAllRead()">全部已读</span>
+  </div>
+  <div class="nd-list" id="nd-list"></div>
+</div>
+
+<div class="page-body">
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div style="max-width:980px;margin:0 auto;padding:16px 28px 80px;text-align:center;">
+    <div class="home-logo-wrap">
+      <div class="home-logo-glow"></div>
+      <div class="home-logo">橹穆宇宙</div>
+    </div>
+    <div style="font-size:13px;letter-spacing:5px;color:var(--t3);margin-bottom:44px;margin-top:4px;">
+      王橹杰 &nbsp;×&nbsp; 穆祉丞 &nbsp;·&nbsp; 专属粉丝宇宙
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:960px;margin:0 auto 36px;">
+      <div class="hnc" onclick="showPage('story')" style="padding:28px 16px 22px;border-radius:var(--r);background:linear-gradient(145deg,rgba(168,212,245,.09),rgba(90,159,212,.04));border:1px solid rgba(168,212,245,.2);cursor:pointer;text-align:center;">
+        <div style="font-size:36px;margin-bottom:14px;">📖</div>
+        <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;letter-spacing:4px;margin-bottom:7px;">故 事 线</div>
+        <div style="font-size:11px;color:var(--t3);letter-spacing:2px;">章节 · 故事 · 记忆</div>
+      </div>
+      <div class="hnc" onclick="showPage('timeline')" style="padding:28px 16px 22px;border-radius:var(--r);background:linear-gradient(145deg,rgba(212,184,245,.09),rgba(160,100,240,.04));border:1px solid rgba(212,184,245,.2);cursor:pointer;text-align:center;">
+        <div style="font-size:36px;margin-bottom:14px;">📅</div>
+        <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;letter-spacing:4px;margin-bottom:7px;">时 间 线</div>
+        <div style="font-size:11px;color:var(--t3);letter-spacing:2px;">重要时刻 · 日历</div>
+      </div>
+      <div class="hnc" onclick="showPage('photos')" style="padding:28px 16px 22px;border-radius:var(--r);background:linear-gradient(145deg,rgba(245,184,208,.09),rgba(232,122,171,.04));border:1px solid rgba(245,184,208,.2);cursor:pointer;text-align:center;">
+        <div style="font-size:36px;margin-bottom:14px;">🖼️</div>
+        <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;letter-spacing:4px;margin-bottom:7px;">照 片 合 集</div>
+        <div style="font-size:11px;color:var(--t3);letter-spacing:2px;">同框 · 回忆</div>
+      </div>
+      <div class="hnc" onclick="showPage('videos')" style="padding:28px 16px 22px;border-radius:var(--r);background:linear-gradient(145deg,rgba(168,212,245,.09),rgba(90,159,212,.04));border:1px solid rgba(168,212,245,.2);cursor:pointer;text-align:center;">
+        <div style="font-size:36px;margin-bottom:14px;">🎬</div>
+        <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;letter-spacing:4px;margin-bottom:7px;">视 频 合 集</div>
+        <div style="font-size:11px;color:var(--t3);letter-spacing:2px;">同框 · 直播 · 剪辑</div>
+      </div>
+      <div class="hnc" onclick="showPage('world')" style="padding:28px 16px 22px;border-radius:var(--r);background:linear-gradient(145deg,rgba(212,184,245,.09),rgba(160,100,240,.04));border:1px solid rgba(212,184,245,.2);cursor:pointer;text-align:center;">
+        <div style="font-size:36px;margin-bottom:14px;">🌍</div>
+        <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;letter-spacing:4px;margin-bottom:7px;">橹 穆 世 界</div>
+        <div style="font-size:11px;color:var(--t3);letter-spacing:2px;">帖子 · 视频 · 文章</div>
+      </div>
+      <div class="hnc" onclick="showPage('events')" style="padding:28px 16px 22px;border-radius:var(--r);background:linear-gradient(145deg,rgba(245,184,208,.07),rgba(232,122,171,.03));border:1px solid rgba(245,184,208,.15);cursor:pointer;text-align:center;">
+        <div style="font-size:36px;margin-bottom:14px;">📣</div>
+        <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;letter-spacing:4px;margin-bottom:7px;">大 事 件</div>
+        <div style="font-size:11px;color:var(--t3);letter-spacing:2px;">公告 · 重大时刻</div>
+      </div>
+      <div class="hnc fan-only" onclick="showPage('messages')" style="padding:28px 16px 22px;border-radius:var(--r);background:linear-gradient(145deg,rgba(168,212,245,.07),rgba(90,159,212,.03));border:1px solid rgba(168,212,245,.15);cursor:pointer;text-align:center;">
+        <div style="font-size:36px;margin-bottom:14px;">💌</div>
+        <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;letter-spacing:4px;margin-bottom:7px;">私 信</div>
+        <div style="font-size:11px;color:var(--t3);letter-spacing:2px;">粉丝专属</div>
+      </div>
+    </div>
+    <div id="home-guest-msg" style="display:none;margin-top:4px;padding:16px 24px;border-radius:var(--r);background:rgba(245,184,208,.07);border:1px solid rgba(245,184,208,.18);font-size:12px;color:var(--t2);letter-spacing:2px;line-height:2.2;">
+      你正在以路人身份浏览 · 可查看全部板块，但无法评论 / 发帖<br>
+      <a href="lumu-index.html" style="color:var(--pink);text-decoration:underline;text-underline-offset:3px;font-size:11px;">← 注册粉丝账号，解锁互动功能</a>
+    </div>
+  </div>
+</div>
+
+<!-- VIDEOS — 独立视频合集页 -->
+<div class="page" id="page-videos">
+  <div class="videos-wrap">
+    <div class="sh"><h2>视 频 合 集</h2><div class="sh-line"></div><span class="sh-tag">VIDEOS</span></div>
+    <div id="admin-video-area" style="display:none;margin-bottom:16px;">
+      <div class="admin-panel">
+        <div class="admin-panel-title">👑 管理员工具</div>
+        <button class="admin-upload-btn" onclick="openAddLink('video')">＋ 添加视频链接</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;" id="video-filters">
+      <button class="vf-btn active" onclick="filterVideos('all',this)">全部</button>
+      <button class="vf-btn" onclick="filterVideos('lumu',this)">橹穆同框</button>
+      <button class="vf-btn" onclick="filterVideos('live',this)">直播片段</button>
+      <button class="vf-btn" onclick="filterVideos('clip',this)">综艺/节目</button>
+      <button class="vf-btn" onclick="filterVideos('fan',this)">粉丝剪辑</button>
+    </div>
+    <div class="video-grid" id="video-grid"></div>
+  </div>
+</div>
+
+<!-- STORY -->
+<div class="page" id="page-story">
+  <div class="story-wrap">
+    <div class="story-toc card" style="padding:20px;">
+      <div class="toc-title">📖 故事线目录</div>
+      <div id="toc-list"></div>
+      <div id="admin-story-btn" style="display:none;margin-top:16px;">
+        <button class="admin-upload-btn" style="width:100%;justify-content:center;" onclick="openModal('modal-add-chapter')">＋ 添加新章节</button>
+      </div>
+    </div>
+    <div class="story-content-wrap" id="story-chapters"></div>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="page" id="page-timeline">
+  <div class="tl-wrap">
+    <div class="sh"><h2>时 间 线</h2><div class="sh-line"></div><span class="sh-tag">TIMELINE</span></div>
+
+    <!-- 双Tab切换 -->
+    <div class="tl-tabs">
+      <button class="tl-tab active-rose" id="tab-important" onclick="switchTLTab('important')">★ 重要日期</button>
+      <button class="tl-tab"             id="tab-daily"     onclick="switchTLTab('daily')">🌸 日常记录</button>
+    </div>
+
+    <!-- 面板一：重要日期（蓝粉轴） -->
+    <div class="tl-panel active" id="panel-important">
+      <aside class="tl-sidebar">
+        <div class="cal-card">
+          <div class="cal-header">
+            <span class="cal-title" id="cal-ym-rose"></span>
+            <div class="cal-nav">
+              <button class="cal-btn" onclick="calNav('rose',-1)">‹</button>
+              <button class="cal-btn" onclick="calNav('rose',1)">›</button>
+            </div>
+          </div>
+          <div class="cal-body">
+            <div class="cal-dow-row">
+              <div class="cal-dow">日</div><div class="cal-dow">一</div><div class="cal-dow">二</div>
+              <div class="cal-dow">三</div><div class="cal-dow">四</div><div class="cal-dow">五</div><div class="cal-dow">六</div>
+            </div>
+            <div class="cal-grid" id="cal-grid-rose"></div>
+            <div class="cal-legend">
+              <div class="leg-item"><div class="leg-dot" style="background:linear-gradient(135deg,var(--blue-deep),var(--pink-deep));"></div>点击跳转</div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--blue);"></div>今天</div>
+            </div>
+          </div>
+        </div>
+        <div class="sd-list-card">
+          <div class="sl-title">重要日期 · 点击跳转</div>
+          <div id="sd-list-rose"></div>
+        </div>
+        <div id="admin-tl-btn" style="display:none;">
+          <button class="admin-upload-btn" style="width:100%;justify-content:center;" onclick="openModal('modal-add-tldate')">＋ 添加重要日期</button>
+        </div>
+      </aside>
+      <div class="tl-poster" id="poster-important">
+        <div class="spine-rose"></div>
+        <div id="tl-rows-rose"></div>
+      </div>
+    </div>
+
+    <!-- 面板二：日常记录（紫色轴） -->
+    <div class="tl-panel" id="panel-daily">
+      <aside class="tl-sidebar">
+        <div class="cal-card">
+          <div class="cal-header">
+            <span class="cal-title" id="cal-ym-blue"></span>
+            <div class="cal-nav">
+              <button class="cal-btn" onclick="calNav('blue',-1)">‹</button>
+              <button class="cal-btn" onclick="calNav('blue',1)">›</button>
+            </div>
+          </div>
+          <div class="cal-body">
+            <div class="cal-dow-row">
+              <div class="cal-dow">日</div><div class="cal-dow">一</div><div class="cal-dow">二</div>
+              <div class="cal-dow">三</div><div class="cal-dow">四</div><div class="cal-dow">五</div><div class="cal-dow">六</div>
+            </div>
+            <div class="cal-grid" id="cal-grid-blue"></div>
+            <div class="cal-legend">
+              <div class="leg-item"><div class="leg-dot" style="background:#a855f7;"></div>点击跳转</div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--blue);"></div>今天</div>
+            </div>
+          </div>
+        </div>
+        <div class="sd-list-card">
+          <div class="sl-title">日常记录 · 点击跳转</div>
+          <div id="sd-list-blue"></div>
+        </div>
+        <div id="admin-tl-btn-daily" style="display:none;">
+          <button class="admin-upload-btn" style="width:100%;justify-content:center;" onclick="openAddTLDate('daily')">＋ 添加日常记录</button>
+        </div>
+      </aside>
+      <div class="tl-poster" id="poster-daily">
+        <div class="spine-blue"></div>
+        <div id="tl-rows-blue"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PHOTOS -->
+<div class="page" id="page-photos">
+  <div class="photos-wrap">
+    <div class="sh"><h2>照 片 合 集</h2><div class="sh-line"></div><span class="sh-tag">GALLERY</span></div>
+    <div id="admin-photo-area" style="display:none;margin-bottom:16px;">
+      <div class="admin-panel">
+        <div class="admin-panel-title">👑 管理员工具</div>
+        <button class="admin-upload-btn" onclick="openModal('modal-add-photo')">＋ 添加照片/图片链接</button>
+      </div>
+    </div>
+    <div class="photos-filters">
+      <button class="pf-btn active" onclick="filterPhotos('all',this)">全部</button>
+      <button class="pf-btn" onclick="filterPhotos('lumu',this)">橹穆同框</button>
+      <button class="pf-btn" onclick="filterPhotos('wlj',this)">王橹杰</button>
+      <button class="pf-btn" onclick="filterPhotos('mzc',this)">穆祉丞</button>
+      <button class="pf-btn" onclick="filterPhotos('fan',this)">粉丝投稿</button>
+    </div>
+    <div class="photo-grid" id="photo-grid"></div>
+  </div>
+</div>
+
+<!-- WORLD (merged with output) -->
+<div class="page" id="page-world">
+  <div class="world-wrap">
+    <div class="sh"><h2>橹 穆 世 界</h2><div class="sh-line"></div><span class="sh-tag">LUMU WORLD</span></div>
+    <div class="world-tabs">
+      <button class="wt-btn active" data-world="lumu" onclick="switchWorld('lumu',this)">🌍 橹穆世界</button>
+      <button class="wt-btn" data-world="quanen" onclick="switchWorld('quanen',this)">💗 全恩世界</button>
+      <button class="wt-btn" data-world="jiec" onclick="switchWorld('jiec',this)">💙 杰丞世界</button>
+      <button class="wt-btn" data-world="tunman" onclick="switchWorld('tunman',this)">🐷 豚馒世界</button>
+      <button class="wt-btn" data-world="video" onclick="switchWorld('video',this)">🎬 视频</button>
+      <button class="wt-btn" data-world="article" onclick="switchWorld('article',this)">📝 文章</button>
+      <button class="wt-btn" data-world="material" onclick="switchWorld('material',this)">🗂 物料</button>
+    </div>
+    <div id="world-content-area"></div>
+  </div>
+</div>
+
+<!-- EVENTS -->
+<div class="page" id="page-events">
+  <div class="events-wrap">
+    <div class="sh"><h2>橹 穆 大 事 件</h2><div class="sh-line"></div><span class="sh-tag">EVENTS</span></div>
+    <div id="admin-event-area" style="display:none;">
+      <div class="admin-panel">
+        <div class="admin-panel-title">👑 发布新公告</div>
+        <div class="fg"><label class="fl">公告标题</label><input class="fi" id="ev-title-input" placeholder="输入公告标题"></div>
+        <div class="fg"><label class="fl">公告内容</label><textarea class="fi" id="ev-content-input" placeholder="输入公告内容..." style="min-height:100px;"></textarea></div>
+        <div class="fg"><label class="fl">配图链接（可选）</label><input class="fi" id="ev-img-input" placeholder="https://图片直链..."></div>
+        <button class="btn-p" onclick="publishEvent()">发布公告 ✦</button>
+      </div>
+    </div>
+    <div id="events-list"></div>
+  </div>
+</div>
+
+<!-- MESSAGES -->
+<div class="page" id="page-messages">
+  <div class="dm-wrap">
+    <div class="dm-list-col">
+      <div class="dm-list-head">💌 私 信</div>
+      <div id="dm-thread-list"></div>
+    </div>
+    <div class="dm-chat-col" id="dm-chat-col">
+      <div style="display:flex;flex:1;align-items:center;justify-content:center;color:var(--t3);font-size:12px;letter-spacing:3px;">选择一个对话开始聊天</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end page-body -->
+
+<!-- ═══ MODALS ═══ -->
+
+<!-- Add Chapter -->
+<div class="modal-ov" id="modal-add-chapter">
+  <div class="modal-bg" onclick="closeModal('modal-add-chapter')"></div>
+  <div class="modal-box">
+    <div class="modal-bar"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-add-chapter')">✕</button>
+      <div class="modal-title">添加章节</div>
+      <div class="modal-sub" id="modal-chapter-mode-sub">新增章节</div>
+      <input type="hidden" id="ch-edit-id">
+      <div class="fg"><label class="fl">章节标题</label><input class="fi" id="ch-title" placeholder="例如：初 见"></div>
+      <div class="fg"><label class="fl">时间标注</label><input class="fi" id="ch-date" placeholder="例如：2023.01"></div>
+      <div class="fg"><label class="fl">章节表情</label><input class="fi" id="ch-emoji" placeholder="🌱" style="font-size:20px;"></div>
+      <div class="fg"><label class="fl">章节内容（段落之间空一行）</label><textarea class="fi" id="ch-content" placeholder="在这里写章节内容..." style="min-height:160px;"></textarea></div>
+      <div class="ferr" id="ch-err"></div>
+      <button class="btn-full" onclick="submitChapter()">保存章节 ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Timeline Date -->
+<div class="modal-ov" id="modal-add-tldate">
+  <div class="modal-bg" onclick="closeModal('modal-add-tldate')"></div>
+  <div class="modal-box">
+    <div class="modal-bar"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-add-tldate')">✕</button>
+      <div class="modal-title">时间线事件</div>
+      <div class="modal-sub" id="modal-tl-mode-sub">新增时间线事件</div>
+      <input type="hidden" id="tl-edit-id">
+      <div class="fg"><label class="fl">类型</label>
+        <select class="fi" id="tl-type-input">
+          <option value="important">★ 重要日期（蓝粉轴）</option>
+          <option value="daily">🌸 日常记录（紫色轴）</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">日期</label><input class="fi" type="date" id="tl-date-input"></div>
+      <div class="fg"><label class="fl">事件标签（如：同台演出）</label><input class="fi" id="tl-tag-input" placeholder="例如：同台演出"></div>
+      <div class="fg"><label class="fl">标题</label><input class="fi" id="tl-title-input" placeholder="例如：初次相遇"></div>
+      <div class="fg"><label class="fl">描述</label><textarea class="fi" id="tl-desc-input" placeholder="描述这个时刻..."></textarea></div>
+      <div class="fg"><label class="fl">表情</label><input class="fi" id="tl-emoji-input" placeholder="✨" style="font-size:20px;"></div>
+      <div class="fg"><label class="fl">配图链接（可选）</label><input class="fi" id="tl-img-input" placeholder="https://图片直链..."></div>
+      <div class="fg"><label class="fl">视频链接（可选）</label><input class="fi" id="tl-video-input" placeholder="https://b23.tv/..."></div>
+      <div class="fg" style="display:flex;align-items:center;gap:10px;">
+        <input type="checkbox" id="tl-big-input" style="width:16px;height:16px;">
+        <label style="font-size:12px;color:var(--t2);letter-spacing:1px;">标记为重大时刻（节点放大）</label>
+      </div>
+      <div class="ferr" id="tl-err"></div>
+      <button class="btn-full" onclick="submitTLDate()">保存 ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Photo -->
+<div class="modal-ov" id="modal-add-photo">
+  <div class="modal-bg" onclick="closeModal('modal-add-photo')"></div>
+  <div class="modal-box">
+    <div class="modal-bar"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-add-photo')">✕</button>
+      <div class="modal-title">添加照片</div>
+      <div class="modal-sub" id="modal-photo-mode-sub">新增照片</div>
+      <input type="hidden" id="ph-edit-id">
+      <input type="hidden" id="ph-base64">
+      <div class="fg"><label class="fl">说明/标题</label><input class="fi" id="ph-caption" placeholder="照片说明"></div>
+      <div class="fg">
+        <label class="fl">上传图片文件</label>
+        <div id="ph-upload-area" style="border:2px dashed var(--border2);border-radius:var(--r-sm);padding:20px;text-align:center;cursor:pointer;transition:all .3s;" onclick="document.getElementById('ph-file').click()">
+          <div id="ph-preview" style="display:none;margin-bottom:10px;"><img id="ph-preview-img" style="max-width:100%;max-height:160px;border-radius:8px;object-fit:contain;"></div>
+          <div id="ph-upload-hint" style="font-size:12px;color:var(--t3);letter-spacing:1px;">📷 点击选择图片文件</div>
+          <input type="file" id="ph-file" accept="image/*" style="display:none;" onchange="previewPhoto(this)">
+        </div>
+      </div>
+      <div class="fg"><label class="fl">或填写图片链接（二选一）</label><input class="fi" id="ph-url" placeholder="https://图片直链..."></div>
+      <div class="fg"><label class="fl">上传者名字</label><input class="fi" id="ph-author" placeholder="例如：橹穆后援会"></div>
+      <div class="fg"><label class="fl">来源平台</label>
+        <select class="fi" id="ph-platform">
+          <option value="微博">微博</option><option value="小红书">小红书</option>
+          <option value="抖音">抖音</option><option value="lofter">lofter</option><option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">分类</label>
+        <select class="fi" id="ph-cat">
+          <option value="lumu">橹穆同框</option><option value="wlj">王橹杰</option>
+          <option value="mzc">穆祉丞</option><option value="fan">粉丝投稿</option>
+        </select>
+      </div>
+      <div class="ferr" id="ph-err"></div>
+      <button class="btn-full" onclick="submitPhoto()">保存 ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- 图片全屏预览 -->
+<div id="photo-lightbox" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.92);backdrop-filter:blur(20px);cursor:zoom-out;align-items:center;justify-content:center;" onclick="closeLightbox()">
+  <button style="position:absolute;top:16px;right:20px;background:none;border:none;color:white;font-size:28px;cursor:pointer;z-index:1;">✕</button>
+  <img id="lightbox-img" style="max-width:92vw;max-height:88vh;object-fit:contain;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.6);">
+  <div id="lightbox-caption" style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-size:13px;color:rgba(255,255,255,.7);letter-spacing:2px;"></div>
+</div>
+
+<!-- Add World Link (video/article/material) -->
+<div class="modal-ov" id="modal-add-link">
+  <div class="modal-bg" onclick="closeModal('modal-add-link')"></div>
+  <div class="modal-box">
+    <div class="modal-bar"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-add-link')">✕</button>
+      <div class="modal-title">添加内容</div>
+      <div class="modal-sub" id="modal-link-mode-sub">新增链接</div>
+      <input type="hidden" id="lk-edit-id">
+      <input type="hidden" id="lk-type">
+      <div class="fg"><label class="fl">标题</label><input class="fi" id="lk-title" placeholder="内容标题"></div>
+      <div class="fg"><label class="fl">链接</label><input class="fi" id="lk-url" placeholder="https://..."></div>
+      <div class="fg"><label class="fl">封面图链接（可选）</label><input class="fi" id="lk-img" placeholder="https://封面图链接..."></div>
+      <div class="fg"><label class="fl">表情图标</label><input class="fi" id="lk-emoji" placeholder="🎬" style="font-size:20px;"></div>
+      <div class="fg"><label class="fl">作者/来源</label><input class="fi" id="lk-author" placeholder="例如：橹穆CP站"></div>
+      <div class="fg"><label class="fl">平台</label>
+        <select class="fi" id="lk-platform">
+          <option value="bilibili">哔哩哔哩</option><option value="微博">微博</option>
+          <option value="小红书">小红书</option><option value="抖音">抖音</option>
+          <option value="YouTube">YouTube</option><option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">标签（用逗号分隔，如：同框,演出）</label>
+        <input class="fi" id="lk-tags" placeholder="同框,演出,橹穆">
+      </div>
+      <div class="ferr" id="lk-err"></div>
+      <button class="btn-full" onclick="submitLink()">保存 ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- Video Player Modal -->
+<div id="video-player-modal" style="display:none;position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,.94);backdrop-filter:blur(20px);align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;width:min(900px,95vw);padding:0 4px;">
+    <div id="vp-title" style="font-size:14px;letter-spacing:2px;color:rgba(255,255,255,.8);max-width:80%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
+    <button onclick="closeVideoPlayer()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:50%;width:36px;height:36px;color:white;font-size:18px;cursor:pointer;flex-shrink:0;">✕</button>
+  </div>
+  <div style="width:min(900px,95vw);aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.7);">
+    <iframe id="vp-frame" src="" allowfullscreen style="width:100%;height:100%;border:none;" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share"></iframe>
+  </div>
+  <div style="font-size:11px;color:rgba(255,255,255,.3);letter-spacing:2px;">点击空白处关闭</div>
+</div>
+
+<!-- Edit Event Modal -->
+<div class="modal-ov" id="modal-edit-event">
+  <div class="modal-bg" onclick="closeModal('modal-edit-event')"></div>
+  <div class="modal-box">
+    <div class="modal-bar"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-edit-event')">✕</button>
+      <div class="modal-title">编辑公告</div>
+      <input type="hidden" id="ev-edit-id">
+      <div class="fg"><label class="fl">公告标题</label><input class="fi" id="ev-edit-title" placeholder="公告标题"></div>
+      <div class="fg"><label class="fl">公告内容</label><textarea class="fi" id="ev-edit-content" placeholder="公告内容..." style="min-height:100px;"></textarea></div>
+      <div class="fg"><label class="fl">配图链接（可选）</label><input class="fi" id="ev-edit-img" placeholder="https://图片直链..."></div>
+      <div class="ferr" id="ev-edit-err"></div>
+      <button class="btn-full" onclick="submitEditEvent()">保存修改 ✦</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="assets/js/lumu-main-script.js"></script>
+</body>
+</html>

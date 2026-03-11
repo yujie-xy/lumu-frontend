@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>橹穆宇宙 · 欢迎回家</title>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@300;400;600;900&family=Noto+Sans+SC:wght@300;400;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ══════ LOADING SCREEN ══════ -->
+<div id="loading-screen">
+  <div class="loading-logo">橹穆宇宙</div>
+  <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
+  <div class="loading-text">正在进入星域...</div>
+</div>
+
+<!-- ══════ BACKGROUND LAYERS ══════ -->
+<div class="bg-layer bg-cosmos"></div>
+<div class="bg-layer bg-nebula" id="nebula-layer"></div>
+<canvas id="starfield"></canvas>
+<div class="petal-field" id="petal-field"></div>
+<div class="particle-field" id="particle-field"></div>
+
+<!-- ══════ MAIN PAGE ══════ -->
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-eyebrow">
+      <span class="eyebrow-line"></span>
+      LUMU KINGDOM · OFFICIAL FAN COMMUNITY
+      <span class="eyebrow-line r"></span>
+    </div>
+
+    <div class="site-logo">
+      <div class="logo-glow-ring"></div>
+      <span class="logo-text">橹穆宇宙</span>
+    </div>
+
+    <div class="site-tagline">王橹杰 × 穆祉丞 的专属宇宙</div>
+
+    <div class="cp-names">
+      <span class="cp-name blue-n">王橹杰</span>
+      <span class="cp-dot"></span>
+      <span class="cp-heart">💜</span>
+      <span class="cp-dot"></span>
+      <span class="cp-name pink-n">穆祉丞</span>
+    </div>
+
+    <div class="divider">
+      <div class="div-line"></div>
+      <div class="div-symbol">✦ 请选择你的身份 ✦</div>
+      <div class="div-line"></div>
+    </div>
+  </header>
+
+  <!-- CHOICE CARDS -->
+  <div class="choice-section">
+
+    <!-- CARD: 路人 -->
+    <a class="choice-card card-passerby" onclick="openPasserbyConfirm(event)" href="#">
+      <div class="card-bg-shape" style="width:200px;height:200px;background:radial-gradient(circle,rgba(168,212,245,0.08),transparent);top:-60px;right:-60px;border-radius:50%;"></div>
+      <div class="card-sparkle" style="top:14%;left:18%;--d:2.2s;--dl:0s">✦</div>
+      <div class="card-sparkle" style="top:20%;right:20%;--d:1.8s;--dl:0.4s">✧</div>
+      <div class="card-sparkle" style="bottom:25%;left:25%;--d:2.5s;--dl:0.8s">⭑</div>
+      <div class="card-glow"></div>
+      <div class="card-glass">
+        <div class="card-icon-wrap">
+          <div class="card-icon-ring"></div>
+          <div class="card-icon-ring-inner"></div>
+          <div class="card-icon-circle">🌙</div>
+        </div>
+        <div class="card-label">PASSERBY · 路人</div>
+        <div class="card-title">路过的人</div>
+        <div class="card-subtitle">
+          无需登录，悄悄看看<br>
+          这片为他们留下的角落
+        </div>
+        <ul class="card-perks">
+          <li class="perk-item"><span class="perk-dot"></span>浏览时间线与大事件</li>
+          <li class="perk-item"><span class="perk-dot"></span>翻阅故事线章节</li>
+          <li class="perk-item"><span class="perk-dot"></span>欣赏照片合集</li>
+          <li class="perk-item"><span class="perk-dot"></span>点赞（不可评论）</li>
+          <li class="perk-item locked"><span class="perk-dot"></span>发言 · 评论 · 私信</li>
+          <li class="perk-item locked"><span class="perk-dot"></span>橹穆世界完整内容</li>
+        </ul>
+        <button class="card-btn">以路人身份进入 →</button>
+      </div>
+    </a>
+
+    <!-- CARD: 粉丝/青梅果 -->
+    <a class="choice-card card-fan" onclick="openFanLogin()" href="#">
+      <div class="card-bg-shape" style="width:200px;height:200px;background:radial-gradient(circle,rgba(245,184,208,0.1),transparent);bottom:-60px;left:-60px;border-radius:50%;"></div>
+      <div class="card-sparkle" style="top:12%;right:18%;--d:2s;--dl:0.2s">✦</div>
+      <div class="card-sparkle" style="top:22%;left:22%;--d:1.6s;--dl:0.6s">♡</div>
+      <div class="card-sparkle" style="bottom:22%;right:22%;--d:2.3s;--dl:1s">✧</div>
+      <div class="card-glow"></div>
+      <div class="card-glass">
+        <div class="card-icon-wrap">
+          <div class="card-icon-ring"></div>
+          <div class="card-icon-ring-inner"></div>
+          <div class="card-icon-circle">🌸</div>
+        </div>
+        <div class="card-label">FAN · 青梅果</div>
+        <div class="card-title">青梅果</div>
+        <div class="card-subtitle">
+          通过验证，加入国度<br>
+          与同好一起守护橹穆
+        </div>
+        <ul class="card-perks">
+          <li class="perk-item"><span class="perk-dot"></span>解锁完整网站内容</li>
+          <li class="perk-item"><span class="perk-dot"></span>发帖 · 评论 · 点赞</li>
+          <li class="perk-item"><span class="perk-dot"></span>私信其他粉丝</li>
+          <li class="perk-item"><span class="perk-dot"></span>橹穆世界全开放</li>
+          <li class="perk-item"><span class="perk-dot"></span>接收大事件通知</li>
+          <li class="perk-item"><span class="perk-dot"></span>专属粉丝徽章</li>
+        </ul>
+        <button class="card-btn">登录 · 注册 →</button>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ADMIN ENTRY -->
+  <div class="admin-entry">
+    <a class="admin-link" onclick="openAdmin()" href="#">
+      ⚙ 管理员入口
+    </a>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <span class="footer-tag">橹穆宇宙 LUMU UNIVERSE</span>
+  <span class="footer-dot"></span>
+  <span class="footer-tag">SINCE 2025</span>
+  <span class="footer-dot"></span>
+  <span class="footer-tag">王橹杰 × 穆祉丞</span>
+</footer>
+
+<!-- ══════════════════════════════════════════
+     MODAL: 路人确认弹窗
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-passerby">
+  <div class="modal-bg" onclick="closeModal('modal-passerby')"></div>
+  <div class="modal-box" style="max-width:380px;">
+    <div class="modal-top-line" style="background:linear-gradient(90deg,var(--blue-deep),rgba(168,212,245,0.6));"></div>
+    <div class="modal-inner" style="text-align:center;">
+      <button class="modal-close" onclick="closeModal('modal-passerby')">✕</button>
+      <div style="font-size:48px;margin-bottom:14px;">🌙</div>
+      <div class="modal-title" style="font-size:22px;letter-spacing:5px;margin-bottom:8px;">路人进入</div>
+      <div class="modal-sub" style="line-height:1.9;margin-bottom:20px;">
+        你将以 <span style="color:var(--blue);">路人</span> 身份浏览橹穆宇宙<br>
+        部分功能将不可使用<br>
+        <span style="font-size:11px;opacity:0.5;">（无法评论 · 无法发帖 · 无法私信）</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="form-submit" style="background:linear-gradient(135deg,#5a9fd4,#a8d4f5);" onclick="confirmPasserby()">
+          🌙 确认以路人身份进入
+        </button>
+        <button onclick="closeModal('modal-passerby');openFanLogin();"
+          style="padding:12px;border-radius:50px;border:1px solid rgba(245,184,208,0.4);
+          background:transparent;color:var(--pink);font-family:'Noto Sans SC',sans-serif;
+          font-size:12px;letter-spacing:3px;cursor:pointer;transition:all .3s;">
+          🌸 还是登录/注册吧
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: 粉丝登录/注册
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-fan">
+  <div class="modal-bg" onclick="closeModal('modal-fan')"></div>
+  <div class="modal-box">
+    <div class="modal-top-line"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-fan')">✕</button>
+      <div class="modal-title">🌸 青梅果入口</div>
+      <div class="modal-sub">欢迎回家 · 新人需要注册验证</div>
+
+      <div class="modal-tabs">
+        <button class="m-tab active" onclick="switchTab('login')">已有账号</button>
+        <button class="m-tab" onclick="switchTab('register')">新人注册</button>
+      </div>
+
+      <!-- Login Form -->
+      <div id="tab-login">
+        <div class="form-group">
+          <label class="form-label">账号</label>
+          <input class="form-input" type="text" id="login-user" placeholder="输入用户名或邮箱">
+        </div>
+        <div class="form-group">
+          <label class="form-label">密码</label>
+          <input class="form-input" type="password" id="login-pass" placeholder="输入密码">
+        </div>
+        <div class="form-error" id="login-error"></div>
+        <button class="form-submit" onclick="doLogin()">进入橹穆宇宙 ✦</button>
+        <div class="form-note">
+          还没有账号？<a onclick="switchTab('register')">去注册</a>
+        </div>
+      </div>
+
+      <!-- Register Form -->
+      <div id="tab-register" style="display:none">
+        <div class="form-group">
+          <label class="form-label">用户名</label>
+          <input class="form-input" type="text" id="reg-user" placeholder="起一个可爱的名字">
+        </div>
+        <div class="form-group">
+          <label class="form-label">密码</label>
+          <input class="form-input" type="password" id="reg-pass" placeholder="设置密码（至少6位）">
+        </div>
+        <div class="form-group">
+          <label class="form-label">邮箱</label>
+          <input class="form-input" type="email" id="reg-email" placeholder="可选，用于找回账号">
+        </div>
+        <div class="form-error" id="reg-error"></div>
+        <button class="form-submit" onclick="goToQuiz()">下一步：验证身份 ✦</button>
+        <div class="form-note">注册需通过随机5题粉丝验证<br>只有真正了解橹穆的人才能加入 💙</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: 管理员登录
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-admin">
+  <div class="modal-bg" onclick="closeModal('modal-admin')"></div>
+  <div class="modal-box">
+    <div class="modal-top-line"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-admin')">✕</button>
+      <div class="modal-title" style="color:rgba(255,255,255,0.7)">⚙ 管理员登录</div>
+      <div class="modal-sub">输入管理员账号与密码</div>
+
+      <div class="form-group">
+        <label class="form-label">管理员账号</label>
+        <input class="form-input" type="text" id="admin-user" placeholder="admin">
+      </div>
+      <div class="form-group">
+        <label class="form-label">密码</label>
+        <input class="form-input" type="password" id="admin-pass" placeholder="输入管理员密码">
+      </div>
+      <div class="form-error" id="admin-error"></div>
+      <button class="form-submit" style="background:linear-gradient(135deg,#3a4a6a,#6a3a5a)" onclick="doAdminLogin()">进入管理后台</button>
+
+      <div class="form-note" style="margin-top:20px;font-size:10px;opacity:0.4">
+        测试账号: admin / lumu2024admin<br>
+        粉丝账号: yumeifan / lumu2024
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     QUIZ MODAL — 注册验证题
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-quiz">
+  <div class="modal-bg"></div>
+  <div class="modal-box" style="max-width:500px">
+    <div class="modal-top-line"></div>
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal('modal-quiz')">✕</button>
+      <div class="modal-title">🌸 粉丝验证</div>
+      <div class="modal-sub" id="quiz-progress-text">第 1 题 / 共 5 题</div>
+
+      <!-- Progress dots -->
+      <div style="display:flex;justify-content:center;gap:8px;margin-bottom:24px">
+        <div class="quiz-dot" id="qdot-0" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all 0.3s"></div>
+        <div class="quiz-dot" id="qdot-1" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all 0.3s"></div>
+        <div class="quiz-dot" id="qdot-2" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all 0.3s"></div>
+        <div class="quiz-dot" id="qdot-3" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all 0.3s"></div>
+        <div class="quiz-dot" id="qdot-4" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all 0.3s"></div>
+      </div>
+
+      <div id="quiz-body">
+        <div id="quiz-question" style="font-family:'Noto Serif SC',serif;font-size:16px;letter-spacing:1px;line-height:1.8;margin-bottom:20px;min-height:60px"></div>
+        <div id="quiz-options" style="display:flex;flex-direction:column;gap:10px"></div>
+        <div class="form-error" id="quiz-error" style="margin-top:12px"></div>
+      </div>
+
+      <div id="quiz-success" style="display:none" class="form-success">
+        <span class="success-icon">🎉</span>
+        <div class="success-title">验证通过！</div>
+        <div class="success-sub">欢迎加入橹穆宇宙，青梅果！</div>
+        <button class="form-submit" style="margin-top:20px" onclick="completeRegister()">进入橹穆宇宙 ✦</button>
+      </div>
+
+      <div id="quiz-fail" style="display:none" class="form-success">
+        <span class="success-icon">💔</span>
+        <div class="success-title" style="-webkit-text-fill-color:#ff8aaa;color:#ff8aaa">再了解一下吧</div>
+        <div class="success-sub">答错了，多了解橹穆再来试试</div>
+        <button class="form-submit" style="margin-top:20px;background:linear-gradient(135deg,#6a3a5a,#a85a8a)" onclick="retryQuiz()">重新答题</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="assets/js/index.js"></script>
+</body>
+</html>
