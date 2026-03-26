@@ -1,0 +1,203 @@
+/* Shared modal styles — imported by each auth modal */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .4s ease;
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(10,6,20,.85);
+  backdrop-filter: blur(16px);
+}
+
+.modal-box {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(145deg, rgba(30,16,55,.95) 0%, rgba(20,10,38,.98) 100%);
+  border-radius: 24px;
+  overflow: hidden;
+  transform: scale(.9) translateY(30px);
+  transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 40px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.06);
+}
+.modal-overlay.open .modal-box {
+  transform: scale(1) translateY(0);
+}
+
+.modal-top-line {
+  height: 2px;
+  background: linear-gradient(90deg, var(--blue-deep), var(--pink-deep));
+}
+
+.modal-inner {
+  padding: 36px 36px 32px;
+  overflow-y: auto;
+  max-height: 88vh;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.05);
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all .3s;
+  z-index: 2;
+}
+.modal-close:hover { background: rgba(255,255,255,.12); color: white; }
+
+.modal-title {
+  font-family: 'ZCOOL XiaoWei', serif;
+  font-size: 26px;
+  letter-spacing: 4px;
+  margin-bottom: 4px;
+}
+.modal-sub {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-bottom: 28px;
+}
+
+/* Tabs */
+.modal-tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(255,255,255,.04);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 24px;
+}
+.m-tab {
+  flex: 1;
+  padding: 9px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all .3s;
+}
+.m-tab.active {
+  background: linear-gradient(135deg, rgba(232,122,171,.3), rgba(168,212,245,.2));
+  color: white;
+}
+
+/* Form */
+.form-group  { margin-bottom: 16px; }
+.form-label  {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px;
+  color: white;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  outline: none;
+  transition: border-color .3s, background .3s;
+}
+.form-input:focus {
+  border-color: rgba(245,184,208,.5);
+  background: rgba(255,255,255,.08);
+}
+.form-input::placeholder { color: rgba(255,255,255,.2); }
+
+.form-submit {
+  width: 100%;
+  padding: 14px;
+  border-radius: 50px;
+  border: none;
+  background: linear-gradient(135deg, #e07aab, #f5b8d0 50%, #a8d4f5);
+  color: white;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: transform .3s, box-shadow .3s;
+  position: relative;
+  overflow: hidden;
+}
+.form-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(232,122,171,.4);
+}
+.form-submit:disabled { opacity: .5; cursor: not-allowed; }
+
+.form-note {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-top: 14px;
+  letter-spacing: 1px;
+  line-height: 1.7;
+}
+.form-note a {
+  color: var(--pink);
+  cursor: pointer;
+}
+.form-note a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.form-error {
+  font-size: 11px;
+  color: #ff8aaa;
+  letter-spacing: 1px;
+  margin-top: 8px;
+  min-height: 16px;
+  text-align: center;
+}
+
+/* Success / fail result panel */
+.result-panel {
+  text-align: center;
+  padding: 20px 0;
+}
+.result-icon  { font-size: 50px; margin-bottom: 16px; display: block; animation: bounce .6s ease; }
+.result-title {
+  font-family: 'ZCOOL XiaoWei', serif;
+  font-size: 22px;
+  letter-spacing: 4px;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--blue), var(--pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.result-sub { font-size: 12px; color: var(--text-dim); letter-spacing: 2px; }

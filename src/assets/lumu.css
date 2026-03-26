@@ -1,0 +1,110 @@
+/* ══════════════════════════════════════════
+   橹穆宇宙 Design System — lumu.css
+   全局 CSS 变量 + 基础 reset
+══════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@300;400;600;900&family=Noto+Sans+SC:wght@300;400;700&family=Ma+Shan+Zheng&display=swap');
+
+:root {
+  --pink:       #f5b8d0;
+  --pink-deep:  #e87aab;
+  --pink-soft:  rgba(245,184,208,.15);
+  --blue:       #a8d4f5;
+  --blue-deep:  #5a9fd4;
+  --blue-soft:  rgba(168,212,245,.15);
+  --lilac:      #d4b8f0;
+  --night:      #0d0818;
+  --night-mid:  #160e2a;
+  --night-card: rgba(255,255,255,0.04);
+  --star-white: rgba(255,255,255,0.9);
+  --text-light: rgba(255,255,255,0.85);
+  --text-dim:   rgba(255,255,255,0.45);
+  --glow-pink:  rgba(245,184,208,0.5);
+  --glow-blue:  rgba(168,212,245,0.5);
+  --gold:       #d4aa70;
+
+  /* main.html aliases */
+  --card:   rgba(255,255,255,.05);
+  --card2:  rgba(255,255,255,.09);
+  --border: rgba(255,255,255,.09);
+  --border2:rgba(255,255,255,.16);
+  --t1: rgba(255,255,255,.92);
+  --t2: rgba(255,255,255,.6);
+  --t3: rgba(255,255,255,.35);
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--night);
+  font-family: 'Noto Sans SC', sans-serif;
+  color: var(--text-light);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
+
+/* ── Animations ── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fade-down {
+  from { opacity: 0; transform: translateY(-30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes heartbeat {
+  0%,100% { transform: scale(1); }
+  30%     { transform: scale(1.35); }
+  60%     { transform: scale(1); }
+  80%     { transform: scale(1.15); }
+}
+@keyframes logo-shimmer {
+  from { background-position: 0% 50%; }
+  to   { background-position: 300% 50%; }
+}
+@keyframes spin-ring {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes pulse-ring {
+  0%,100% { transform: scale(1); opacity: .5; }
+  50%     { transform: scale(1.05); opacity: 1; }
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0) scale(1); }
+  15%     { transform: translateX(-8px); }
+  30%     { transform: translateX(7px); }
+  45%     { transform: translateX(-5px); }
+  60%     { transform: translateX(4px); }
+  75%     { transform: translateX(-2px); }
+}
+@keyframes bounce {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.2); }
+}
+
+/* ── Loading bar ── */
+@keyframes load-fill {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+@keyframes loading-pulse {
+  0%,100% { opacity: .4; transform: scale(.97); }
+  50%     { opacity: 1;  transform: scale(1); }
+}

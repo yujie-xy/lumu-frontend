@@ -1,0 +1,6 @@
+/* Vue scaffold defaults removed — lumu.css handles global reset */
+#app {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
