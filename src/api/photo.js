@@ -22,14 +22,15 @@ async function req(method, path, body) {
   return data.data
 }
 
-// ── 相册标签（独立，不与视频共享）─────────────────────────────
-export function fetchPhotoLabels()                        { return req('GET',    '/api/photo-labels') }
-export function createPhotoLabel(name, sortOrder)         { return req('POST',   '/api/photo-labels', { name, sortOrder: sortOrder ?? 0 }) }
-export function updatePhotoLabel(id, name, sortOrder)     { return req('PUT',    `/api/photo-labels/${id}`, { name, sortOrder: sortOrder ?? 0 }) }
-export function deletePhotoLabel(id)                      { return req('DELETE', `/api/photo-labels/${id}`) }
+// ── 照片 CRUD ────────────────────────────────────────────────
+// ContentRequest: { title, body, resourceUrl, status }
+export function fetchPhotos()             { return req('GET',    '/api/photos') }
+export function createPhoto(body)         { return req('POST',   '/api/photos', body) }
+export function updatePhoto(id, body)     { return req('PUT',    `/api/photos/${id}`, body) }
+export function deletePhoto(id)           { return req('DELETE', `/api/photos/${id}`) }
 
-// ── 照片 ──────────────────────────────────────────────────────
-export function fetchPhotos(labelId)    { return req('GET',    labelId ? `/api/photos?labelId=${labelId}` : '/api/photos') }
-export function createPhoto(body)       { return req('POST',   '/api/photos', body) }
-export function updatePhoto(id, body)   { return req('PUT',    `/api/photos/${id}`, body) }
-export function deletePhoto(id)         { return req('DELETE', `/api/photos/${id}`) }
+// ── 投票 & 置顶 ───────────────────────────────────────────────
+// VoteRequest: { voteType: "LIKE" | "DISLIKE" }
+export function votePhoto(id, voteType = 'LIKE') { return req('POST',   `/api/photos/${id}/vote`, { voteType }) }
+export function pinPhoto(id)              { return req('POST',   `/api/photos/${id}/pin`) }
+export function unpinPhoto(id)            { return req('DELETE', `/api/photos/${id}/pin`) }

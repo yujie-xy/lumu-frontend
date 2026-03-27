@@ -5,55 +5,69 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
-/** GET /api/admin/users */
-export async function fetchUsers() {
-  const res  = await fetch('/api/admin/users', { headers: authHeaders() })
-  const data = await res.json()
-  if (data.code !== 200) throw new Error(data.msg)
-  return data.data   // UserAdminVo[]
+function jsonAuthHeaders() {
+  return { 'Content-Type': 'application/json', ...authHeaders() }
 }
 
-/** POST /api/admin/users/{id}/status — 切换禁用/启用 */
-export async function toggleUserStatus(id) {
-  const res  = await fetch(`/api/admin/users/${id}/status`, {
-    method:  'POST',
-    headers: authHeaders(),
-  })
+async function apiReq(method, path, body) {
+  const opts = {
+    method,
+    headers: body !== undefined ? jsonAuthHeaders() : authHeaders(),
+  }
+  if (body !== undefined) opts.body = JSON.stringify(body)
+  const res  = await fetch(path, opts)
   const data = await res.json()
-  if (data.code !== 200) throw new Error(data.msg)
-  return data.data   // UserAdminVo (updated)
+  if (data.code !== 200) throw new Error(data.msg || '操作失败')
+  return data.data
 }
 
-/** POST /api/admin/users/{id}/role — 切换 fan ↔ admin（仅 super_admin） */
-export async function toggleUserRole(id) {
-  const res  = await fetch(`/api/admin/users/${id}/role`, {
-    method:  'POST',
-    headers: authHeaders(),
-  })
-  const data = await res.json()
-  if (data.code !== 200) throw new Error(data.msg)
-  return data.data   // UserAdminVo (updated)
+// ── 当前用户自助操作 ────────────────────────────────────────
+
+/** PUT /users/me/password — 修改自己的密码
+ *  ChangePasswordRequest: { newPassword }
+ */
+export async function changeMyPassword({ newPassword }) {
+  return apiReq('PUT', '/api/users/me/password', { newPassword })
 }
 
-/** PUT /api/users/me/password — 修改自己的密码 */
-export async function changeMyPassword({ oldPassword, newPassword, confirmPassword }) {
-  const res  = await fetch('/api/users/me/password', {
-    method:  'PUT',
-    headers: { 'Content-Type': 'application/json', ...authHeaders() },
-    body:    JSON.stringify({ oldPassword, newPassword, confirmPassword }),
-  })
-  const data = await res.json()
-  if (data.code !== 200) throw new Error(data.msg)
+/** PUT /users/me/username — 修改自己的用户名
+ *  ChangeUsernameRequest: { newUsername }
+ */
+export async function changeMyUsername({ newUsername }) {
+  return apiReq('PUT', '/api/users/me/username', { newUsername })
 }
 
-/** POST /api/admin/users/create-admin — 新建管理员（仅 super_admin） */
-export async function createAdmin({ username, password }) {
-  const res  = await fetch('/api/admin/users/create-admin', {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json', ...authHeaders() },
-    body:    JSON.stringify({ username, password }),
-  })
-  const data = await res.json()
-  if (data.code !== 200) throw new Error(data.msg)
-  return data.data   // UserAdminVo
+/** DELETE /users/me — 注销账户 */
+export async function deactivateAccount() {
+  return apiReq('DELETE', '/api/users/me')
+}
+
+// ── 管理员用户治理接口 ───────────────────────────────────────
+
+/** PUT /admin/users/{userUuid}/ban — 封禁/解封用户
+ *  BanRequest: { banned: boolean }
+ */
+export async function banUser(userUuid, banned) {
+  return apiReq('PUT', `/api/admin/users/${userUuid}/ban`, { banned })
+}
+
+/** PUT /admin/users/{userUuid}/mute — 禁言/解禁用户
+ *  MuteRequest: { muted: boolean }
+ */
+export async function muteUser(userUuid, muted) {
+  return apiReq('PUT', `/api/admin/users/${userUuid}/mute`, { muted })
+}
+
+/** PUT /admin/users/{userUuid}/reset-password — 重置用户密码
+ *  ResetPasswordRequest: { newPassword }
+ */
+export async function adminResetPassword(userUuid, newPassword) {
+  return apiReq('PUT', `/api/admin/users/${userUuid}/reset-password`, { newPassword })
+}
+
+/** PUT /admin/users/{userUuid}/reset-username — 重置用户名
+ *  ResetUsernameRequest: { newUsername }
+ */
+export async function adminResetUsername(userUuid, newUsername) {
+  return apiReq('PUT', `/api/admin/users/${userUuid}/reset-username`, { newUsername })
 }

@@ -44,9 +44,6 @@
               <span class="msg-time">{{ formatTime(m.createdAt) }}</span>
             </div>
             <div class="msg-content">{{ m.content }}</div>
-            <div class="msg-like-row">
-              <LikeButton content-type="message" :target-id="m.id" />
-            </div>
           </div>
           <button v-if="isAdmin()" class="msg-del" @click="remove(m.id)" title="删除">🗑</button>
         </div>
@@ -59,8 +56,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuth } from '@/composables/useAuth.js'
-import { fetchMessages, createMessage, deleteMessage } from '@/api/messages.js'
-import LikeButton from '@/components/common/LikeButton.vue'
+import { fetchThreads } from '@/api/messages.js'
 
 const { isGuest, isAdmin } = useAuth()
 
@@ -74,30 +70,20 @@ const postError = ref('')
 async function load() {
   loading.value = true
   error.value   = ''
-  try { messages.value = await fetchMessages() }
+  try {
+    const threads = await fetchThreads()
+    messages.value = Array.isArray(threads) ? threads : []
+  }
   catch (e) { error.value = e.message }
   finally { loading.value = false }
 }
 
 async function post() {
-  if (!draft.value.trim()) return
-  postError.value = ''
-  posting.value   = true
-  try {
-    await createMessage(draft.value.trim())
-    draft.value = ''
-    await load()
-  } catch (e) {
-    postError.value = e.message
-  } finally {
-    posting.value = false
-  }
+  postError.value = '私信功能需要指定接收方，请通过用户资料页发起私信。'
 }
 
-async function remove(id) {
-  if (!confirm('确定删除这条留言？')) return
-  try { await deleteMessage(id); await load() }
-  catch (e) { alert('删除失败：' + e.message) }
+async function remove() {
+  alert('当前后端版本暂不支持删除消息')
 }
 
 function formatTime(iso) {

@@ -19,7 +19,7 @@
           <div class="form-group">
             <label class="form-label">账号</label>
             <input class="form-input" type="text" v-model="login.username"
-              placeholder="输入用户名或邮箱" @keydown.enter="doLogin">
+              placeholder="输入用户名" @keydown.enter="doLogin">
           </div>
           <div class="form-group">
             <label class="form-label">密码</label>
@@ -46,14 +46,14 @@
             <input class="form-input" type="password" v-model="reg.password" placeholder="设置密码（至少6位）">
           </div>
           <div class="form-group">
-            <label class="form-label">邮箱</label>
-            <input class="form-input" type="email" v-model="reg.email" placeholder="可选，用于找回账号">
+            <label class="form-label">微博名</label>
+            <input class="form-input" type="text" v-model="reg.weiboName" placeholder="微博昵称（必填）">
           </div>
           <div class="form-error">{{ reg.error }}</div>
           <button class="form-submit" :disabled="reg.loading" @click="goToQuiz">
             {{ reg.loading ? '检查中...' : '下一步：验证身份 ✦' }}
           </button>
-          <div class="form-note">注册需通过随机5题粉丝验证<br>只有真正了解橹穆的人才能加入 💙</div>
+          <div class="form-note">注册需通过随机题目粉丝验证<br>只有真正了解橹穆的人才能加入 💙</div>
         </div>
 
       </div>
@@ -63,7 +63,7 @@
 
 <script setup>
 import { reactive, ref, watch } from 'vue'
-import { login as apiLogin, checkUsername } from '@/api/auth.js'
+import { login as apiLogin } from '@/api/auth.js'
 
 const props = defineProps({ open: Boolean })
 const emit  = defineEmits(['close', 'success', 'go-quiz'])
@@ -91,30 +91,20 @@ async function doLogin() {
 }
 
 // ── Register / pre-quiz state ──────────────
-const reg = reactive({ username: '', password: '', email: '', error: '', loading: false })
+const reg = reactive({ username: '', password: '', weiboName: '', error: '', loading: false })
 
 async function goToQuiz() {
   reg.error = ''
-  if (!reg.username)          { shake(); reg.error = '请输入用户名'; return }
-  if (reg.username.length < 2){ shake(); reg.error = '用户名至少2个字符'; return }
-  if (reg.password.length < 6){ shake(); reg.error = '密码至少6位'; return }
+  if (!reg.username)           { shake(); reg.error = '请输入用户名'; return }
+  if (reg.username.length < 2) { shake(); reg.error = '用户名至少2个字符'; return }
+  if (reg.password.length < 6) { shake(); reg.error = '密码至少6位'; return }
+  if (!reg.weiboName.trim())   { shake(); reg.error = '请输入微博名'; return }
 
-  reg.loading = true
-  try {
-    await checkUsername(reg.username, reg.password, reg.email)
-  } catch (e) {
-    reg.error = e.message
-    shake()
-    return
-  } finally {
-    reg.loading = false
-  }
-
-  // Precheck passed → hand off to QuizModal
+  // Hand off to QuizModal — no pre-check call needed
   emit('go-quiz', {
-    username: reg.username,
-    password: reg.password,
-    email: reg.email,
+    username:  reg.username,
+    password:  reg.password,
+    weiboName: reg.weiboName,
   })
 }
 
@@ -130,7 +120,7 @@ function shake() {
 watch(() => props.open, (v) => {
   if (!v) {
     login.username = ''; login.password = ''; login.error = ''
-    reg.username = ''; reg.password = ''; reg.email = ''; reg.error = ''
+    reg.username = ''; reg.password = ''; reg.weiboName = ''; reg.error = ''
     tab.value = 'login'
   }
 })

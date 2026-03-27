@@ -6,13 +6,12 @@
     @click="handleClick"
   >
     <span class="like-icon">{{ liked ? '❤️' : '🤍' }}</span>
-    <span class="like-count">{{ count }}</span>
   </button>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { fetchLikeSummary, toggleLike } from '@/api/interaction.js'
+import { ref } from 'vue'
+import { voteContent } from '@/api/interaction.js'
 import { useAuth } from '@/composables/useAuth.js'
 
 const props = defineProps({
@@ -20,21 +19,10 @@ const props = defineProps({
   targetId:    { type: Number, required: true },
 })
 
-const { isGuest, isFan } = useAuth()
+const { isGuest } = useAuth()
 
-const count   = ref(0)
 const liked   = ref(false)
 const loading = ref(false)
-
-onMounted(async () => {
-  try {
-    const list = await fetchLikeSummary(props.contentType, [props.targetId])
-    if (list.length) {
-      count.value = list[0].likeCount
-      liked.value = list[0].liked
-    }
-  } catch (_) {}
-})
 
 async function handleClick() {
   if (isGuest()) {
@@ -44,9 +32,8 @@ async function handleClick() {
   if (loading.value) return
   loading.value = true
   try {
-    const updated = await toggleLike(props.contentType, props.targetId)
-    count.value = updated.likeCount
-    liked.value = updated.liked
+    await voteContent(props.contentType, props.targetId, liked.value ? 'DISLIKE' : 'LIKE')
+    liked.value = !liked.value
   } catch (_) {} finally {
     loading.value = false
   }

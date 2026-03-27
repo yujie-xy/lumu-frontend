@@ -22,30 +22,24 @@ async function req(method, path, body) {
   return data.data
 }
 
-// ── 世界 tag（公开读 / 后台写）─────────────────────────────────
-export function fetchWorldTags()                              { return req('GET',    '/api/world/tags') }
-export function fetchWorldTagsAdmin()                        { return req('GET',    '/api/admin/world-tags') }
-export function createWorldTag(name, slug, sortOrder)        { return req('POST',   '/api/admin/world-tags', { name, slug, sortOrder: sortOrder ?? 0 }) }
-export function updateWorldTag(id, name, slug, sortOrder)    { return req('PUT',    `/api/admin/world-tags/${id}`, { name, slug, sortOrder: sortOrder ?? 0 }) }
-export function deleteWorldTag(id)                           { return req('DELETE', `/api/admin/world-tags/${id}`) }
+// ── 世界内容 CRUD ────────────────────────────────────────────
+// ContentRequest: { title, body, resourceUrl, status }
+export function fetchWorlds()              { return req('GET',    '/api/worlds') }
+export function fetchWorldById(id)         { return req('GET',    `/api/worlds/${id}`) }
+export function createWorld(body)          { return req('POST',   '/api/worlds', body) }
+export function updateWorld(id, body)      { return req('PUT',    `/api/worlds/${id}`, body) }
+export function deleteWorld(id)            { return req('DELETE', `/api/worlds/${id}`) }
 
-// ── 类别 tag（公开读 / 后台写）─────────────────────────────────
-export function fetchCategoryTags()                              { return req('GET',    '/api/world/category-tags') }
-export function fetchCategoryTagsAdmin()                         { return req('GET',    '/api/admin/world-category-tags') }
-export function createCategoryTag(name, slug, sortOrder)         { return req('POST',   '/api/admin/world-category-tags', { name, slug, sortOrder: sortOrder ?? 0 }) }
-export function updateCategoryTag(id, name, slug, sortOrder)     { return req('PUT',    `/api/admin/world-category-tags/${id}`, { name, slug, sortOrder: sortOrder ?? 0 }) }
-export function deleteCategoryTag(id)                            { return req('DELETE', `/api/admin/world-category-tags/${id}`) }
+// ── 投票 & 置顶 ───────────────────────────────────────────────
+// VoteRequest: { voteType: "LIKE" | "DISLIKE" }
+export function voteWorld(id, voteType = 'LIKE') { return req('POST',   `/api/worlds/${id}/vote`, { voteType }) }
+export function pinWorld(id)               { return req('POST',   `/api/worlds/${id}/pin`) }
+export function unpinWorld(id)             { return req('DELETE', `/api/worlds/${id}/pin`) }
 
-// ── 世界内容（公开读 / 后台写）─────────────────────────────────
-export function fetchWorldPosts(worldTagId, categoryTagId) {
-  const params = new URLSearchParams()
-  if (worldTagId)    params.set('worldTagId',    worldTagId)
-  if (categoryTagId) params.set('categoryTagId', categoryTagId)
-  const qs = params.toString()
-  return req('GET', qs ? `/api/world/posts?${qs}` : '/api/world/posts')
-}
-export function fetchWorldPost(id)        { return req('GET',    `/api/world/posts/${id}`) }
-export function createWorldPost(body)     { return req('POST',   '/api/admin/world/posts', body) }
-export function updateWorldPost(id, body) { return req('PUT',    `/api/admin/world/posts/${id}`, body) }
-export function deleteWorldPost(id)       { return req('DELETE', `/api/admin/world/posts/${id}`) }
-export function pinWorldPost(id)          { return req('POST',   `/api/admin/world/posts/${id}/pin`) }
+// ── Legacy aliases for components using old world-posts naming ─
+export { fetchWorlds as fetchWorldPosts }
+export { fetchWorldById as fetchWorldPost }
+export { createWorld as createWorldPost }
+export { updateWorld as updateWorldPost }
+export { deleteWorld as deleteWorldPost }
+export { pinWorld as pinWorldPost }

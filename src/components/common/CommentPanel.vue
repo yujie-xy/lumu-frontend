@@ -54,7 +54,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchComments, postComment, deleteComment } from '@/api/interaction.js'
+import { fetchPostComments, postForumComment } from '@/api/interaction.js'
 import { useAuth } from '@/composables/useAuth.js'
 
 const props = defineProps({
@@ -72,8 +72,9 @@ const submitting = ref(false)
 onMounted(load)
 
 async function load() {
+  if (props.contentType !== 'forum_post') return
   try {
-    comments.value = await fetchComments(props.contentType, props.targetId)
+    comments.value = await fetchPostComments(props.targetId)
   } catch (_) {}
 }
 
@@ -81,7 +82,7 @@ async function handleSubmit() {
   if (!draft.value.trim() || submitting.value) return
   submitting.value = true
   try {
-    const vo = await postComment(props.contentType, props.targetId, draft.value.trim())
+    const vo = await postForumComment(props.targetId, draft.value.trim())
     comments.value.push(vo)
     draft.value = ''
   } catch (e) {
@@ -93,12 +94,8 @@ async function handleSubmit() {
 
 async function handleDelete(id) {
   if (!confirm('确认删除该评论？')) return
-  try {
-    await deleteComment(id)
-    comments.value = comments.value.filter(c => c.id !== id)
-  } catch (e) {
-    alert(e.message || '删除失败')
-  }
+  // Backend has no delete-comment endpoint; remove locally only
+  comments.value = comments.value.filter(c => c.id !== id)
 }
 
 function formatTime(iso) {

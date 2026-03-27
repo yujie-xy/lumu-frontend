@@ -29,21 +29,39 @@ async function apiWrite(method, path, body) {
   return data.data
 }
 
-export function fetchStory()           { return apiFetch('/api/story') }
-export function fetchStoryById(id)     { return apiFetch(`/api/story/${id}`) }
-export function fetchTimeline()           { return apiFetch('/api/timeline') }
-export function fetchTimelineById(id)     { return apiFetch(`/api/timeline/${id}`) }
-export function fetchNotices()            { return apiFetch('/api/notices') }
-export function fetchNoticeById(id)       { return apiFetch(`/api/notices/${id}`) }
+// ── Stories ───────────────────────────────────────────────────
+export function fetchStories()            { return apiFetch('/api/stories') }
+export function fetchStoryById(id)        { return apiFetch(`/api/stories/${id}`) }
+export function createStory(body)         { return apiWrite('POST',   '/api/stories',        body) }
+export function updateStory(id, body)     { return apiWrite('PUT',    `/api/stories/${id}`,   body) }
+export function deleteStory(id)           { return apiWrite('DELETE',  `/api/stories/${id}`) }
+export function pinStory(id)              { return apiWrite('POST',   `/api/stories/${id}/pin`) }
+export function unpinStory(id)            { return apiWrite('DELETE', `/api/stories/${id}/pin`) }
 
-export function createStory(body)       { return apiWrite('POST',   '/api/story',         body) }
-export function updateStory(id, body)   { return apiWrite('PUT',    `/api/story/${id}`,   body) }
-export function deleteStory(id)         { return apiWrite('DELETE',  `/api/story/${id}`) }
+// Legacy alias
+export { fetchStories as fetchStory }
 
-export function createTimeline(body)     { return apiWrite('POST',   '/api/timeline',       body) }
-export function updateTimeline(id, body) { return apiWrite('PUT',    `/api/timeline/${id}`, body) }
-export function deleteTimeline(id)       { return apiWrite('DELETE',  `/api/timeline/${id}`) }
+// ── Timelines ─────────────────────────────────────────────────
+export function fetchTimelines()              { return apiFetch('/api/timelines') }
+export function fetchTimelineById(id)         { return apiFetch(`/api/timelines/${id}`) }
+export function createTimeline(body)          { return apiWrite('POST',   '/api/timelines',        body) }
+export function updateTimeline(id, body)      { return apiWrite('PUT',    `/api/timelines/${id}`,   body) }
+export function deleteTimeline(id)            { return apiWrite('DELETE',  `/api/timelines/${id}`) }
+export function pinTimeline(id)               { return apiWrite('POST',   `/api/timelines/${id}/pin`) }
+export function unpinTimeline(id)             { return apiWrite('DELETE', `/api/timelines/${id}/pin`) }
 
-export function createNotice(body)      { return apiWrite('POST',   '/api/notices',        body) }
-export function updateNotice(id, body)  { return apiWrite('PUT',    `/api/notices/${id}`,  body) }
-export function deleteNotice(id)        { return apiWrite('DELETE',  `/api/notices/${id}`) }
+// Legacy alias
+export { fetchTimelines as fetchTimeline }
+
+// ── Events (formerly notices) ─────────────────────────────────
+export function fetchEvents()             { return apiFetch('/api/events') }
+export function fetchEventById(id)        { return apiFetch(`/api/events/${id}`) }
+export function createEvent(body)         { return apiWrite('POST',   '/api/events',        body) }
+export function updateEvent(id, body)     { return apiWrite('PUT',    `/api/events/${id}`,   body) }
+export function deleteEvent(id)           { return apiWrite('DELETE',  `/api/events/${id}`) }
+export function pinEvent(id)              { return apiWrite('POST',   `/api/events/${id}/pin`) }
+export function unpinEvent(id)            { return apiWrite('DELETE', `/api/events/${id}/pin`) }
+
+// Legacy aliases (notices → events)
+export { fetchEvents as fetchNotices, fetchEventById as fetchNoticeById }
+export { createEvent as createNotice, updateEvent as updateNotice, deleteEvent as deleteNotice }

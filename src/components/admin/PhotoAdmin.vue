@@ -1,34 +1,8 @@
 <template>
   <div class="photo-admin">
 
-    <!-- ══ 相册标签管理 ══ -->
-    <div class="section-card">
-      <div class="section-head">
-        <div class="section-label">🏷 相册标签管理</div>
-        <div class="label-add-row">
-          <input class="label-input" v-model="newLabelName" placeholder="标签名" @keyup.enter="addLabel" />
-          <button class="btn-label-add" @click="addLabel">添加</button>
-        </div>
-      </div>
-      <div v-if="labels.length" class="label-list">
-        <div v-for="l in labels" :key="l.id" class="label-item">
-          <template v-if="editingLabelId === l.id">
-            <input class="label-edit-input" v-model="editingLabelName" @keyup.enter="saveLabelEdit(l)" />
-            <button class="btn-label-save"   @click="saveLabelEdit(l)">保存</button>
-            <button class="btn-label-cancel" @click="editingLabelId = null">取消</button>
-          </template>
-          <template v-else>
-            <span class="label-name">{{ l.name }}</span>
-            <button class="btn-label-edit"   @click="startLabelEdit(l)">编辑</button>
-            <button class="btn-label-del"    @click="removeLabel(l.id)">删除</button>
-          </template>
-        </div>
-      </div>
-      <div v-else class="section-empty">暂无相册标签</div>
-    </div>
-
     <!-- ══ 照片管理 ══ -->
-    <div class="section-card" style="margin-top: 20px;">
+    <div class="section-card">
       <div class="section-head">
         <div class="section-label">🖼 照片管理</div>
         <button class="btn-add" @click="openAdd">＋ 添加照片</button>
@@ -39,13 +13,13 @@
 
       <div v-else class="photo-list">
         <div v-for="p in photos" :key="p.id" class="photo-row">
-          <img :src="resolveMediaUrl(p.imageUrl)" class="thumb" alt="" />
+          <img v-if="p.resourceUrl" :src="resolveMediaUrl(p.resourceUrl)" class="thumb" alt="" />
+          <div v-else class="thumb" style="background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);">🖼</div>
           <div class="row-body">
             <div class="row-title">{{ p.title || '（无标题）' }}</div>
             <div class="row-meta">
-              <span v-if="p.source" class="row-source">来源：{{ p.source }}</span>
-              <span v-for="l in p.labels" :key="l.id" class="row-label">{{ l.name }}</span>
-              <span v-if="!p.labels?.length" class="row-nolabel">未分类</span>
+              <span v-if="p.body" class="row-source">{{ p.body }}</span>
+              <span class="row-label" :class="p.status">{{ p.status }}</span>
             </div>
           </div>
           <div class="row-actions">
@@ -67,35 +41,25 @@
             <div class="modal-sub">{{ editId ? '修改照片信息' : '新增一张照片' }}</div>
 
             <div class="fg">
-              <label class="fl">图片地址 *</label>
+              <label class="fl">图片地址 (resourceUrl) *</label>
               <div class="upload-row">
-                <input class="fi" v-model="form.imageUrl" placeholder="https://example.com/photo.jpg 或点击上传" />
+                <input class="fi" v-model="form.resourceUrl" placeholder="https://example.com/photo.jpg 或点击上传" />
                 <button type="button" class="btn-upload" :disabled="imgUploading" @click="$refs.imgFileInput.click()">
                   {{ imgUploading ? '上传中…' : '📎 上传' }}
                 </button>
                 <input ref="imgFileInput" type="file" accept="image/jpeg,image/png,image/webp" style="display:none" @change="handleImgUpload" />
               </div>
-              <img v-if="form.imageUrl" :src="resolveMediaUrl(form.imageUrl)" class="img-preview" alt="预览" />
+              <img v-if="form.resourceUrl" :src="resolveMediaUrl(form.resourceUrl)" class="img-preview" alt="预览" />
             </div>
-            <div class="fg"><label class="fl">标题（可选）</label>
+            <div class="fg"><label class="fl">标题 *</label>
               <input class="fi" v-model="form.title" placeholder="例如：演唱会现场" /></div>
-            <div class="fg"><label class="fl">来源（可选）</label>
-              <input class="fi" v-model="form.source" placeholder="例如：微博 @xxx" /></div>
-
-            <div class="fg">
-              <label class="fl">选择标签（可多选）</label>
-              <div class="label-checks">
-                <label
-                  v-for="l in labels"
-                  :key="l.id"
-                  class="label-check-item"
-                  :class="{ checked: form.labelIds.includes(l.id) }"
-                >
-                  <input type="checkbox" :value="l.id" v-model="form.labelIds" style="display:none" />
-                  {{ l.name }}
-                </label>
-                <span v-if="!labels.length" class="no-labels-hint">请先在上方添加相册标签</span>
-              </div>
+            <div class="fg"><label class="fl">描述（body，可选）</label>
+              <input class="fi" v-model="form.body" placeholder="例如：来源 微博 @xxx" /></div>
+            <div class="fg"><label class="fl">状态 (status) *</label>
+              <select class="fi" v-model="form.status">
+                <option value="PUBLISHED">PUBLISHED（已发布）</option>
+                <option value="DRAFT">DRAFT（草稿）</option>
+              </select>
             </div>
 
             <div class="ferr">{{ formErr }}</div>
@@ -111,17 +75,9 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import {
-  fetchPhotoLabels, createPhotoLabel, updatePhotoLabel, deletePhotoLabel,
-  fetchPhotos, createPhoto, updatePhoto, deletePhoto
-} from '@/api/photo.js'
+import { fetchPhotos, createPhoto, updatePhoto, deletePhoto } from '@/api/photo.js'
 import { uploadImage } from '@/api/upload.js'
 import { resolveMediaUrl } from '@/utils/media.js'
-
-const labels         = ref([])
-const newLabelName   = ref('')
-const editingLabelId = ref(null)
-const editingLabelName = ref('')
 
 const photos         = ref([])
 const loadingPhotos  = ref(true)
@@ -131,44 +87,17 @@ const submitting     = ref(false)
 const formErr        = ref('')
 
 const imgUploading = ref(false)
-const emptyForm = () => ({ imageUrl: '', title: '', source: '', labelIds: [] })
+// ContentRequest: { title, body, resourceUrl, status }
+const emptyForm = () => ({ resourceUrl: '', title: '', body: '', status: 'PUBLISHED' })
 const form = ref(emptyForm())
 
-onMounted(async () => {
-  await Promise.all([loadLabels(), loadPhotos()])
-})
-
-async function loadLabels() {
-  try { labels.value = await fetchPhotoLabels() } catch {}
-}
+onMounted(loadPhotos)
 
 async function loadPhotos() {
   loadingPhotos.value = true
   try { photos.value = await fetchPhotos() }
   catch {}
   finally { loadingPhotos.value = false }
-}
-
-async function addLabel() {
-  const name = newLabelName.value.trim()
-  if (!name) return
-  try { await createPhotoLabel(name); newLabelName.value = ''; await loadLabels() }
-  catch (e) { alert('添加失败：' + e.message) }
-}
-
-function startLabelEdit(l) { editingLabelId.value = l.id; editingLabelName.value = l.name }
-
-async function saveLabelEdit(l) {
-  const name = editingLabelName.value.trim()
-  if (!name) return
-  try { await updatePhotoLabel(l.id, name); editingLabelId.value = null; await loadLabels() }
-  catch (e) { alert('保存失败：' + e.message) }
-}
-
-async function removeLabel(id) {
-  if (!confirm('删除相册标签后，已打该标签的照片关联也会删除。确定继续？')) return
-  try { await deletePhotoLabel(id); await loadLabels() }
-  catch (e) { alert('删除失败：' + e.message) }
 }
 
 function openAdd() {
@@ -178,22 +107,23 @@ function openAdd() {
 function openEdit(p) {
   editId.value = p.id
   form.value = {
-    imageUrl: p.imageUrl || '',
-    title:    p.title    || '',
-    source:   p.source   || '',
-    labelIds: (p.labels || []).map(l => l.id),
+    resourceUrl: p.resourceUrl || '',
+    title:       p.title       || '',
+    body:        p.body        || '',
+    status:      p.status      || 'PUBLISHED',
   }
   formErr.value = ''; showModal.value = true
 }
 
 async function submit() {
   formErr.value = ''
-  if (!form.value.imageUrl.trim()) { formErr.value = '图片地址不能为空'; return }
+  if (!form.value.resourceUrl.trim()) { formErr.value = '图片地址不能为空'; return }
+  if (!form.value.title.trim())       { formErr.value = '标题不能为空'; return }
   const body = {
-    imageUrl: form.value.imageUrl.trim(),
-    title:    form.value.title.trim()  || null,
-    source:   form.value.source.trim() || null,
-    labelIds: form.value.labelIds,
+    resourceUrl: form.value.resourceUrl.trim(),
+    title:       form.value.title.trim(),
+    body:        form.value.body.trim() || null,
+    status:      form.value.status,
   }
   submitting.value = true
   try {
@@ -215,7 +145,7 @@ async function handleImgUpload(e) {
   imgUploading.value = true
   try {
     const url = await uploadImage(file)
-    form.value.imageUrl = url
+    form.value.resourceUrl = url
   } catch (err) {
     alert('上传失败：' + (err.message || '未知错误'))
   } finally {

@@ -1,34 +1,8 @@
 <template>
   <div class="video-admin">
 
-    <!-- ══ 视频标签管理 ══ -->
-    <div class="section-card">
-      <div class="section-head">
-        <div class="section-label">🏷 视频标签管理</div>
-        <div class="label-add-row">
-          <input class="label-input" v-model="newLabelName" placeholder="标签名" @keyup.enter="addLabel" />
-          <button class="btn-label-add" @click="addLabel">添加</button>
-        </div>
-      </div>
-      <div v-if="labels.length" class="label-list">
-        <div v-for="l in labels" :key="l.id" class="label-item">
-          <template v-if="editingLabelId === l.id">
-            <input class="label-edit-input" v-model="editingLabelName" @keyup.enter="saveLabelEdit(l)" />
-            <button class="btn-label-save"   @click="saveLabelEdit(l)">保存</button>
-            <button class="btn-label-cancel" @click="editingLabelId = null">取消</button>
-          </template>
-          <template v-else>
-            <span class="label-name">{{ l.name }}</span>
-            <button class="btn-label-edit"   @click="startLabelEdit(l)">编辑</button>
-            <button class="btn-label-del"    @click="removeLabel(l.id)">删除</button>
-          </template>
-        </div>
-      </div>
-      <div v-else class="section-empty">暂无视频标签</div>
-    </div>
-
     <!-- ══ 视频管理 ══ -->
-    <div class="section-card" style="margin-top: 20px;">
+    <div class="section-card">
       <div class="section-head">
         <div class="section-label">🎬 视频管理</div>
         <button class="btn-add" @click="openAdd">＋ 添加视频</button>
@@ -39,18 +13,15 @@
 
       <div v-else class="video-list">
         <div v-for="v in videos" :key="v.id" class="video-row">
-          <img v-if="v.coverUrl || resolveVideoCover(v.videoUrl)"
-               :src="v.coverUrl ? resolveMediaUrl(v.coverUrl) : resolveVideoCover(v.videoUrl)"
-               class="thumb" alt="" />
+          <img v-if="v.resourceUrl && !v.resourceUrl.includes('bilibili')" :src="resolveMediaUrl(v.resourceUrl)" class="thumb" alt="" />
           <div v-else class="thumb-placeholder">▶</div>
           <div class="row-body">
             <div class="row-title">{{ v.title }}</div>
             <div class="row-meta">
-              <span v-if="v.source" class="row-source">{{ v.source }}</span>
-              <span v-for="l in v.labels" :key="l.id" class="row-label">{{ l.name }}</span>
-              <span v-if="!v.labels?.length" class="row-nolabel">未分类</span>
+              <span v-if="v.resourceUrl" class="row-source">{{ v.resourceUrl }}</span>
+              <span class="row-label">{{ v.status }}</span>
             </div>
-            <div v-if="v.description" class="row-preview">{{ v.description }}</div>
+            <div v-if="v.body" class="row-preview">{{ v.body }}</div>
           </div>
           <div class="row-actions">
             <button class="btn-edit" @click="openEdit(v)">✏️ 编辑</button>
@@ -72,42 +43,15 @@
 
             <div class="fg"><label class="fl">视频标题 *</label>
               <input class="fi" v-model="form.title" placeholder="例如：2024 北京演唱会" /></div>
-            <div class="fg"><label class="fl">视频链接 *</label>
-              <input class="fi" v-model="form.videoUrl" placeholder="https://b23.tv/xxxxx" /></div>
-            <div class="fg">
-              <label class="fl">封面图（可选）</label>
-              <div class="upload-row">
-                <input class="fi" v-model="form.coverUrl" placeholder="https://example.com/cover.jpg 或点击上传" />
-                <button type="button" class="btn-upload" :disabled="coverUploading" @click="$refs.coverFileInput.click()">
-                  {{ coverUploading ? '上传中…' : '📎 上传' }}
-                </button>
-                <input ref="coverFileInput" type="file" accept="image/jpeg,image/png,image/webp" style="display:none" @change="handleCoverUpload" />
-              </div>
-              <div v-if="coverResolving" class="cover-resolving">正在解析 B站封面…</div>
-              <div v-else-if="previewCoverUrl" class="cover-preview-wrap">
-                <img :src="previewCoverUrl" class="cover-preview" alt="封面预览" />
-                <span v-if="isAutoCover" class="auto-cover-hint">自动封面</span>
-              </div>
-            </div>
-            <div class="fg"><label class="fl">来源（可选）</label>
-              <input class="fi" v-model="form.source" placeholder="例如：B站官方" /></div>
-            <div class="fg"><label class="fl">简介（可选）</label>
-              <textarea class="fi" v-model="form.description" rows="3" placeholder="视频简介..."></textarea></div>
-
-            <div class="fg">
-              <label class="fl">选择标签（可多选）</label>
-              <div class="label-checks">
-                <label
-                  v-for="l in labels"
-                  :key="l.id"
-                  class="label-check-item"
-                  :class="{ checked: form.labelIds.includes(l.id) }"
-                >
-                  <input type="checkbox" :value="l.id" v-model="form.labelIds" style="display:none" />
-                  {{ l.name }}
-                </label>
-                <span v-if="!labels.length" class="no-labels-hint">请先在上方添加视频标签</span>
-              </div>
+            <div class="fg"><label class="fl">视频链接 (resourceUrl) *</label>
+              <input class="fi" v-model="form.resourceUrl" placeholder="https://b23.tv/xxxxx" /></div>
+            <div class="fg"><label class="fl">简介 (body，可选）</label>
+              <textarea class="fi" v-model="form.body" rows="3" placeholder="视频简介..."></textarea></div>
+            <div class="fg"><label class="fl">状态 (status) *</label>
+              <select class="fi" v-model="form.status">
+                <option value="PUBLISHED">PUBLISHED（已发布）</option>
+                <option value="DRAFT">DRAFT（草稿）</option>
+              </select>
             </div>
 
             <div class="ferr">{{ formErr }}</div>
@@ -122,18 +66,9 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
-import {
-  fetchVideoLabels, createVideoLabel, updateVideoLabel, deleteVideoLabel,
-  fetchVideos, createVideo, updateVideo, deleteVideo, fetchVideoCoverUrl
-} from '@/api/video.js'
-import { uploadImage } from '@/api/upload.js'
-import { resolveMediaUrl, resolveVideoCover } from '@/utils/media.js'
-
-const labels         = ref([])
-const newLabelName   = ref('')
-const editingLabelId = ref(null)
-const editingLabelName = ref('')
+import { ref, onMounted } from 'vue'
+import { fetchVideos, createVideo, updateVideo, deleteVideo } from '@/api/video.js'
+import { resolveMediaUrl } from '@/utils/media.js'
 
 const videos         = ref([])
 const loadingVideos  = ref(true)
@@ -142,44 +77,11 @@ const editId         = ref(null)
 const submitting     = ref(false)
 const formErr        = ref('')
 
-const coverUploading = ref(false)
-const coverResolving = ref(false)
-const emptyForm = () => ({ title: '', videoUrl: '', coverUrl: '', source: '', description: '', labelIds: [] })
+// ContentRequest: { title, body, resourceUrl, status }
+const emptyForm = () => ({ title: '', resourceUrl: '', body: '', status: 'PUBLISHED' })
 const form = ref(emptyForm())
 
-// 表单封面预览：优先 coverUrl，无则尝试自动封面（YouTube 客户端 / B站服务端）
-const previewCoverUrl = computed(() => {
-  if (form.value.coverUrl) return resolveMediaUrl(form.value.coverUrl)
-  return resolveVideoCover(form.value.videoUrl) || ''
-})
-const isAutoCover = computed(() => !form.value.coverUrl && !!previewCoverUrl.value)
-
-// 监听视频链接变化：B站链接且封面为空时，自动调后端解析并填入 coverUrl
-let resolveTimer = null
-watch(() => form.value.videoUrl, (newUrl) => {
-  clearTimeout(resolveTimer)
-  if (!newUrl || form.value.coverUrl) return
-  if (!newUrl.includes('bilibili.com') && !newUrl.includes('b23.tv')) return
-  coverResolving.value = true
-  resolveTimer = setTimeout(async () => {
-    try {
-      if (form.value.coverUrl) return          // 防止 debounce 期间用户已手填
-      const resolved = await fetchVideoCoverUrl(newUrl)
-      if (resolved && !form.value.coverUrl) {
-        form.value.coverUrl = resolved
-      }
-    } catch { /* 静默失败，不影响正常操作 */ }
-    finally { coverResolving.value = false }
-  }, 600)
-})
-
-onMounted(async () => {
-  await Promise.all([loadLabels(), loadVideos()])
-})
-
-async function loadLabels() {
-  try { labels.value = await fetchVideoLabels() } catch {}
-}
+onMounted(loadVideos)
 
 async function loadVideos() {
   loadingVideos.value = true
@@ -188,58 +90,30 @@ async function loadVideos() {
   finally { loadingVideos.value = false }
 }
 
-async function addLabel() {
-  const name = newLabelName.value.trim()
-  if (!name) return
-  try { await createVideoLabel(name); newLabelName.value = ''; await loadLabels() }
-  catch (e) { alert('添加失败：' + e.message) }
-}
-
-function startLabelEdit(l) { editingLabelId.value = l.id; editingLabelName.value = l.name }
-
-async function saveLabelEdit(l) {
-  const name = editingLabelName.value.trim()
-  if (!name) return
-  try { await updateVideoLabel(l.id, name); editingLabelId.value = null; await loadLabels() }
-  catch (e) { alert('保存失败：' + e.message) }
-}
-
-async function removeLabel(id) {
-  if (!confirm('删除视频标签后，已打该标签的视频关联也会删除。确定继续？')) return
-  try { await deleteVideoLabel(id); await loadLabels() }
-  catch (e) { alert('删除失败：' + e.message) }
-}
-
 function openAdd() {
-  clearTimeout(resolveTimer); coverResolving.value = false
   editId.value = null; form.value = emptyForm(); formErr.value = ''; showModal.value = true
 }
 
 function openEdit(v) {
-  clearTimeout(resolveTimer); coverResolving.value = false
   editId.value = v.id
   form.value = {
     title:       v.title       || '',
-    videoUrl:    v.videoUrl    || '',
-    coverUrl:    v.coverUrl    || '',
-    source:      v.source      || '',
-    description: v.description || '',
-    labelIds:    (v.labels || []).map(l => l.id),
+    resourceUrl: v.resourceUrl || '',
+    body:        v.body        || '',
+    status:      v.status      || 'PUBLISHED',
   }
   formErr.value = ''; showModal.value = true
 }
 
 async function submit() {
   formErr.value = ''
-  if (!form.value.title.trim())    { formErr.value = '标题不能为空'; return }
-  if (!form.value.videoUrl.trim()) { formErr.value = '视频链接不能为空'; return }
+  if (!form.value.title.trim())       { formErr.value = '标题不能为空'; return }
+  if (!form.value.resourceUrl.trim()) { formErr.value = '视频链接不能为空'; return }
   const body = {
     title:       form.value.title.trim(),
-    videoUrl:    form.value.videoUrl.trim(),
-    coverUrl:    form.value.coverUrl.trim()    || null,
-    source:      form.value.source.trim()      || null,
-    description: form.value.description.trim() || null,
-    labelIds:    form.value.labelIds,
+    resourceUrl: form.value.resourceUrl.trim(),
+    body:        form.value.body.trim() || null,
+    status:      form.value.status,
   }
   submitting.value = true
   try {
@@ -251,21 +125,6 @@ async function submit() {
     formErr.value = e.message || '操作失败'
   } finally {
     submitting.value = false
-  }
-}
-
-async function handleCoverUpload(e) {
-  const file = e.target.files?.[0]
-  if (!file) return
-  e.target.value = ''
-  coverUploading.value = true
-  try {
-    const url = await uploadImage(file)
-    form.value.coverUrl = url
-  } catch (err) {
-    alert('上传失败：' + (err.message || '未知错误'))
-  } finally {
-    coverUploading.value = false
   }
 }
 

@@ -15,12 +15,8 @@
         <div class="data-body">
           <div class="event-tag">📣 大 事 件</div>
           <div class="data-title">{{ n.title }}</div>
-          <div class="data-meta">
-            {{ n.dateLabel || '' }}
-            {{ n.admin ? '· 发布者：' + n.admin : '' }}
-            {{ n.createdAt ? '· ' + n.createdAt.slice(0, 10) : '' }}
-          </div>
-          <div class="data-preview">{{ n.content }}</div>
+          <div class="data-meta">{{ n.status }} {{ n.createdAt ? '· ' + n.createdAt.slice(0, 10) : '' }}</div>
+          <div class="data-preview">{{ n.body }}</div>
         </div>
         <div class="data-actions">
           <button class="btn-edit" @click="openEdit(n)">✏️ 编辑</button>
@@ -38,48 +34,29 @@
             <div class="modal-title">{{ editId ? '编辑公告' : '发布公告' }}</div>
             <div class="modal-sub">{{ editId ? '修改大事件公告' : '新增大事件公告' }}</div>
 
-            <div class="fg"><label class="fl">公告标题</label>
+            <div class="fg"><label class="fl">公告标题 *</label>
               <input class="fi" v-model="form.title" placeholder="输入公告标题"></div>
-            <div class="fg"><label class="fl">公告内容</label>
-              <textarea class="fi" v-model="form.content" rows="5" placeholder="输入公告内容..."></textarea></div>
-            <div class="fg"><label class="fl">时间标注（可选）</label>
-              <input class="fi" v-model="form.dateLabel" placeholder="例如：2024年春"></div>
 
-            <!-- 封面图 URL（保留旧方式） -->
             <div class="fg">
-              <label class="fl">封面图链接（可选）</label>
+              <label class="fl">封面图 (resourceUrl)</label>
               <div class="upload-row">
-                <input class="fi upload-input" v-model="form.imageUrl" placeholder="https://图片直链…" />
+                <input class="fi upload-input" v-model="form.resourceUrl" placeholder="https://... 或点击上传" />
                 <button type="button" class="btn-upload" :disabled="coverUploading" @click="$refs.coverFile.click()">
                   {{ coverUploading ? '上传中…' : '📎 上传' }}
                 </button>
                 <input ref="coverFile" type="file" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none" @change="handleCoverUpload" />
               </div>
-              <img v-if="form.imageUrl" :src="form.imageUrl" class="img-preview" alt="" />
+              <img v-if="form.resourceUrl" :src="form.resourceUrl" class="img-preview" alt="" />
             </div>
 
-            <!-- 图片集 -->
-            <div class="fg">
-              <label class="fl">图片集（可选，多图）</label>
-              <!-- URL 添加 -->
-              <div class="upload-row">
-                <input class="fi upload-input" v-model="newImageUrl" placeholder="输入图片直链后按添加" />
-                <button type="button" class="btn-upload" @click="addImageUrl">添加</button>
-              </div>
-              <!-- 批量本地上传 -->
-              <div class="upload-row" style="margin-top:6px;">
-                <button type="button" class="btn-upload" :disabled="multiUploading" @click="$refs.multiFile.click()">
-                  {{ multiUploading ? '上传中…' : '📎 批量上传' }}
-                </button>
-                <input ref="multiFile" type="file" accept="image/jpeg,image/png,image/gif,image/webp" multiple style="display:none" @change="handleMultiUpload" />
-              </div>
-              <!-- 缩略图预览 -->
-              <div v-if="imageUrls.length" class="thumb-strip">
-                <div v-for="(url, i) in imageUrls" :key="i" class="thumb-item">
-                  <img :src="url" class="thumb-img" alt="" />
-                  <button class="thumb-del" @click="imageUrls.splice(i, 1)">✕</button>
-                </div>
-              </div>
+            <div class="fg"><label class="fl">公告内容 (body)</label>
+              <textarea class="fi" v-model="form.body" rows="5" placeholder="输入公告内容..."></textarea></div>
+
+            <div class="fg"><label class="fl">状态 (status) *</label>
+              <select class="fi" v-model="form.status">
+                <option value="PUBLISHED">PUBLISHED（已发布）</option>
+                <option value="DRAFT">DRAFT（草稿）</option>
+              </select>
             </div>
 
             <div class="ferr">{{ formErr }}</div>
@@ -95,11 +72,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchNotices, fetchNoticeById, createNotice, updateNotice, deleteNotice } from '@/api/content.js'
+import { fetchEvents, fetchEventById, createEvent, updateEvent, deleteEvent } from '@/api/content.js'
 import { uploadImage } from '@/api/upload.js'
-import { useAuth } from '@/composables/useAuth.js'
-
-const { state } = useAuth()
 
 const notices        = ref([])
 const loading        = ref(true)
@@ -109,16 +83,14 @@ const editId         = ref(null)
 const submitting     = ref(false)
 const formErr        = ref('')
 const coverUploading = ref(false)
-const multiUploading = ref(false)
-const newImageUrl    = ref('')
-const imageUrls      = ref([])
 
-const emptyForm = () => ({ title: '', content: '', dateLabel: '', imageUrl: '' })
+// ContentRequest: { title, body, resourceUrl, status }
+const emptyForm = () => ({ title: '', body: '', resourceUrl: '', status: 'PUBLISHED' })
 const form = ref(emptyForm())
 
 async function load() {
   loading.value = true; error.value = ''
-  try { notices.value = await fetchNotices() }
+  try { notices.value = await fetchEvents() }
   catch (e) { error.value = e.message }
   finally { loading.value = false }
 }
@@ -126,8 +98,6 @@ async function load() {
 function openAdd() {
   editId.value = null
   form.value = emptyForm()
-  imageUrls.value = []
-  newImageUrl.value = ''
   formErr.value = ''
   showModal.value = true
 }
@@ -135,29 +105,20 @@ function openAdd() {
 async function openEdit(n) {
   let detail
   try {
-    detail = await fetchNoticeById(n.id)
+    detail = await fetchEventById(n.id)
   } catch (e) {
     alert('获取公告详情失败：' + e.message)
     return
   }
   editId.value = detail.id
   form.value = {
-    title:     detail.title || '',
-    content:   detail.content || '',
-    dateLabel: detail.dateLabel || '',
-    imageUrl:  detail.imageUrl || '',
+    title:       detail.title       || '',
+    body:        detail.body        || '',
+    resourceUrl: detail.resourceUrl || '',
+    status:      detail.status      || 'PUBLISHED',
   }
-  imageUrls.value = (detail.images || []).map(img => img.imageUrl)
-  newImageUrl.value = ''
   formErr.value = ''
   showModal.value = true
-}
-
-function addImageUrl() {
-  const url = newImageUrl.value.trim()
-  if (!url) return
-  imageUrls.value.push(url)
-  newImageUrl.value = ''
 }
 
 async function handleCoverUpload(e) {
@@ -165,7 +126,7 @@ async function handleCoverUpload(e) {
   if (!file) return
   coverUploading.value = true
   try {
-    form.value.imageUrl = await uploadImage(file)
+    form.value.resourceUrl = await uploadImage(file)
   } catch (err) {
     alert('上传失败：' + err.message)
   } finally {
@@ -174,40 +135,19 @@ async function handleCoverUpload(e) {
   }
 }
 
-async function handleMultiUpload(e) {
-  const files = Array.from(e.target.files)
-  if (!files.length) return
-  multiUploading.value = true
-  try {
-    for (const file of files) {
-      const url = await uploadImage(file)
-      imageUrls.value.push(url)
-    }
-  } catch (err) {
-    alert('上传失败：' + err.message)
-  } finally {
-    multiUploading.value = false
-    e.target.value = ''
-  }
-}
-
 async function submit() {
   formErr.value = ''
-  if (!form.value.title.trim() || !form.value.content.trim()) {
-    formErr.value = '标题和内容不能为空'; return
-  }
+  if (!form.value.title.trim()) { formErr.value = '标题不能为空'; return }
   const body = {
-    title:     form.value.title.trim(),
-    content:   form.value.content.trim(),
-    dateLabel: form.value.dateLabel.trim(),
-    imageUrl:  form.value.imageUrl.trim(),
-    admin:     state.user?.username || '',
-    imageUrls: imageUrls.value.filter(u => u.trim()),
+    title:       form.value.title.trim(),
+    body:        form.value.body.trim() || null,
+    resourceUrl: form.value.resourceUrl.trim() || null,
+    status:      form.value.status,
   }
   submitting.value = true
   try {
-    if (editId.value) await updateNotice(editId.value, body)
-    else              await createNotice(body)
+    if (editId.value) await updateEvent(editId.value, body)
+    else              await createEvent(body)
     showModal.value = false
     await load()
   } catch (e) {
@@ -219,7 +159,7 @@ async function submit() {
 
 async function remove(id) {
   if (!confirm('确定删除此公告？')) return
-  try { await deleteNotice(id); await load() }
+  try { await deleteEvent(id); await load() }
   catch (e) { alert('删除失败：' + e.message) }
 }
 

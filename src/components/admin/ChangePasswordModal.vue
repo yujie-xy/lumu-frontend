@@ -9,16 +9,6 @@
 
         <div class="cp-body">
           <div class="cp-field">
-            <label class="cp-label">当前密码</label>
-            <input
-              v-model="form.oldPassword"
-              type="password"
-              class="cp-input"
-              placeholder="输入当前密码"
-              autocomplete="current-password"
-            />
-          </div>
-          <div class="cp-field">
             <label class="cp-label">新密码</label>
             <input
               v-model="form.newPassword"
@@ -61,7 +51,7 @@ import { changeMyPassword } from '@/api/userAdmin.js'
 
 defineEmits(['close'])
 
-const form = reactive({ oldPassword: '', newPassword: '', confirmPassword: '' })
+const form = reactive({ newPassword: '', confirmPassword: '' })
 const loading = ref(false)
 const error   = ref('')
 const success = ref(false)
@@ -70,19 +60,13 @@ async function submit() {
   error.value   = ''
   success.value = false
 
-  if (!form.oldPassword)                       { error.value = '请输入当前密码'; return }
-  if (form.newPassword.length < 6)             { error.value = '新密码至少 6 位'; return }
-  if (form.newPassword !== form.confirmPassword) { error.value = '两次输入的新密码不一致'; return }
+  if (form.newPassword.length < 6)               { error.value = '新密码至少 6 位'; return }
+  if (form.newPassword !== form.confirmPassword)  { error.value = '两次输入的新密码不一致'; return }
 
   loading.value = true
   try {
-    await changeMyPassword({
-      oldPassword:     form.oldPassword,
-      newPassword:     form.newPassword,
-      confirmPassword: form.confirmPassword,
-    })
+    await changeMyPassword({ newPassword: form.newPassword })
     success.value = true
-    form.oldPassword = ''
     form.newPassword = ''
     form.confirmPassword = ''
   } catch (e) {

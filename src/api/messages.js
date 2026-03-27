@@ -13,7 +13,6 @@ async function req(method, path, body) {
 
   const res = await fetch(path, opts)
 
-  // 非 2xx：先读文本，再尝试解析 JSON，避免空 body 时 res.json() 崩溃
   if (!res.ok) {
     const text = await res.text()
     let msg = (res.status === 401 || res.status === 403)
@@ -30,6 +29,16 @@ async function req(method, path, body) {
   return data.data
 }
 
-export function fetchMessages()         { return req('GET',    '/api/messages') }
-export function createMessage(content)  { return req('POST',   '/api/messages', { content }) }
-export function deleteMessage(id)       { return req('DELETE', `/api/messages/${id}`) }
+/** GET /messages/threads — 获取当前用户的消息线程列表 */
+export function fetchThreads()               { return req('GET', '/api/messages/threads') }
+
+/** GET /messages/threads/{threadId} — 获取某个线程的消息列表 */
+export function fetchThread(threadId)        { return req('GET', `/api/messages/threads/${threadId}`) }
+
+/** POST /messages/to/{userUuid} — 向指定用户发送私信 */
+export function sendMessage(userUuid, content) {
+  return req('POST', `/api/messages/to/${userUuid}`, { content })
+}
+
+// Legacy alias — used by components that called fetchMessages() as a general list
+export { fetchThreads as fetchMessages }

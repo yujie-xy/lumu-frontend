@@ -11,17 +11,11 @@
 
     <div v-else class="data-list">
       <div v-for="ev in events" :key="ev.id" class="data-row">
-        <div class="data-bar" :style="ev.color === 'blue' ? 'background:linear-gradient(180deg,#a855f7,rgba(168,85,247,.2))' : ''"></div>
+        <div class="data-bar"></div>
         <div class="data-body">
-          <div class="data-title">{{ ev.emoji || '✦' }} {{ ev.title }}</div>
-          <div class="data-meta">
-            <span :class="ev.color === 'blue' ? 'tag-blue' : 'tag-gold'">
-              {{ ev.color === 'blue' ? '🌸 日常' : '★ 重要' }}
-            </span>
-            &nbsp;·&nbsp; {{ ev.date }}
-            <span v-if="ev.isBig" class="tag-big">&nbsp;★ 重大</span>
-          </div>
-          <div v-if="ev.description" class="data-preview">{{ ev.description }}</div>
+          <div class="data-title">✦ {{ ev.title }}</div>
+          <div class="data-meta">{{ ev.status }}</div>
+          <div v-if="ev.body" class="data-preview">{{ ev.body }}</div>
         </div>
         <div class="data-actions">
           <button class="btn-edit" @click="openEdit(ev)">✏️ 编辑</button>
@@ -39,57 +33,29 @@
             <div class="modal-title">{{ editId ? '编辑时间线事件' : '添加时间线事件' }}</div>
             <div class="modal-sub">{{ editId ? '修改时间线记录' : '新增时间线记录' }}</div>
 
-            <div class="fg"><label class="fl">类型</label>
-              <select class="fi" v-model="form.color">
-                <option value="pink">★ 重要日期（蓝粉轴）</option>
-                <option value="blue">🌸 日常记录（紫色轴）</option>
-              </select></div>
-            <div class="fg"><label class="fl">日期</label>
-              <input class="fi" type="date" v-model="form.date"></div>
-            <div class="fg"><label class="fl">标题</label>
-              <input class="fi" v-model="form.title" placeholder="例如：初次相遇"></div>
-            <div class="fg"><label class="fl">标签 | 描述（可选，用 | 分隔标签和描述）</label>
-              <textarea class="fi" v-model="form.description" placeholder="例如：同台演出|两人首次同台！"></textarea></div>
-            <div class="fg"><label class="fl">表情</label>
-              <input class="fi" v-model="form.emoji" placeholder="✨"></div>
+            <div class="fg"><label class="fl">标题 *</label>
+              <input class="fi" v-model="form.title" placeholder="时间线标题"></div>
+
             <div class="fg">
-              <label class="fl">封面图（可选）</label>
+              <label class="fl">封面图 (resourceUrl)</label>
               <div class="upload-row">
-                <input class="fi upload-input" v-model="form.imageUrl" placeholder="https://图片直链… 或点击上传" />
+                <input class="fi upload-input" v-model="form.resourceUrl" placeholder="https://... 或点击上传" />
                 <button type="button" class="btn-upload" :disabled="imgUploading" @click="$refs.imgFile.click()">
                   {{ imgUploading ? '上传中…' : '📎 上传' }}
                 </button>
                 <input ref="imgFile" type="file" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none" @change="handleImgUpload" />
               </div>
-              <img v-if="form.imageUrl" :src="form.imageUrl" class="img-preview" alt="" />
+              <img v-if="form.resourceUrl" :src="form.resourceUrl" class="img-preview" alt="" />
             </div>
 
-            <!-- 图片集 -->
-            <div class="fg">
-              <label class="fl">图片集（可选，多图）</label>
-              <div class="upload-row">
-                <input class="fi upload-input" v-model="newImageUrl" placeholder="输入图片直链后按添加" />
-                <button type="button" class="btn-upload" @click="addImageUrl">添加</button>
-              </div>
-              <div class="upload-row" style="margin-top:6px;">
-                <button type="button" class="btn-upload" :disabled="multiUploading" @click="$refs.multiFile.click()">
-                  {{ multiUploading ? '上传中…' : '📎 批量上传' }}
-                </button>
-                <input ref="multiFile" type="file" accept="image/jpeg,image/png,image/gif,image/webp" multiple style="display:none" @change="handleMultiUpload" />
-              </div>
-              <div v-if="imageUrls.length" class="thumb-strip">
-                <div v-for="(url, i) in imageUrls" :key="i" class="thumb-item">
-                  <img :src="url" class="thumb-img" alt="" />
-                  <button class="thumb-del" @click="imageUrls.splice(i, 1)">✕</button>
-                </div>
-              </div>
-            </div>
+            <div class="fg"><label class="fl">正文内容 (body)</label>
+              <textarea class="fi" v-model="form.body" rows="5" placeholder="时间线内容描述..."></textarea></div>
 
-            <div class="fg"><label class="fl">视频链接（可选）</label>
-              <input class="fi" v-model="form.videoUrl" placeholder="https://b23.tv/..."></div>
-            <div class="fg" style="display:flex;align-items:center;gap:10px;">
-              <input type="checkbox" id="tl-big" v-model="form.isBig" style="width:16px;height:16px;accent-color:var(--gold);">
-              <label for="tl-big" style="font-size:12px;color:var(--t2);letter-spacing:1px;cursor:pointer;">标记为重大时刻（节点放大）</label>
+            <div class="fg"><label class="fl">状态 (status) *</label>
+              <select class="fi" v-model="form.status">
+                <option value="PUBLISHED">PUBLISHED（已发布）</option>
+                <option value="DRAFT">DRAFT（草稿）</option>
+              </select>
             </div>
 
             <div class="ferr">{{ formErr }}</div>
@@ -105,7 +71,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchTimeline, fetchTimelineById, createTimeline, updateTimeline, deleteTimeline } from '@/api/content.js'
+import { fetchTimelines, fetchTimelineById, createTimeline, updateTimeline, deleteTimeline } from '@/api/content.js'
 import { uploadImage } from '@/api/upload.js'
 
 const events    = ref([])
@@ -115,26 +81,21 @@ const showModal = ref(false)
 const editId    = ref(null)
 const submitting   = ref(false)
 const formErr      = ref('')
-const imgUploading    = ref(false)
-const multiUploading  = ref(false)
-const newImageUrl     = ref('')
-const imageUrls       = ref([])
+const imgUploading = ref(false)
 
-const emptyForm = () => ({
-  color: 'pink', date: '', title: '', description: '',
-  emoji: '', imageUrl: '', videoUrl: '', isBig: false
-})
+// ContentRequest: { title, body, resourceUrl, status }
+const emptyForm = () => ({ title: '', body: '', resourceUrl: '', status: 'PUBLISHED' })
 const form = ref(emptyForm())
 
 async function load() {
   loading.value = true; error.value = ''
-  try { events.value = await fetchTimeline() }
+  try { events.value = await fetchTimelines() }
   catch (e) { error.value = e.message }
   finally { loading.value = false }
 }
 
 function openAdd() {
-  editId.value = null; form.value = emptyForm(); imageUrls.value = []; newImageUrl.value = ''; formErr.value = ''; showModal.value = true
+  editId.value = null; form.value = emptyForm(); formErr.value = ''; showModal.value = true
 }
 
 async function openEdit(ev) {
@@ -147,26 +108,13 @@ async function openEdit(ev) {
   }
   editId.value = detail.id
   form.value = {
-    color:       detail.color || 'pink',
-    date:        detail.date || '',
-    title:       detail.title || '',
-    description: detail.description || '',
-    emoji:       detail.emoji || '',
-    imageUrl:    detail.imageUrl || '',
-    videoUrl:    detail.videoUrl || '',
-    isBig:       !!detail.isBig,
+    title:       detail.title       || '',
+    body:        detail.body        || '',
+    resourceUrl: detail.resourceUrl || '',
+    status:      detail.status      || 'PUBLISHED',
   }
-  imageUrls.value = (detail.images || []).map(img => img.imageUrl)
-  newImageUrl.value = ''
   formErr.value = ''
   showModal.value = true
-}
-
-function addImageUrl() {
-  const url = newImageUrl.value.trim()
-  if (!url) return
-  imageUrls.value.push(url)
-  newImageUrl.value = ''
 }
 
 async function handleImgUpload(e) {
@@ -174,7 +122,7 @@ async function handleImgUpload(e) {
   if (!file) return
   imgUploading.value = true
   try {
-    form.value.imageUrl = await uploadImage(file)
+    form.value.resourceUrl = await uploadImage(file)
   } catch (err) {
     alert('上传失败：' + err.message)
   } finally {
@@ -183,41 +131,14 @@ async function handleImgUpload(e) {
   }
 }
 
-async function handleMultiUpload(e) {
-  const files = Array.from(e.target.files)
-  if (!files.length) return
-  multiUploading.value = true
-  try {
-    for (const file of files) {
-      const url = await uploadImage(file)
-      imageUrls.value.push(url)
-    }
-  } catch (err) {
-    alert('上传失败：' + err.message)
-  } finally {
-    multiUploading.value = false
-    e.target.value = ''
-  }
-}
-
 async function submit() {
   formErr.value = ''
-  if (!form.value.date || !form.value.title.trim()) {
-    formErr.value = '日期和标题不能为空'; return
-  }
-  const existingKey = editId.value ? events.value.find(e => e.id === editId.value)?.eventKey : null
-  const eventKey = existingKey || (form.value.date + '-' + Date.now())
+  if (!form.value.title.trim()) { formErr.value = '标题不能为空'; return }
   const body = {
-    date:        form.value.date,
     title:       form.value.title.trim(),
-    description: form.value.description.trim(),
-    emoji:       form.value.emoji.trim() || '✦',
-    imageUrl:    form.value.imageUrl.trim(),
-    videoUrl:    form.value.videoUrl.trim(),
-    color:       form.value.color,
-    isBig:       form.value.isBig,
-    eventKey,
-    imageUrls:   imageUrls.value.filter(u => u.trim()),
+    body:        form.value.body.trim() || null,
+    resourceUrl: form.value.resourceUrl.trim() || null,
+    status:      form.value.status,
   }
   submitting.value = true
   try {

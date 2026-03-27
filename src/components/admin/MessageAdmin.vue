@@ -29,7 +29,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchMessages, deleteMessage } from '@/api/messages.js'
+import { fetchThreads } from '@/api/messages.js'
 
 const messages = ref([])
 const loading  = ref(true)
@@ -38,19 +38,18 @@ const error    = ref('')
 async function load() {
   loading.value = true
   error.value   = ''
-  try { messages.value = await fetchMessages() }
+  try {
+    // fetchThreads returns a list of message threads
+    const threads = await fetchThreads()
+    // Flatten threads into a display list
+    messages.value = Array.isArray(threads) ? threads : []
+  }
   catch (e) { error.value = e.message }
   finally { loading.value = false }
 }
 
-async function remove(id) {
-  if (!confirm('确定删除这条留言？此操作不可恢复。')) return
-  try {
-    await deleteMessage(id)
-    await load()
-  } catch (e) {
-    alert('删除失败：' + e.message)
-  }
+async function remove() {
+  alert('当前后端版本暂不支持删除消息')
 }
 
 function formatTime(iso) {

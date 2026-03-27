@@ -22,21 +22,15 @@ async function req(method, path, body) {
   return data.data
 }
 
-// ── 视频标签（独立，不与相册共享）─────────────────────────────
-export function fetchVideoLabels()                        { return req('GET',    '/api/video-labels') }
-export function createVideoLabel(name, sortOrder)         { return req('POST',   '/api/video-labels', { name, sortOrder: sortOrder ?? 0 }) }
-export function updateVideoLabel(id, name, sortOrder)     { return req('PUT',    `/api/video-labels/${id}`, { name, sortOrder: sortOrder ?? 0 }) }
-export function deleteVideoLabel(id)                      { return req('DELETE', `/api/video-labels/${id}`) }
+// ── 视频 CRUD ────────────────────────────────────────────────
+// ContentRequest: { title, body, resourceUrl, status }
+export function fetchVideos()             { return req('GET',    '/api/videos') }
+export function createVideo(body)         { return req('POST',   '/api/videos', body) }
+export function updateVideo(id, body)     { return req('PUT',    `/api/videos/${id}`, body) }
+export function deleteVideo(id)           { return req('DELETE', `/api/videos/${id}`) }
 
-// ── 视频 ──────────────────────────────────────────────────────
-export function fetchVideos(labelId)    { return req('GET',    labelId ? `/api/videos?labelId=${labelId}` : '/api/videos') }
-export function createVideo(body)       { return req('POST',   '/api/videos', body) }
-export function updateVideo(id, body)   { return req('PUT',    `/api/videos/${id}`, body) }
-export function deleteVideo(id)         { return req('DELETE', `/api/videos/${id}`) }
-
-// ── 封面自动解析（B站）────────────────────────────────────────
-// 返回封面图 URL 字符串，无法解析时返回空字符串
-export async function fetchVideoCoverUrl(videoUrl) {
-  const data = await req('GET', `/api/resolve-cover?videoUrl=${encodeURIComponent(videoUrl)}`)
-  return (data && data.coverUrl) || ''
-}
+// ── 投票 & 置顶 ───────────────────────────────────────────────
+// VoteRequest: { voteType: "LIKE" | "DISLIKE" }
+export function voteVideo(id, voteType = 'LIKE') { return req('POST',   `/api/videos/${id}/vote`, { voteType }) }
+export function pinVideo(id)              { return req('POST',   `/api/videos/${id}/pin`) }
+export function unpinVideo(id)            { return req('DELETE', `/api/videos/${id}/pin`) }

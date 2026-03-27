@@ -1,21 +1,5 @@
 <template>
   <div class="video-page">
-    <!-- 标签栏 -->
-    <div class="video-tabs">
-      <button
-        class="video-tab"
-        :class="{ active: activeLabelId === null }"
-        @click="selectLabel(null)"
-      >全部</button>
-      <button
-        v-for="label in labels"
-        :key="label.id"
-        class="video-tab"
-        :class="{ active: activeLabelId === label.id }"
-        @click="selectLabel(label.id)"
-      >{{ label.name }}</button>
-    </div>
-
     <!-- 视频列表 -->
     <div class="video-body">
       <div v-if="loading" class="video-loading">
@@ -29,7 +13,7 @@
         <a
           v-for="v in videos"
           :key="v.id"
-          :href="v.videoUrl"
+          :href="v.resourceUrl"
           target="_blank"
           rel="noopener noreferrer"
           class="video-card"
@@ -43,11 +27,7 @@
           </div>
           <div class="video-info">
             <div class="video-title">{{ v.title }}</div>
-            <div v-if="v.description" class="video-desc">{{ v.description }}</div>
-            <div class="video-meta">
-              <span v-if="v.source" class="video-source">{{ v.source }}</span>
-              <span v-for="l in v.labels" :key="l.id" class="video-label-badge">{{ l.name }}</span>
-            </div>
+            <div v-if="v.body" class="video-desc">{{ v.body }}</div>
             <div class="video-like-row" @click.stop.prevent>
               <LikeButton content-type="video" :target-id="v.id" />
             </div>
@@ -60,42 +40,29 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchVideoLabels, fetchVideos } from '@/api/video.js'
-import { resolveMediaUrl, resolveVideoCover } from '@/utils/media.js'
+import { fetchVideos } from '@/api/video.js'
+import { resolveVideoCover } from '@/utils/media.js'
 import LikeButton from '@/components/common/LikeButton.vue'
 
 function getVideoCover(v) {
-  if (v.coverUrl) return resolveMediaUrl(v.coverUrl)
-  return resolveVideoCover(v.videoUrl) || ''
+  return resolveVideoCover(v.resourceUrl) || ''
 }
 
-const labels       = ref([])
-const videos       = ref([])
-const loading      = ref(true)
-const error        = ref(null)
-const activeLabelId = ref(null)
+const videos  = ref([])
+const loading = ref(true)
+const error   = ref(null)
 
 onMounted(async () => {
-  try { labels.value = await fetchVideoLabels() } catch {}
-  await loadVideos()
-})
-
-async function loadVideos() {
   loading.value = true
   error.value   = null
   try {
-    videos.value = await fetchVideos(activeLabelId.value)
+    videos.value = await fetchVideos()
   } catch (e) {
     error.value = e.message
   } finally {
     loading.value = false
   }
-}
-
-function selectLabel(labelId) {
-  activeLabelId.value = labelId
-  loadVideos()
-}
+})
 </script>
 
 <style scoped>

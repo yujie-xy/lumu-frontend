@@ -13,9 +13,9 @@
       <div v-for="ch in chapters" :key="ch.id" class="data-row">
         <div class="data-bar"></div>
         <div class="data-body">
-          <div class="data-title">{{ ch.emoji || '📖' }} 第{{ ch.chapterNum }}章 · {{ ch.title }}</div>
-          <div class="data-meta">{{ ch.dateLabel || '——' }}</div>
-          <div class="data-preview">{{ stripHtml(ch.content) }}</div>
+          <div class="data-title">📖 {{ ch.title }}</div>
+          <div class="data-meta">{{ ch.status }}</div>
+          <div class="data-preview">{{ ch.body || '' }}</div>
         </div>
         <div class="data-actions">
           <button class="btn-edit" @click="openEdit(ch)">✏️ 编辑</button>
@@ -34,62 +34,30 @@
             <div class="modal-title">{{ editId ? '编辑章节' : '添加章节' }}</div>
             <div class="modal-sub">{{ editId ? '修改故事线章节内容' : '新增故事线章节' }}</div>
 
-            <div class="fg"><label class="fl">章节序号</label>
-              <input class="fi" type="number" v-model="form.chapterNum" placeholder="留空自动排序"></div>
-            <div class="fg"><label class="fl">章节标题</label>
-              <input class="fi" v-model="form.title" placeholder="例如：初 见"></div>
-            <div class="fg"><label class="fl">时间标注</label>
-              <input class="fi" v-model="form.dateLabel" placeholder="例如：2023.01"></div>
-            <div class="fg"><label class="fl">章节表情</label>
-              <input class="fi" v-model="form.emoji" placeholder="🌱"></div>
-            <div class="fg"><label class="fl">渐变背景（可选）</label>
-              <input class="fi" v-model="form.gradient" placeholder="例如：135deg,rgba(168,212,245,.2),rgba(245,184,208,.15)"></div>
+            <div class="fg"><label class="fl">标题 *</label>
+              <input class="fi" v-model="form.title" placeholder="故事标题"></div>
 
-            <!-- 封面图（旧字段，保持兼容） -->
             <div class="fg">
-              <label class="fl">封面图（可选）</label>
+              <label class="fl">封面图 (resourceUrl)</label>
               <div class="upload-row">
-                <input class="fi upload-input" v-model="form.imageUrl" placeholder="https://example.com/image.jpg 或点击上传" />
+                <input class="fi upload-input" v-model="form.resourceUrl" placeholder="https://... 或点击上传" />
                 <button type="button" class="btn-upload" :disabled="coverUploading" @click="$refs.coverFile.click()">
                   {{ coverUploading ? '上传中…' : '📎 上传' }}
                 </button>
                 <input ref="coverFile" type="file" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none" @change="handleCoverUpload" />
               </div>
-              <img v-if="form.imageUrl" :src="form.imageUrl" class="img-preview" alt="" />
+              <img v-if="form.resourceUrl" :src="form.resourceUrl" class="img-preview" alt="" />
             </div>
 
-            <!-- 图片集（多图，子表） -->
-            <div class="fg">
-              <label class="fl">图片集（可多张）</label>
+            <div class="fg"><label class="fl">正文内容 (body)</label>
+              <textarea class="fi" v-model="form.body" rows="8" placeholder="在这里写故事内容..."></textarea></div>
 
-              <!-- 方式A：本地上传 -->
-              <div class="upload-bar">
-                <button type="button" class="btn-upload" :disabled="imgUploading" @click="$refs.imgFiles.click()">
-                  {{ imgUploading ? '上传中…' : '📎 上传图片（可多选）' }}
-                </button>
-                <input ref="imgFiles" type="file" accept="image/jpeg,image/png,image/gif,image/webp"
-                       multiple style="display:none" @change="handleImgUpload" />
-              </div>
-
-              <!-- 方式B：直接填 URL -->
-              <div class="url-add-row">
-                <input class="fi url-add-input" v-model="urlInput" placeholder="粘贴图片 URL，回车添加" @keyup.enter="addUrlToImages" />
-                <button type="button" class="btn-url-add" @click="addUrlToImages">添加</button>
-              </div>
-
-              <!-- 缩略图预览 -->
-              <div v-if="imageUrls.length" class="img-thumb-list">
-                <div v-for="(url, i) in imageUrls" :key="i" class="img-thumb-item">
-                  <img :src="url" class="thumb-img" alt="" />
-                  <span class="thumb-idx">{{ i + 1 }}</span>
-                  <button class="thumb-del" @click="removeImage(i)">✕</button>
-                </div>
-              </div>
-              <div v-else class="imgs-empty">暂无图片集，可通过上传或填写 URL 添加</div>
+            <div class="fg"><label class="fl">状态 (status) *</label>
+              <select class="fi" v-model="form.status">
+                <option value="PUBLISHED">PUBLISHED（已发布）</option>
+                <option value="DRAFT">DRAFT（草稿）</option>
+              </select>
             </div>
-
-            <div class="fg"><label class="fl">章节内容（段落间空一行）</label>
-              <textarea class="fi" v-model="form.content" rows="8" placeholder="在这里写章节内容..."></textarea></div>
 
             <div class="ferr">{{ formErr }}</div>
             <button class="btn-submit" :disabled="submitting" @click="submit">
@@ -104,7 +72,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchStory, fetchStoryById, createStory, updateStory, deleteStory } from '@/api/content.js'
+import { fetchStories, fetchStoryById, createStory, updateStory, deleteStory } from '@/api/content.js'
 import { uploadImage } from '@/api/upload.js'
 
 const chapters   = ref([])
@@ -116,19 +84,14 @@ const submitting = ref(false)
 const formErr    = ref('')
 
 const coverUploading = ref(false)
-const imgUploading   = ref(false)
-const imageUrls      = ref([])
-const urlInput       = ref('')
 
-const emptyForm = () => ({
-  chapterNum: '', title: '', dateLabel: '', emoji: '',
-  gradient: '', content: '', imageUrl: ''
-})
+// ContentRequest: { title, body, resourceUrl, status }
+const emptyForm = () => ({ title: '', body: '', resourceUrl: '', status: 'PUBLISHED' })
 const form = ref(emptyForm())
 
 async function load() {
   loading.value = true; error.value = ''
-  try { chapters.value = await fetchStory() }
+  try { chapters.value = await fetchStories() }
   catch (e) { error.value = e.message }
   finally { loading.value = false }
 }
@@ -136,8 +99,6 @@ async function load() {
 function openAdd() {
   editId.value = null
   form.value = emptyForm()
-  imageUrls.value = []
-  urlInput.value = ''
   formErr.value = ''
   showModal.value = true
 }
@@ -148,23 +109,16 @@ async function openEdit(ch) {
   try {
     detail = await fetchStoryById(ch.id)
   } catch (e) {
-    alert('加载章节详情失败：' + e.message)
+    alert('加载故事详情失败：' + e.message)
     return
   }
   editId.value = ch.id
-  const tmp = document.createElement('div')
-  tmp.innerHTML = detail.content || ''
   form.value = {
-    chapterNum: detail.chapterNum ?? '',
-    title:      detail.title     || '',
-    dateLabel:  detail.dateLabel || '',
-    emoji:      detail.emoji     || '',
-    gradient:   detail.gradient  || '',
-    content:    tmp.innerText || tmp.textContent || '',
-    imageUrl:   detail.imageUrl  || '',
+    title:       detail.title       || '',
+    body:        detail.body        || '',
+    resourceUrl: detail.resourceUrl || '',
+    status:      detail.status      || 'PUBLISHED',
   }
-  imageUrls.value = (detail.images || []).map(img => img.imageUrl)
-  urlInput.value = ''
   showModal.value = true
 }
 
@@ -173,7 +127,7 @@ async function handleCoverUpload(e) {
   if (!file) return
   coverUploading.value = true
   try {
-    form.value.imageUrl = await uploadImage(file)
+    form.value.resourceUrl = await uploadImage(file)
   } catch (err) {
     alert('上传失败：' + err.message)
   } finally {
@@ -182,54 +136,15 @@ async function handleCoverUpload(e) {
   }
 }
 
-async function handleImgUpload(e) {
-  const files = Array.from(e.target.files || [])
-  if (!files.length) return
-  imgUploading.value = true
-  try {
-    for (const file of files) {
-      const url = await uploadImage(file)
-      imageUrls.value.push(url)
-    }
-  } catch (err) {
-    alert('上传失败：' + err.message)
-  } finally {
-    imgUploading.value = false
-    e.target.value = ''
-  }
-}
-
-function addUrlToImages() {
-  const url = urlInput.value.trim()
-  if (!url) return
-  imageUrls.value.push(url)
-  urlInput.value = ''
-}
-
-function removeImage(i) {
-  imageUrls.value.splice(i, 1)
-}
-
 async function submit() {
   formErr.value = ''
-  if (!form.value.title.trim() || !form.value.content.trim()) {
-    formErr.value = '标题和内容不能为空'; return
-  }
-  const rawContent = form.value.content.trim()
-  const content = rawContent.split(/\n\n+/).map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('')
+  if (!form.value.title.trim()) { formErr.value = '标题不能为空'; return }
   const body = {
-    title:     form.value.title.trim(),
-    dateLabel: form.value.dateLabel.trim(),
-    emoji:     form.value.emoji.trim() || '✨',
-    content,
-    imageUrls: imageUrls.value,
+    title:       form.value.title.trim(),
+    body:        form.value.body.trim() || null,
+    resourceUrl: form.value.resourceUrl.trim() || null,
+    status:      form.value.status,
   }
-  if (form.value.chapterNum !== '' && form.value.chapterNum !== null) {
-    body.chapterNum = Number(form.value.chapterNum)
-  }
-  if (form.value.gradient.trim()) body.gradient = form.value.gradient.trim()
-  if (form.value.imageUrl.trim()) body.imageUrl = form.value.imageUrl.trim()
-
   submitting.value = true
   try {
     if (editId.value) await updateStory(editId.value, body)
@@ -247,10 +162,6 @@ async function remove(id) {
   if (!confirm('确定删除此章节？此操作不可恢复。')) return
   try { await deleteStory(id); await load() }
   catch (e) { alert('删除失败：' + e.message) }
-}
-
-function stripHtml(s) {
-  const d = document.createElement('div'); d.innerHTML = s || ''; return d.textContent || d.innerText || ''
 }
 
 onMounted(load)
