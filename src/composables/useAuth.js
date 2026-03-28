@@ -4,11 +4,28 @@ const state = reactive({
   user: null, // { username, role, badge, token }
 })
 
+function normalizeRole(role) {
+  if (typeof role !== 'string' || !role.trim()) return ''
+  return role.trim().toLowerCase()
+}
+
+function normalizeUser(data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return data
+  return {
+    ...data,
+    username: typeof data.username === 'string' ? data.username : '',
+    role: normalizeRole(data.role),
+    badge: typeof data.badge === 'string' ? data.badge : '',
+    token: typeof data.token === 'string' ? data.token : null,
+    userUuid: typeof data.userUuid === 'string' ? data.userUuid : '',
+  }
+}
+
 function _load() {
   if (state.user) return
   try {
     const raw = localStorage.getItem('lumu_session')
-    if (raw) state.user = JSON.parse(raw)
+    if (raw) state.user = normalizeUser(JSON.parse(raw))
   } catch {
     state.user = null
   }
@@ -18,8 +35,9 @@ export function useAuth() {
   _load()
 
   function setUser(data) {
-    state.user = data
-    localStorage.setItem('lumu_session', JSON.stringify(data))
+    const normalized = normalizeUser(data)
+    state.user = normalized
+    localStorage.setItem('lumu_session', JSON.stringify(normalized))
   }
 
   function setGuest() {

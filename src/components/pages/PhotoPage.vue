@@ -61,7 +61,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchPhotoLabels, fetchPhotos } from '@/api/photo.js'
+import { fetchPhotos } from '@/api/photo.js'
 import { resolveMediaUrl } from '@/utils/media.js'
 import LikeButton from '@/components/common/LikeButton.vue'
 
@@ -72,8 +72,44 @@ const error        = ref(null)
 const activeLabelId = ref(null)
 const lightbox     = ref(null)
 
+function normalizePhotoImages(images) {
+  if (!Array.isArray(images)) return []
+  return images
+    .map((img, idx) => {
+      const imageUrl = img?.imageUrl || img?.resourceUrl || img?.url || ''
+      if (!imageUrl) return null
+      return { ...img, id: img.id ?? idx, imageUrl }
+    })
+    .filter(Boolean)
+}
+
+function normalizePhotoItem(photo) {
+  if (!photo || typeof photo !== 'object') return photo
+
+  const resourceUrl = photo.resourceUrl || photo.imageUrl || photo.coverImageUrl || photo.firstImageUrl || ''
+  const imageUrl = photo.imageUrl || photo.resourceUrl || photo.coverImageUrl || photo.firstImageUrl || ''
+
+  return {
+    ...photo,
+    title: photo.title || '',
+    body: photo.body ?? photo.content ?? photo.description ?? photo.source ?? '',
+    content: photo.content ?? photo.body ?? photo.description ?? photo.source ?? '',
+    description: photo.description ?? photo.body ?? photo.content ?? photo.source ?? '',
+    source: photo.source ?? photo.body ?? photo.content ?? photo.description ?? '',
+    resourceUrl,
+    imageUrl,
+    coverImageUrl: photo.coverImageUrl || resourceUrl || imageUrl || '',
+    firstImageUrl: photo.firstImageUrl || imageUrl || resourceUrl || '',
+    images: normalizePhotoImages(photo.images),
+    labels: Array.isArray(photo.labels) ? photo.labels : [],
+    isPinned: Boolean(photo.isPinned),
+    status: photo.status || '',
+    createdAt: photo.createdAt || '',
+  }
+}
+
 onMounted(async () => {
-  try { labels.value = await fetchPhotoLabels() } catch {}
+  labels.value = []
   await loadPhotos()
 })
 
@@ -81,7 +117,8 @@ async function loadPhotos() {
   loading.value = true
   error.value   = null
   try {
-    photos.value = await fetchPhotos(activeLabelId.value)
+    const list = await fetchPhotos()
+    photos.value = Array.isArray(list) ? list.map(normalizePhotoItem) : []
   } catch (e) {
     error.value = e.message
   } finally {
@@ -95,7 +132,7 @@ function selectLabel(labelId) {
 }
 
 function openLightbox(photo) {
-  lightbox.value = photo
+  lightbox.value = normalizePhotoItem(photo)
 }
 </script>
 

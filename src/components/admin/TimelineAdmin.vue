@@ -71,7 +71,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchTimelines, fetchTimelineById, createTimeline, updateTimeline, deleteTimeline } from '@/api/content.js'
+import { fetchTimelines, createTimeline, updateTimeline, deleteTimeline } from '@/api/content.js'
 import { uploadImage } from '@/api/upload.js'
 
 const events    = ref([])
@@ -87,9 +87,38 @@ const imgUploading = ref(false)
 const emptyForm = () => ({ title: '', body: '', resourceUrl: '', status: 'PUBLISHED' })
 const form = ref(emptyForm())
 
+function normalizeTimelineEvent(event) {
+  if (!event || typeof event !== 'object') return event
+
+  const resourceUrl = event.resourceUrl || event.imageUrl || event.coverImageUrl || event.firstImageUrl || ''
+  const imageUrl = event.imageUrl || event.coverImageUrl || event.firstImageUrl || resourceUrl || ''
+  const date = event.date || event.createdAt || ''
+
+  return {
+    ...event,
+    title: event.title || '',
+    body: event.body ?? event.content ?? event.description ?? '',
+    content: event.content ?? event.body ?? event.description ?? '',
+    description: event.description ?? event.body ?? event.content ?? '',
+    resourceUrl,
+    imageUrl,
+    coverImageUrl: event.coverImageUrl || resourceUrl || imageUrl || '',
+    firstImageUrl: event.firstImageUrl || imageUrl || resourceUrl || '',
+    images: Array.isArray(event.images) ? event.images : [],
+    date,
+    dateLabel: event.dateLabel || (date ? String(date).slice(0, 10) : ''),
+    isPinned: Boolean(event.isPinned),
+    status: event.status || 'PUBLISHED',
+    createdAt: event.createdAt || '',
+  }
+}
+
 async function load() {
   loading.value = true; error.value = ''
-  try { events.value = await fetchTimelines() }
+  try {
+    const list = await fetchTimelines()
+    events.value = Array.isArray(list) ? list.map(normalizeTimelineEvent) : []
+  }
   catch (e) { error.value = e.message }
   finally { loading.value = false }
 }
@@ -99,6 +128,17 @@ function openAdd() {
 }
 
 async function openEdit(ev) {
+  const detail = normalizeTimelineEvent(ev)
+  editId.value = detail.id
+  form.value = {
+    title:       detail.title       || '',
+    body:        detail.body        || '',
+    resourceUrl: detail.resourceUrl || '',
+    status:      detail.status      || 'PUBLISHED',
+  }
+  formErr.value = ''
+  showModal.value = true
+  return
   let detail
   try {
     detail = await fetchTimelineById(ev.id)

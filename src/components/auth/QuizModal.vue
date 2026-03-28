@@ -81,6 +81,11 @@ const totalCount = computed(() => questions.value.length || 5)
 
 const currentQ = computed(() => questions.value[currentIndex.value] || { stem: '' })
 
+function resolveQuestionId(question) {
+  if (!question || typeof question !== 'object') return null
+  return question.questionId ?? question.id ?? null
+}
+
 const progressText = computed(() => {
   if (phase.value === 'loading')  return '加载题目中...'
   if (phase.value === 'success')  return '验证通过 🎉'
@@ -133,9 +138,9 @@ async function submitAll() {
   phase.value = 'loading'
 
   const payload = questions.value.map((q, i) => ({
-    questionId: q.id,
+    questionId: resolveQuestionId(q),
     answer:     answers.value[i]?.trim() || '',
-  }))
+  })).filter((item) => item.questionId != null)
 
   try {
     const info = await submitQuizRegistration(

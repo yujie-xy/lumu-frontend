@@ -87,7 +87,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchWorlds, fetchWorldById, createWorld, updateWorld, deleteWorld, pinWorld, unpinWorld } from '@/api/world.js'
+import { fetchWorlds, createWorld, updateWorld, deleteWorld, pinWorld, unpinWorld } from '@/api/world.js'
 import { uploadImage } from '@/api/upload.js'
 import { resolveMediaUrl } from '@/utils/media.js'
 
@@ -103,11 +103,37 @@ const coverUploading = ref(false)
 const emptyForm = () => ({ title: '', body: '', resourceUrl: '', status: 'PUBLISHED' })
 const form = ref(emptyForm())
 
+function normalizeWorldPost(post) {
+  if (!post || typeof post !== 'object') return post
+
+  const resourceUrl = post.resourceUrl || post.imageUrl || post.coverImageUrl || post.firstImageUrl || ''
+  const imageUrl = post.imageUrl || post.coverImageUrl || post.firstImageUrl || resourceUrl || ''
+
+  return {
+    ...post,
+    title: post.title || '',
+    body: post.body ?? post.content ?? post.description ?? '',
+    content: post.content ?? post.body ?? post.description ?? '',
+    description: post.description ?? post.body ?? post.content ?? '',
+    resourceUrl,
+    imageUrl,
+    coverImageUrl: post.coverImageUrl || resourceUrl || imageUrl || '',
+    firstImageUrl: post.firstImageUrl || imageUrl || resourceUrl || '',
+    images: Array.isArray(post.images) ? post.images : [],
+    isPinned: Boolean(post.isPinned),
+    status: post.status || 'PUBLISHED',
+    createdAt: post.createdAt || '',
+  }
+}
+
 onMounted(loadPosts)
 
 async function loadPosts() {
   loadingPosts.value = true
-  try { posts.value = await fetchWorlds() }
+  try {
+    const list = await fetchWorlds()
+    posts.value = Array.isArray(list) ? list.map(normalizeWorldPost) : []
+  }
   catch {}
   finally { loadingPosts.value = false }
 }
@@ -119,6 +145,15 @@ function openAdd() {
 async function openEdit(p) {
   editId.value = p.id
   formErr.value = ''
+  const full = normalizeWorldPost(p)
+  form.value = {
+    title:       full.title       || '',
+    body:        full.body        || '',
+    resourceUrl: full.resourceUrl || '',
+    status:      full.status      || 'PUBLISHED',
+  }
+  showModal.value = true
+  return
   let full
   try {
     full = await fetchWorldById(p.id)

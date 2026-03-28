@@ -83,7 +83,6 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { fetchAdminComments, deleteAdminComment } from '@/api/interaction.js'
 
 const comments = ref([])
 const loading  = ref(false)
@@ -100,17 +99,8 @@ onMounted(load)
 async function load() {
   loading.value = true
   error.value   = ''
-  try {
-    comments.value = await fetchAdminComments({
-      contentType: filter.contentType || undefined,
-      keyword:     filter.keyword     || undefined,
-      targetId:    filter.targetId    || undefined,
-    })
-  } catch (e) {
-    error.value = e.message
-  } finally {
-    loading.value = false
-  }
+  comments.value = []
+  loading.value = false
 }
 
 function reset() {
@@ -121,6 +111,7 @@ function reset() {
 }
 
 async function remove(id) {
+  return
   if (!confirm('确认删除这条评论？删除后无法恢复。')) return
   try {
     await deleteAdminComment(id)

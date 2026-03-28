@@ -143,7 +143,7 @@
 
 <script setup>
 import { ref, computed, reactive, onMounted } from 'vue'
-import { fetchTimeline, fetchTimelineById } from '@/api/content.js'
+import { fetchTimeline } from '@/api/content.js'
 import { resolveMediaUrl } from '@/utils/media.js'
 import LikeButton   from '@/components/common/LikeButton.vue'
 import CommentPanel from '@/components/common/CommentPanel.vue'
@@ -153,6 +153,43 @@ const loading = ref(true)
 const error = ref(null)
 const activeTab = ref('rose')
 const scrollRef = ref(null)
+
+function normalizeTimelineImages(images) {
+  if (!Array.isArray(images)) return []
+  return images
+    .map((img, idx) => {
+      const imageUrl = img?.imageUrl || img?.resourceUrl || img?.url || ''
+      if (!imageUrl) return null
+      return { ...img, id: img.id ?? idx, imageUrl }
+    })
+    .filter(Boolean)
+}
+
+function normalizeTimelineEvent(event) {
+  if (!event || typeof event !== 'object') return {}
+
+  const resourceUrl = event.resourceUrl || event.imageUrl || event.firstImageUrl || event.coverImageUrl || ''
+  const imageUrl = event.imageUrl || event.firstImageUrl || event.coverImageUrl || resourceUrl || ''
+  const date = event.date || event.createdAt || ''
+
+  return {
+    ...event,
+    title: event.title || '',
+    body: event.body ?? event.content ?? event.description ?? '',
+    content: event.content ?? event.body ?? event.description ?? '',
+    description: event.description ?? event.body ?? event.content ?? '',
+    resourceUrl,
+    imageUrl,
+    firstImageUrl: event.firstImageUrl || imageUrl || resourceUrl || '',
+    coverImageUrl: event.coverImageUrl || resourceUrl || imageUrl || '',
+    images: normalizeTimelineImages(event.images),
+    date,
+    dateLabel: event.dateLabel || (date ? String(date).slice(0, 10) : ''),
+    isPinned: Boolean(event.isPinned),
+    status: event.status || '',
+    createdAt: event.createdAt || '',
+  }
+}
 
 // ── Per-card image state ───────────────────────────────────────
 // { [event.id]: { images: string[], idx: number, loaded: boolean } }
@@ -167,7 +204,7 @@ function getCardState(id) {
 function cardCurrent(event) {
   const s = getCardState(event.id)
   if (s.images.length) return s.images[s.idx]
-  return event.imageUrl || event.firstImageUrl || null
+  return event.imageUrl || event.firstImageUrl || event.coverImageUrl || event.resourceUrl || null
 }
 
 /** Returns how many images are available for in-card cycling. */
@@ -188,23 +225,17 @@ function nextCard(event) {
 }
 
 /** Fetch full image list for one event and store in cardState. */
-async function lazyLoadImages(event) {
+function lazyLoadImages(event) {
   const s = getCardState(event.id)
   if (s.loaded) return
-  s.loaded = true   // mark before await to prevent double-fetch
-  try {
-    const detail = await fetchTimelineById(event.id)
-    if (detail.images && detail.images.length) {
-      s.images = detail.images.map(img => img.imageUrl)
-    } else if (detail.imageUrl) {
-      s.images = [detail.imageUrl]
-    } else if (event.imageUrl || event.firstImageUrl) {
-      s.images = [event.imageUrl || event.firstImageUrl]
-    }
-  } catch {
-    const single = event.imageUrl || event.firstImageUrl
-    if (single) s.images = [single]
+  s.loaded = true
+  const normalized = normalizeTimelineEvent(event)
+  if (normalized.images.length) {
+    s.images = normalized.images.map(img => img.imageUrl)
+    return
   }
+  const single = normalized.imageUrl || normalized.firstImageUrl || normalized.coverImageUrl || normalized.resourceUrl
+  if (single) s.images = [single]
 }
 
 // ── Gallery lightbox ───────────────────────────────────────────
@@ -213,37 +244,29 @@ const gallery = reactive({ open: false, loading: false, images: [], idx: 0 })
 async function openGallery(event) {
   gallery.open = true
   gallery.idx = 0
-  // Reuse already-loaded card state to avoid a second API call
   const s = getCardState(event.id)
   if (s.loaded && s.images.length) {
     gallery.images = [...s.images]
-    gallery.idx = s.idx   // start from the same position user was on
+    gallery.idx = s.idx
     gallery.loading = false
     return
   }
   gallery.loading = true
   gallery.images = []
-  try {
-    const detail = await fetchTimelineById(event.id)
-    if (detail.images && detail.images.length) {
-      gallery.images = detail.images.map(img => img.imageUrl)
-    } else {
-      gallery.images = [detail.imageUrl || event.imageUrl || event.firstImageUrl].filter(Boolean)
-    }
-  } catch {
-    gallery.images = [event.imageUrl || event.firstImageUrl].filter(Boolean)
-  } finally {
-    gallery.loading = false
-  }
+  lazyLoadImages(event)
+  gallery.images = [...getCardState(event.id).images]
+  gallery.idx = getCardState(event.id).idx
+  gallery.loading = false
 }
 
 onMounted(async () => {
   try {
-    events.value = await fetchTimeline()
+    const list = await fetchTimeline()
+    events.value = Array.isArray(list) ? list.map(normalizeTimelineEvent) : []
     // Background-load detail images for all events that have any image.
     // Not awaited — Vue reactivity updates arrows as each resolves.
     for (const e of events.value) {
-      if (e.imageUrl || e.firstImageUrl) lazyLoadImages(e)
+      if (e.images?.length || e.imageUrl || e.firstImageUrl || e.coverImageUrl || e.resourceUrl) lazyLoadImages(e)
     }
   } catch (e) {
     error.value = e.message

@@ -128,12 +128,48 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { fetchNoticeById } from '@/api/content.js'
 import { useNoticeRead } from '@/composables/useNoticeRead.js'
 
 const { notices, loadNotices, markAllRead } = useNoticeRead()
 const loading = ref(true)
 const error   = ref(null)
+
+function normalizeNoticeImages(images) {
+  if (!Array.isArray(images)) return []
+  return images
+    .map((img, idx) => {
+      const imageUrl = img?.imageUrl || img?.resourceUrl || img?.url || ''
+      if (!imageUrl) return null
+      return { ...img, id: img.id ?? idx, imageUrl }
+    })
+    .filter(Boolean)
+}
+
+function normalizeNoticeItem(notice) {
+  if (!notice || typeof notice !== 'object') return {}
+
+  const resourceUrl = notice.resourceUrl || notice.imageUrl || notice.coverImageUrl || notice.firstImageUrl || ''
+  const imageUrl = notice.imageUrl || notice.firstImageUrl || notice.coverImageUrl || resourceUrl || ''
+  const date = notice.date || notice.createdAt || ''
+
+  return {
+    ...notice,
+    title: notice.title || '',
+    body: notice.body ?? notice.content ?? notice.description ?? '',
+    content: notice.content ?? notice.body ?? notice.description ?? '',
+    description: notice.description ?? notice.body ?? notice.content ?? '',
+    resourceUrl,
+    imageUrl,
+    coverImageUrl: notice.coverImageUrl || resourceUrl || imageUrl || '',
+    firstImageUrl: notice.firstImageUrl || imageUrl || resourceUrl || '',
+    images: normalizeNoticeImages(notice.images),
+    date,
+    dateLabel: notice.dateLabel || (date ? String(date).slice(0, 10) : ''),
+    isPinned: Boolean(notice.isPinned),
+    status: notice.status || '',
+    createdAt: notice.createdAt || '',
+  }
+}
 
 // ── Per-card image state ───────────────────────────────────────
 // { [notice.id]: { images: string[], idx: number, loaded: boolean } }
@@ -148,7 +184,7 @@ function getCardState(id) {
 function cardCurrent(notice) {
   const s = getCardState(notice.id)
   if (s.images.length) return s.images[s.idx]
-  return notice.imageUrl || notice.firstImageUrl || null
+  return notice.imageUrl || notice.firstImageUrl || notice.coverImageUrl || notice.resourceUrl || null
 }
 
 /** Returns how many images are available for in-card cycling. */
@@ -169,23 +205,17 @@ function nextCard(notice) {
 }
 
 /** Fetch full image list for one notice and store in cardState. */
-async function lazyLoadImages(notice) {
+function lazyLoadImages(notice) {
   const s = getCardState(notice.id)
   if (s.loaded) return
-  s.loaded = true   // mark before await to prevent double-fetch
-  try {
-    const detail = await fetchNoticeById(notice.id)
-    if (detail.images && detail.images.length) {
-      s.images = detail.images.map(img => img.imageUrl)
-    } else if (detail.imageUrl) {
-      s.images = [detail.imageUrl]
-    } else if (notice.imageUrl || notice.firstImageUrl) {
-      s.images = [notice.imageUrl || notice.firstImageUrl]
-    }
-  } catch {
-    const single = notice.imageUrl || notice.firstImageUrl
-    if (single) s.images = [single]
+  s.loaded = true
+  const normalized = normalizeNoticeItem(notice)
+  if (normalized.images.length) {
+    s.images = normalized.images.map(img => img.imageUrl)
+    return
   }
+  const single = normalized.imageUrl || normalized.firstImageUrl || normalized.coverImageUrl || normalized.resourceUrl
+  if (single) s.images = [single]
 }
 
 // ── Gallery lightbox ───────────────────────────────────────────
@@ -194,39 +224,29 @@ const gallery = reactive({ open: false, loading: false, images: [], idx: 0 })
 async function openGallery(notice) {
   gallery.open = true
   gallery.idx = 0
-  // Reuse already-loaded card state to avoid a second API call
   const s = getCardState(notice.id)
   if (s.loaded && s.images.length) {
     gallery.images = [...s.images]
-    gallery.idx = s.idx   // start lightbox from the same position user was on
+    gallery.idx = s.idx
     gallery.loading = false
     return
   }
   gallery.loading = true
   gallery.images = []
-  try {
-    const detail = await fetchNoticeById(notice.id)
-    if (detail.images && detail.images.length) {
-      gallery.images = detail.images.map(img => img.imageUrl)
-    } else {
-      const single = detail.imageUrl || notice.imageUrl || notice.firstImageUrl
-      if (single) gallery.images = [single]
-    }
-  } catch {
-    const single = notice.imageUrl || notice.firstImageUrl
-    if (single) gallery.images = [single]
-  } finally {
-    gallery.loading = false
-  }
+  lazyLoadImages(notice)
+  gallery.images = [...getCardState(notice.id).images]
+  gallery.idx = getCardState(notice.id).idx
+  gallery.loading = false
 }
 
 onMounted(async () => {
   try {
     await loadNotices()
+    notices.value = Array.isArray(notices.value) ? notices.value.map(normalizeNoticeItem) : []
     // Background-load detail images for all cards that have any image.
     // Not awaited — Vue reactivity will update arrows as each resolves.
     for (const n of notices.value) {
-      if (n.imageUrl || n.firstImageUrl) lazyLoadImages(n)
+      if (n.images?.length || n.imageUrl || n.firstImageUrl || n.coverImageUrl || n.resourceUrl) lazyLoadImages(n)
     }
   } catch (e) {
     error.value = e.message

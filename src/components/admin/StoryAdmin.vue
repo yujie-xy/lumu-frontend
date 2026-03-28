@@ -72,7 +72,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchStories, fetchStoryById, createStory, updateStory, deleteStory } from '@/api/content.js'
+import { fetchStories, createStory, updateStory, deleteStory } from '@/api/content.js'
 import { uploadImage } from '@/api/upload.js'
 
 const chapters   = ref([])
@@ -89,9 +89,35 @@ const coverUploading = ref(false)
 const emptyForm = () => ({ title: '', body: '', resourceUrl: '', status: 'PUBLISHED' })
 const form = ref(emptyForm())
 
+function normalizeStoryChapter(chapter) {
+  if (!chapter || typeof chapter !== 'object') return chapter
+
+  const resourceUrl = chapter.resourceUrl || chapter.imageUrl || chapter.coverImageUrl || chapter.firstImageUrl || ''
+  const imageUrl = chapter.imageUrl || chapter.coverImageUrl || chapter.firstImageUrl || resourceUrl || ''
+
+  return {
+    ...chapter,
+    title: chapter.title || '',
+    body: chapter.body ?? chapter.content ?? chapter.description ?? '',
+    content: chapter.content ?? chapter.body ?? chapter.description ?? '',
+    description: chapter.description ?? chapter.body ?? chapter.content ?? '',
+    resourceUrl,
+    imageUrl,
+    coverImageUrl: chapter.coverImageUrl || resourceUrl || imageUrl || '',
+    firstImageUrl: chapter.firstImageUrl || imageUrl || resourceUrl || '',
+    images: Array.isArray(chapter.images) ? chapter.images : [],
+    isPinned: Boolean(chapter.isPinned),
+    status: chapter.status || 'PUBLISHED',
+    createdAt: chapter.createdAt || '',
+  }
+}
+
 async function load() {
   loading.value = true; error.value = ''
-  try { chapters.value = await fetchStories() }
+  try {
+    const list = await fetchStories()
+    chapters.value = Array.isArray(list) ? list.map(normalizeStoryChapter) : []
+  }
   catch (e) { error.value = e.message }
   finally { loading.value = false }
 }
@@ -105,6 +131,16 @@ function openAdd() {
 
 async function openEdit(ch) {
   formErr.value = ''
+  const detail = normalizeStoryChapter(ch)
+  editId.value = ch.id
+  form.value = {
+    title:       detail.title       || '',
+    body:        detail.body        || '',
+    resourceUrl: detail.resourceUrl || '',
+    status:      detail.status      || 'PUBLISHED',
+  }
+  showModal.value = true
+  return
   let detail
   try {
     detail = await fetchStoryById(ch.id)

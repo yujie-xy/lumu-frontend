@@ -11,7 +11,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { voteContent } from '@/api/interaction.js'
+import { SUPPORTED_VOTE_CONTENT_TYPES, voteContent } from '@/api/interaction.js'
 import { useAuth } from '@/composables/useAuth.js'
 
 const props = defineProps({
@@ -29,6 +29,7 @@ async function handleClick() {
     alert('请先登录后再点赞 ✨')
     return
   }
+  if (!SUPPORTED_VOTE_CONTENT_TYPES.includes(props.contentType)) return
   if (loading.value) return
   loading.value = true
   try {

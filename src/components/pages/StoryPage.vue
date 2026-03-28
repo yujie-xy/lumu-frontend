@@ -122,7 +122,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { fetchStory, fetchStoryById } from '@/api/content.js'
+import { fetchStory } from '@/api/content.js'
 import { resolveMediaUrl } from '@/utils/media.js'
 import LikeButton   from '@/components/common/LikeButton.vue'
 import CommentPanel from '@/components/common/CommentPanel.vue'
@@ -136,10 +136,45 @@ const chapterImages = ref([])
 const galleryIdx    = ref(0)
 const fullscreenImg = ref(null)
 
+function normalizeStoryImages(images) {
+  if (!Array.isArray(images)) return []
+  return images
+    .map((img, idx) => {
+      const imageUrl = img?.imageUrl || img?.resourceUrl || img?.url || ''
+      if (!imageUrl) return null
+      return { ...img, id: img.id ?? idx, imageUrl }
+    })
+    .filter(Boolean)
+}
+
+function normalizeStoryChapter(chapter) {
+  if (!chapter || typeof chapter !== 'object') return {}
+
+  const resourceUrl = chapter.resourceUrl || chapter.imageUrl || chapter.firstImageUrl || chapter.coverImageUrl || ''
+  const imageUrl = chapter.imageUrl || chapter.firstImageUrl || chapter.coverImageUrl || resourceUrl || ''
+
+  return {
+    ...chapter,
+    title: chapter.title || '',
+    body: chapter.body ?? chapter.content ?? chapter.description ?? '',
+    content: chapter.content ?? chapter.body ?? chapter.description ?? '',
+    description: chapter.description ?? chapter.body ?? chapter.content ?? '',
+    resourceUrl,
+    imageUrl,
+    firstImageUrl: chapter.firstImageUrl || imageUrl || resourceUrl || '',
+    coverImageUrl: chapter.coverImageUrl || resourceUrl || imageUrl || '',
+    images: normalizeStoryImages(chapter.images),
+    isPinned: Boolean(chapter.isPinned),
+    status: chapter.status || '',
+    createdAt: chapter.createdAt || '',
+  }
+}
+
 onMounted(async () => {
   try {
-    chapters.value = await fetchStory()
-    if (chapters.value.length) loadChapterImages(chapters.value[0].id)
+    const list = await fetchStory()
+    chapters.value = Array.isArray(list) ? list.map(normalizeStoryChapter) : []
+    if (chapters.value.length) loadChapterImages(chapters.value[0])
   } catch (e) {
     error.value = e.message
   } finally {
@@ -147,22 +182,17 @@ onMounted(async () => {
   }
 })
 
-async function loadChapterImages(id) {
+function loadChapterImages(chapter) {
   galleryIdx.value = 0
-  try {
-    const detail = await fetchStoryById(id)
-    chapterImages.value = detail.images || []
-  } catch {
-    chapterImages.value = []
-  }
+  chapterImages.value = normalizeStoryImages(chapter?.images)
 }
 
 watch(activeIdx, (newIdx) => {
   const ch = chapters.value[newIdx]
-  if (ch) loadChapterImages(ch.id)
+  if (ch) loadChapterImages(ch)
 })
 
-const current = computed(() => chapters.value[activeIdx.value] ?? {})
+const current = computed(() => normalizeStoryChapter(chapters.value[activeIdx.value]))
 
 function goNext() {
   if (activeIdx.value >= chapters.value.length - 1) return

@@ -72,7 +72,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchEvents, fetchEventById, createEvent, updateEvent, deleteEvent } from '@/api/content.js'
+import { fetchEvents, createEvent, updateEvent, deleteEvent } from '@/api/content.js'
 import { uploadImage } from '@/api/upload.js'
 
 const notices        = ref([])
@@ -88,9 +88,38 @@ const coverUploading = ref(false)
 const emptyForm = () => ({ title: '', body: '', resourceUrl: '', status: 'PUBLISHED' })
 const form = ref(emptyForm())
 
+function normalizeNoticeItem(notice) {
+  if (!notice || typeof notice !== 'object') return notice
+
+  const resourceUrl = notice.resourceUrl || notice.imageUrl || notice.coverImageUrl || notice.firstImageUrl || ''
+  const imageUrl = notice.imageUrl || notice.coverImageUrl || notice.firstImageUrl || resourceUrl || ''
+  const date = notice.date || notice.createdAt || ''
+
+  return {
+    ...notice,
+    title: notice.title || '',
+    body: notice.body ?? notice.content ?? notice.description ?? '',
+    content: notice.content ?? notice.body ?? notice.description ?? '',
+    description: notice.description ?? notice.body ?? notice.content ?? '',
+    resourceUrl,
+    imageUrl,
+    coverImageUrl: notice.coverImageUrl || resourceUrl || imageUrl || '',
+    firstImageUrl: notice.firstImageUrl || imageUrl || resourceUrl || '',
+    images: Array.isArray(notice.images) ? notice.images : [],
+    date,
+    dateLabel: notice.dateLabel || (date ? String(date).slice(0, 10) : ''),
+    isPinned: Boolean(notice.isPinned),
+    status: notice.status || 'PUBLISHED',
+    createdAt: notice.createdAt || '',
+  }
+}
+
 async function load() {
   loading.value = true; error.value = ''
-  try { notices.value = await fetchEvents() }
+  try {
+    const list = await fetchEvents()
+    notices.value = Array.isArray(list) ? list.map(normalizeNoticeItem) : []
+  }
   catch (e) { error.value = e.message }
   finally { loading.value = false }
 }
@@ -103,6 +132,17 @@ function openAdd() {
 }
 
 async function openEdit(n) {
+  const detail = normalizeNoticeItem(n)
+  editId.value = detail.id
+  form.value = {
+    title:       detail.title       || '',
+    body:        detail.body        || '',
+    resourceUrl: detail.resourceUrl || '',
+    status:      detail.status      || 'PUBLISHED',
+  }
+  formErr.value = ''
+  showModal.value = true
+  return
   let detail
   try {
     detail = await fetchEventById(n.id)

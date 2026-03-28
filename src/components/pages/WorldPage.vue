@@ -134,7 +134,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchWorldTags, fetchCategoryTags, fetchWorldPosts, fetchWorldPost } from '@/api/world.js'
+import { fetchWorldPosts } from '@/api/world.js'
 import { resolveMediaUrl } from '@/utils/media.js'
 import LikeButton from '@/components/common/LikeButton.vue'
 
@@ -150,9 +150,44 @@ const detail          = ref(null)
 const detailLoading   = ref(false)
 const activeImageIdx  = ref(0)
 
+function normalizeWorldImages(images) {
+  if (!Array.isArray(images)) return []
+  return images
+    .map((img, idx) => {
+      const imageUrl = img?.imageUrl || img?.resourceUrl || img?.url || ''
+      if (!imageUrl) return null
+      return { ...img, id: img.id ?? idx, imageUrl }
+    })
+    .filter(Boolean)
+}
+
+function normalizeWorldPost(post) {
+  if (!post || typeof post !== 'object') return post
+
+  const resourceUrl = post.resourceUrl || post.imageUrl || post.coverImageUrl || post.firstImageUrl || ''
+  const coverImageUrl = post.coverImageUrl || resourceUrl || ''
+  const firstImageUrl = post.firstImageUrl || post.imageUrl || coverImageUrl || resourceUrl || ''
+
+  return {
+    ...post,
+    title: post.title || '',
+    body: post.body ?? post.content ?? post.description ?? '',
+    content: post.content ?? post.body ?? post.description ?? '',
+    description: post.description ?? post.body ?? post.content ?? '',
+    resourceUrl,
+    imageUrl: post.imageUrl || resourceUrl || firstImageUrl || '',
+    coverImageUrl,
+    firstImageUrl,
+    images: normalizeWorldImages(post.images),
+    isPinned: Boolean(post.isPinned),
+    status: post.status || '',
+    createdAt: post.createdAt || '',
+  }
+}
+
 onMounted(async () => {
-  try { worldTags.value    = await fetchWorldTags() }    catch {}
-  try { categoryTags.value = await fetchCategoryTags() } catch {}
+  worldTags.value = []
+  categoryTags.value = []
   await loadPosts()
 })
 
@@ -160,7 +195,8 @@ async function loadPosts() {
   loading.value = true
   error.value   = null
   try {
-    posts.value = await fetchWorldPosts(activeWorldTagId.value, activeCategoryTagId.value)
+    const list = await fetchWorldPosts()
+    posts.value = Array.isArray(list) ? list.map(normalizeWorldPost) : []
   } catch (e) {
     error.value = e.message
   } finally {
@@ -178,16 +214,11 @@ function selectCategoryTag(id) {
   loadPosts()
 }
 
-async function openDetail(post) {
+function openDetail(post) {
   // 先用列表数据预显示，再拉取完整详情（含 images）
-  detail.value = post
+  detail.value = normalizeWorldPost(post)
   activeImageIdx.value = 0
-  detailLoading.value = true
-  try {
-    detail.value = await fetchWorldPost(post.id)
-    activeImageIdx.value = 0
-  } catch {}
-  finally { detailLoading.value = false }
+  detailLoading.value = false
 }
 
 function closeDetail() {

@@ -79,6 +79,7 @@ async function load() {
 }
 
 async function handleSubmit() {
+  if (props.contentType !== 'forum_post') return
   if (!draft.value.trim() || submitting.value) return
   submitting.value = true
   try {
